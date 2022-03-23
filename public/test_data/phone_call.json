@@ -19,7 +19,10 @@
             "user":"operator_user",
             "text":"はいもしもし",
             "time":"00:01",
-            "meta":null
+            "meta":{
+                "tag_1":true,
+                "tag_2":true
+                }
             },
             {
             "user":"customer_user",
@@ -27,7 +30,7 @@
             "time":"00:05",
             "meta":{
                 "tag_1":true,
-                "tag_2":true
+                "tag_2":false
                 }
             }
         ]

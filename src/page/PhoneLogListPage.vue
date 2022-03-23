@@ -122,57 +122,20 @@
     name: 'PhoneLogListPage',
     components: {
     },
+    mounted:function(){
+      fetch('/test_data/phone_log_list.json')
+      .then(res=>{
+        return res.json()
+      })
+      .then(data=>{
+        return this.call_logs = data
+      })
+    },
     data () {
       return {
         modal: false,
         date: new Date().toISOString().substr(0, 7),
-        call_logs:[
-          {
-            avator:"https://cdn.vuetifyjs.com/images/lists/1.jpg",
-            name:"客A",
-            log_date:"14:00",
-            log_note:"メモ：AAA　あとB",
-            vtt:[],
-            vtt_length:8,
-            to:"/phone_call"
-          },
-          {
-            avator:"https://cdn.vuetifyjs.com/images/lists/1.jpg",
-            name:"客A",
-            log_date:"14:00",
-            log_note:"メモ：AAA　あとB",
-            vtt:[],
-            vtt_length:8,
-            to:"/phone_log?date=2022-03-01"
-          },
-          {
-            avator:"https://cdn.vuetifyjs.com/images/lists/1.jpg",
-            name:"客A",
-            log_date:"14:00",
-            log_note:"メモ：AAA　あとB",
-            vtt:[],
-            vtt_length:8,
-            to:"/phone_call"
-          },
-          {
-            avator:"https://cdn.vuetifyjs.com/images/lists/1.jpg",
-            name:"客A",
-            log_date:"14:00",
-            log_note:"メモ：AAA　あとB",
-            vtt:[],
-            vtt_length:8,
-            to:"/phone_log?date=2022-03-01"
-          },
-          {
-            avator:"https://cdn.vuetifyjs.com/images/lists/1.jpg",
-            name:"客A",
-            log_date:"14:00",
-            log_note:"メモ：AAA　あとB",
-            vtt:[],
-            vtt_length:8,
-            to:"/phone_log?date=2022-03-01"
-          }
-        ]
+        call_logs:null
       }
     },
   }

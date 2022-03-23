@@ -1,7 +1,7 @@
 <template>
   <div class="balloon_l">
     <v-sheet
-    v-if="tag === '1'"
+    v-if="meta.tag_1"
     width="5"
     height="60"
     color="#ff7d7d"
@@ -9,7 +9,7 @@
     >
     </v-sheet>
     <v-sheet
-    v-if="tag === '2'"
+    v-if="meta.tag_2"
     width="5"
     height="60"
     color="#ffc421"
@@ -19,13 +19,13 @@
     <div class="face_icon">
       <v-avatar color="blue">
         <span class="white--text">
-          客1
+          {{user.name}}
         </span>
       </v-avatar>
     </div>
     <div>
       <p class="says">
-        aaaa
+        {{chat.text}}
       </p>
     </div>
   </div>
@@ -33,7 +33,7 @@
 <script>
   export default {
     name: 'MemoList',
-    props:['tag'],
+    props:['meta','chat','user'],
     mounted:function(){
     },
     methods: {

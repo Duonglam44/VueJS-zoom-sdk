@@ -3,18 +3,19 @@
       <div class="face_icon">
           <v-avatar color="red">
           <span class="white--text">
-              オペ
+              {{user.name}}
           </span>
           </v-avatar>
       </div>
       <p class="says">
-          aaaaaa
+          {{chat.text}}
       </p>
     </div>
 </template>
 <script>
   export default {
     name: 'ChatBoxRight',
+    props:['tag','chat','user'],
     data(){
       return{
         toggle_exclusive:undefined

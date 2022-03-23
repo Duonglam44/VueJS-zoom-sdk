@@ -4,13 +4,13 @@
     <div class="face_icon">
       <v-avatar color="blue">
         <span class="white--text">
-          客1
+          {{user.name}}
         </span>
       </v-avatar>
     </div>
     <div>
       <v-btn-toggle
-        v-model="tag"
+        v-model="tags"
         rounded
         dense
       >
@@ -22,7 +22,7 @@
         </v-btn>
       </v-btn-toggle>
       <v-badge
-            v-if="tag == 0"
+            v-if="tags == 0"
             bordered
             color="#ffc421"
             icon="mdi-label"
@@ -30,7 +30,7 @@
           >
       </v-badge>
       <v-badge
-            v-if="tag == 1"
+            v-if="tags == 1"
             bordered
             color="#ff7d7d"
             icon="mdi-label"
@@ -38,7 +38,7 @@
           >
       </v-badge>
       <p class="says">
-        aaaa
+        {{chat.text}}
       </p>
     </div>
   </div>
@@ -46,11 +46,12 @@
 <script>
   export default {
     name: 'ChatBoxLeft',
+    props:['tag','chat','user'],
     mounted:function(){
     },
     data () {
       return {
-        tag:undefined,
+        tags:undefined,
       }
     },
     methods: {
