@@ -1,34 +1,119 @@
 <template>
   <v-container>
-    <v-list three-line>
-      <template v-for="(item, index) in items">
-        <v-subheader
-          v-if="item.header"
-          :key="item.header"
-          v-text="item.header"
-        ></v-subheader>
-
-        <v-divider
-          v-else-if="item.divider"
-          :key="index"
-          :inset="item.inset"
-        ></v-divider>
-
-        <v-list-item
-          v-else
-          :key="item.title"
+    <v-row>
+      <v-col cols="12">
+        <v-app-bar
+          fixed
+          color="#505c65"
+          scroll-target="#scrolling-techniques-7"
+          height="60"
         >
-          <v-list-item-avatar>
-            <v-img :src="item.avatar"></v-img>
-          </v-list-item-avatar>
+          <img src="../assets/logo-icon.png" alt="Logo" class="ma-1 pa-1">
 
-          <v-list-item-content>
-            <v-list-item-title v-html="item.title"></v-list-item-title>
-            <v-list-item-subtitle v-html="item.subtitle"></v-list-item-subtitle>
-          </v-list-item-content>
-        </v-list-item>
-      </template>
-    </v-list>
+          <v-toolbar-title class="white--text font-weight-black ma-2 pa-1">通話履歴</v-toolbar-title>
+    
+          <v-spacer></v-spacer>
+          <v-text-field
+              prepend-inner-icon="mdi-magnify"
+              placeholder="検索キーワード"
+              solo
+              rounded
+              dense
+              class="my-auto pa-1"
+            ></v-text-field>
+          <v-spacer></v-spacer>
+        </v-app-bar>
+      </v-col>
+    </v-row>
+    <v-row class="mt-13">
+      <v-col cols="5" class="d-flex">
+        <v-btn icon><v-icon>mdi-arrow-left-thick</v-icon></v-btn>
+        <v-dialog
+          ref="dialog"
+          v-model="modal"
+          :return-value.sync="date"
+          persistent
+          width="290px"
+        >
+          <template v-slot:activator="{ on, attrs }">
+            <v-text-field
+              v-model="date"
+              solo
+              prepend-inner-icon="mdi-calendar"
+              readonly
+              rounded
+              dense
+              v-bind="attrs"
+              v-on="on"
+            ></v-text-field>
+          </template>
+          <v-date-picker
+            v-model="date"
+            type="month"
+            scrollable
+            locale="ja-JP"
+            color="#505c65"
+          >
+            <v-spacer></v-spacer>
+            <v-btn
+              text
+              color="primary"
+              @click="modal = false"
+            >
+              Cancel
+            </v-btn>
+            <v-btn
+              text
+              color="primary"
+              @click="$refs.dialog.save(date)"
+            >
+              OK
+            </v-btn>
+          </v-date-picker>
+        </v-dialog>
+        <v-btn icon><v-icon>mdi-arrow-right-thick</v-icon></v-btn>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col cols="12">
+        <v-list subheader>
+          <v-list-item-group>
+            <v-subheader>今日</v-subheader>
+            <v-list-item v-for="item in call_logs" :key="item.name" :to="item.to">
+              <v-list-item-avatar>
+                <v-img
+                  :src="item.avator"
+                ></v-img>
+              </v-list-item-avatar>
+              <v-list-item-content>
+                <v-list-item-title>{{item.name}}</v-list-item-title>
+              </v-list-item-content>
+              <v-list-item-content>
+                <v-list-item-title>{{item.log_date}}</v-list-item-title>
+              </v-list-item-content>
+              <v-list-item-content>
+                <v-list-item-title>{{item.log_note}}</v-list-item-title>
+              </v-list-item-content>
+              <v-list-item-icon>
+                <v-icon >
+                  mdi-message
+                </v-icon>
+                <v-badge
+                  overlap
+                  :content="item.vtt_length"
+                ></v-badge>
+              </v-list-item-icon>
+              <v-spacer></v-spacer>
+              <v-list-item-icon>
+                <v-icon >
+                  mdi-delete
+                </v-icon>
+              </v-list-item-icon>
+            </v-list-item>
+          </v-list-item-group>
+        </v-list>
+      </v-col>
+    </v-row>
   </v-container>
 </template>
 
@@ -39,37 +124,54 @@
     },
     data () {
       return {
-        items: [
-          { header: 'Today' },
+        modal: false,
+        date: new Date().toISOString().substr(0, 7),
+        call_logs:[
           {
-            avatar: 'https://cdn.vuetifyjs.com/images/lists/1.jpg',
-            title: 'Brunch this weekend?',
-            subtitle: `<span class="text--primary">Ali Connors</span> &mdash; I'll be in your neighborhood doing errands this weekend. Do you want to hang out?`,
+            avator:"https://cdn.vuetifyjs.com/images/lists/1.jpg",
+            name:"客A",
+            log_date:"14:00",
+            log_note:"メモ：AAA　あとB",
+            vtt:[],
+            vtt_length:8,
+            to:"/phone_call"
           },
-          { divider: true, inset: true },
           {
-            avatar: 'https://cdn.vuetifyjs.com/images/lists/2.jpg',
-            title: 'Summer BBQ <span class="grey--text text--lighten-1">4</span>',
-            subtitle: `<span class="text--primary">to Alex, Scott, Jennifer</span> &mdash; Wish I could come, but I'm out of town this weekend.`,
+            avator:"https://cdn.vuetifyjs.com/images/lists/1.jpg",
+            name:"客A",
+            log_date:"14:00",
+            log_note:"メモ：AAA　あとB",
+            vtt:[],
+            vtt_length:8,
+            to:"/phone_log?date=2022-03-01"
           },
-          { divider: true, inset: true },
           {
-            avatar: 'https://cdn.vuetifyjs.com/images/lists/3.jpg',
-            title: 'Oui oui',
-            subtitle: '<span class="text--primary">Sandra Adams</span> &mdash; Do you have Paris recommendations? Have you ever been?',
+            avator:"https://cdn.vuetifyjs.com/images/lists/1.jpg",
+            name:"客A",
+            log_date:"14:00",
+            log_note:"メモ：AAA　あとB",
+            vtt:[],
+            vtt_length:8,
+            to:"/phone_call"
           },
-          { divider: true, inset: true },
           {
-            avatar: 'https://cdn.vuetifyjs.com/images/lists/4.jpg',
-            title: 'Birthday gift',
-            subtitle: '<span class="text--primary">Trevor Hansen</span> &mdash; Have any ideas about what we should get Heidi for her birthday?',
+            avator:"https://cdn.vuetifyjs.com/images/lists/1.jpg",
+            name:"客A",
+            log_date:"14:00",
+            log_note:"メモ：AAA　あとB",
+            vtt:[],
+            vtt_length:8,
+            to:"/phone_log?date=2022-03-01"
           },
-          { divider: true, inset: true },
           {
-            avatar: 'https://cdn.vuetifyjs.com/images/lists/5.jpg',
-            title: 'Recipe to try',
-            subtitle: '<span class="text--primary">Britta Holt</span> &mdash; We should eat this: Grate, Squash, Corn, and tomatillo Tacos.',
-          },
+            avator:"https://cdn.vuetifyjs.com/images/lists/1.jpg",
+            name:"客A",
+            log_date:"14:00",
+            log_note:"メモ：AAA　あとB",
+            vtt:[],
+            vtt_length:8,
+            to:"/phone_log?date=2022-03-01"
+          }
         ]
       }
     },

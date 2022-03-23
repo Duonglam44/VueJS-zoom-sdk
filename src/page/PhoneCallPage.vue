@@ -8,6 +8,7 @@
           scroll-target="#scrolling-techniques-7"
         >
           <v-btn 
+           to="/"
           text
           x-large
           color="#505c65" 
