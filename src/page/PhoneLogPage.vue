@@ -73,8 +73,10 @@
         </v-row>
         <v-row>
           <v-col cols="12" class="pt-15">
-            <ChatBoxRight />
-            <ChatBoxLeft :tag="tag_none" />
+            <div v-for="item in phone_log.vtt" :key="item.user">
+              <div v-if="item.user === 'operator_user'"><ChatBoxRight :user="phone_log.operator_user" :chat="item"/></div>
+              <div v-if="item.user === 'customer_user'"><ChatBoxLeft :user="phone_log.customer_user" :chat="item" :tag="item.meta" /></div>
+            </div>
           </v-col>
           <v-footer
           fixed
@@ -115,65 +117,62 @@
           >
           <v-tabs-slider color="yellow"></v-tabs-slider>
 
-          <v-tab class="rounded-t-xl" style="background-color:#f9f9f9;">すべて<v-badge inline content="3"></v-badge></v-tab>
-          <v-tab class="rounded-t-xl white--text" style="background-color:#ff7d7d;">営業連絡<v-badge inline content="2"></v-badge></v-tab>
-          <v-tab class="rounded-t-xl white--text" style="background-color:#ffc421;">注文<v-badge inline content="1"></v-badge></v-tab>
+          <v-tab class="rounded-t-xl" style="background-color:#f9f9f9;">すべて<v-badge v-if="tag_all_list && tag_all_list.length>0" inline :content="tag_all_list.length"></v-badge></v-tab>
+          <v-tab class="rounded-t-xl white--text" style="background-color:#ff7d7d;">営業連絡<v-badge v-if="tag_1_list && tag_1_list.length>0" inline :content="tag_1_list.length"></v-badge></v-tab>
+          <v-tab class="rounded-t-xl white--text" style="background-color:#ffc421;">注文<v-badge v-if="tag_2_list && tag_2_list.length>0" inline :content="tag_2_list.length"></v-badge></v-tab>
           <v-tab-item style="background-color:#f9f9f9;">
             <v-sheet
-              block
-              height="5"
-              color="#f9f9f9"
-              class="mr-1"
+            block
+            height="5"
+            color="#f9f9f9"
+            class="mr-1"
+            >
+            </v-sheet>
+            <div v-for="item in tag_all_list" :key="item.user">
+              <v-card
+                elevation="2"
+                class="ma-1 pa-1"
               >
-              </v-sheet>
-            <v-card
-              elevation="2"
-              class="ma-1 pa-1"
-            ><MemoList :tag="tag_1" />
-            </v-card>
-            <v-card
-              elevation="2"
-              class="ma-1 pa-1"
-            ><MemoList :tag="tag_1" />
-            </v-card>
-            <v-card
-              elevation="2"
-              class="ma-1 pa-1"
-            ><MemoList :tag="tag_2" />
-            </v-card>
+              <div v-if="item.user === 'operator_user'"><MemoList :user="phone_log.operator_user" :chat="item" :meta="item.meta" /></div>
+              <div v-if="item.user === 'customer_user'"><MemoList :user="phone_log.customer_user" :chat="item" :meta="item.meta" /></div>
+              </v-card>
+            </div>
           </v-tab-item>
           <v-tab-item>
             <v-sheet
-              block
-              height="5"
-              color="#ff7d7d"
-              class="mr-1"
-              >
+            block
+            height="5"
+            color="#ff7d7d"
+            class="mr-1"
+            >
               </v-sheet>
-            <v-card
-              elevation="2"
-              class="ma-1 pa-1"
-            ><MemoList :tag="tag_1" />
-            </v-card>
-            <v-card
-              elevation="2"
-              class="ma-1 pa-1"
-            ><MemoList :tag="tag_1" />
-            </v-card>
+            <div v-for="item in tag_1_list" :key="item.user">
+              <v-card
+                elevation="2"
+                class="ma-1 pa-1"
+              >
+              <div v-if="item.user === 'operator_user'"><MemoList :user="phone_log.operator_user" :chat="item" :meta="item.meta" /></div>
+              <div v-if="item.user === 'customer_user'"><MemoList :user="phone_log.customer_user" :chat="item" :meta="item.meta" /></div>
+              </v-card>
+            </div>
           </v-tab-item>
           <v-tab-item>
             <v-sheet
-              block
-              height="5"
-              color="#ffc421"
-              class="mr-1"
+            block
+            height="5"
+            color="#ffc421"
+            class="mr-1"
+            >
+            </v-sheet>
+            <div v-for="item in tag_2_list" :key="item.user">
+              <v-card
+                elevation="2"
+                class="ma-1 pa-1"
               >
-              </v-sheet>
-            <v-card
-              elevation="2"
-              class="ma-1 pa-1"
-            ><MemoList :tag="tag_2" />
-            </v-card>
+              <div v-if="item.user === 'operator_user'"><MemoList :user="phone_log.operator_user" :chat="item" :meta="item.meta" /></div>
+              <div v-if="item.user === 'customer_user'"><MemoList :user="phone_log.customer_user" :chat="item" :meta="item.meta" /></div>
+              </v-card>
+            </div>
           </v-tab-item>
         </v-tabs>
       </v-col>
@@ -195,14 +194,30 @@ import MemoList from '../components/MemoList';
     },
     created() {
       this.date = this.$route.query["date"]
-      // this.date = query.date
+      fetch('/test_data/phone-log_'+this.date+'.json')
+      .then((res)=>{
+        return res.json()
+      })
+      .then((data)=>{
+        this.phone_log = data[0];
+        this.tag_all_list = this.phone_log.vtt.filter((item) => {
+              return item.meta.includes(0) || item.meta.includes(1);
+          });
+        this.tag_1_list = this.phone_log.vtt.filter((item) => {
+            return item.meta.includes(0);
+        });
+        this.tag_2_list = this.phone_log.vtt.filter((item) => {
+            return item.meta.includes(1);
+        });
+      })
     },
     data () {
       return {
         date:null,
-        tag_none:'0',
-        tag_1:'1',
-        tag_2:'2',
+        phone_log:null,
+        tag_1_list:[],
+        tag_2_list:[],
+        tag_all_list:[],
       }
     },
   }

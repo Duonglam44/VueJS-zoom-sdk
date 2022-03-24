@@ -27,7 +27,7 @@
                 "user": "operator_user",
                 "text": "かしこまりました。そちらでしたら最短納期は明日午後になりますがいかがでしょうか。",
                 "time": "00:02",
-                "meta": null
+                "meta": []
             },
             {
                 "user": "customer_user",
@@ -39,19 +39,19 @@
                 "user": "operator_user",
                 "text": "承知いたしました。",
                 "time": "00:01",
-                "meta": null
+                "meta": []
             },
             {
                 "user": "customer_user",
                 "text": "すみません。あと、もう一ついいですかね。先週納品してもらったやつなんですが、えーと。",
                 "time": "00:04",
-                "meta": null
+                "meta": []
             },
             {
                 "user": "customer_user",
                 "text": "あれをもう一回発注したいんです。",
                 "time": "00:01",
-                "meta": null
+                "meta": []
             }
         ]
     }

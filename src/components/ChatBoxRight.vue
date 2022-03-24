@@ -3,7 +3,7 @@
       <div class="face_icon">
           <v-avatar color="red">
           <span class="white--text">
-              {{user.name}}
+              {{user.short_name}}
           </span>
           </v-avatar>
       </div>
@@ -54,7 +54,8 @@
   position: relative;
   padding: 10px;
   border-radius: 12px;
-  background: #8ee7b6;
+  background: #cbfdff
+;
   box-sizing: border-box;
   margin: 0 !important;
   line-height: 1.5;
@@ -74,10 +75,12 @@
 }
 .balloon_l .says:after {
   left: -26px;
-  border-right: 22px solid #8ee7b6;
+  border-right: 22px solid #cbfdff
+;
 }
 .balloon_r .says:after {
   right: -26px;
-  border-left: 22px solid #8ee7b6;
+  border-left: 22px solid #cbfdff
+;
 }
 </style>

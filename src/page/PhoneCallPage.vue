@@ -61,7 +61,7 @@
           <v-col cols="12" class="pt-15">
             <div v-for="item in phone_log.vtt" :key="item.user">
               <div v-if="item.user === 'operator_user'"><ChatBoxRight :user="phone_log.operator_user" :chat="item"/></div>
-              <div v-if="item.user === 'customer_user'"><ChatBoxLeft :user="phone_log.customer_user" :chat="item" :tag="tag_none" /></div>
+              <div v-if="item.user === 'customer_user'"><ChatBoxLeft :user="phone_log.customer_user" :chat="item" :tag="item.meta" @update="item.meta = $event"/></div>
             </div>
           </v-col>
           <v-footer
@@ -103,9 +103,9 @@
           >
           <v-tabs-slider color="yellow"></v-tabs-slider>
 
-          <v-tab class="rounded-t-xl" style="background-color:#f9f9f9;">すべて<v-badge inline :content="tag_all_list.length"></v-badge></v-tab>
-          <v-tab class="rounded-t-xl white--text" style="background-color:#ff7d7d;">営業連絡<v-badge inline :content="tag_1_list.length"></v-badge></v-tab>
-          <v-tab class="rounded-t-xl white--text" style="background-color:#ffc421;">注文<v-badge inline :content="tag_2_list.length"></v-badge></v-tab>
+          <v-tab class="rounded-t-xl" style="background-color:#f9f9f9;">すべて<v-badge v-if="tag_all_list && tag_all_list.length>0" inline :content="tag_all_list.length"></v-badge></v-tab>
+          <v-tab class="rounded-t-xl white--text" style="background-color:#ff7d7d;">営業連絡<v-badge v-if="tag_1_list && tag_1_list.length>0" inline :content="tag_1_list.length"></v-badge></v-tab>
+          <v-tab class="rounded-t-xl white--text" style="background-color:#ffc421;">注文<v-badge v-if="tag_2_list && tag_2_list.length>0" inline :content="tag_2_list.length"></v-badge></v-tab>
           <v-tab-item style="background-color:#f9f9f9;">
             <v-sheet
             block
@@ -198,7 +198,7 @@ import MemoList from '../components/MemoList';
       phone_log:{
         immediate: true,
         handler: function () {
-          this.create_tag_list()
+          
         }
       } 
     },
@@ -220,15 +220,15 @@ import MemoList from '../components/MemoList';
         var item = this.tmp_phone_log_vtt.shift()
         this.phone_log.vtt.push(item)
         if(item.meta != null){
-            if(item.meta.tag_1 && item.meta.tag_2){
+            if(item.meta.includes(0) && item.meta.includes(1)){
               
               this.tag_1_list.push(item)
               this.tag_2_list.push(item)
               this.tag_all_list.push(item)
-            }else if(item.meta.tag_1){
+            }else if(item.meta.includes(0)){
               this.tag_1_list.push(item)
               this.tag_all_list.push(item)
-            }else if(item.meta.tag_2){
+            }else if(item.meta.includes(1)){
               this.tag_2_list.push(item)
               this.tag_all_list.push(item)
             }
@@ -240,9 +240,6 @@ import MemoList from '../components/MemoList';
     },
     method:{
       create_tag_list:()=>{
-        // this.phone_log.vtt.forEach((item)=>{
-          
-        // })
       }
     }
   }

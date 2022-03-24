@@ -4,15 +4,16 @@
     <div class="face_icon">
       <v-avatar color="blue">
         <span class="white--text">
-          {{user.name}}
+          {{user.short_name}}
         </span>
       </v-avatar>
     </div>
     <div>
       <v-btn-toggle
-        v-model="tags"
-        rounded
+        v-model="inputedValue"
+        multiple
         dense
+        class="d-flex justify-end" 
       >
         <v-btn small>
           <v-icon color="#ffc421">mdi-label</v-icon>
@@ -21,25 +22,13 @@
           <v-icon color="#ff7d7d">mdi-label</v-icon>
         </v-btn>
       </v-btn-toggle>
-      <v-badge
-            v-if="tags == 0"
-            bordered
-            color="#ffc421"
-            icon="mdi-label"
-            overlap
-          >
-      </v-badge>
-      <v-badge
-            v-if="tags == 1"
-            bordered
-            color="#ff7d7d"
-            icon="mdi-label"
-            overlap
-          >
-      </v-badge>
       <p class="says">
         {{chat.text}}
       </p>
+    </div>
+    <div class="d-flex flex-column mt-10">
+      <v-icon v-if="tag && tag.includes(0)" color="#ffc421" >mdi-label</v-icon>
+      <v-icon v-if="tag && tag.includes(1)" color="#ff7d7d" >mdi-label</v-icon>
     </div>
   </div>
 </template>
@@ -51,8 +40,19 @@
     },
     data () {
       return {
-        tags:undefined,
+        tags:null
       }
+    },
+    computed: {
+      inputedValue: {
+        get() {
+          return this.tag
+        },
+        set(newValue) {
+          console.log(newValue)
+        this.$emit("update", newValue);
+      },
+      },
     },
     methods: {
     }
@@ -89,7 +89,7 @@
   position: relative;
   padding: 10px;
   border-radius: 12px;
-  background: #8ee7b6;
+  background: #f2f2f2;
   box-sizing: border-box;
   margin: 0 !important;
   line-height: 1.5;
@@ -109,10 +109,10 @@
 }
 .balloon_l .says:after {
   left: -26px;
-  border-right: 22px solid #8ee7b6;
+  border-right: 22px solid #f2f2f2;
 }
 .balloon_r .says:after {
   right: -26px;
-  border-left: 22px solid #8ee7b6;
+  border-left: 22px solid #f2f2f2;
 }
 </style>

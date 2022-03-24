@@ -1,0 +1,18 @@
+[
+    {
+        "avator":"https://cdn.vuetifyjs.com/images/lists/1.jpg",
+        "name":"客A",
+        "log_date":"2022-03-25 14:00",
+        "log_note_view":"メモ：AAA　あとB",
+        "vtt_length":8,
+        "to":"/phone_call?date=2022-03-25"
+    },
+    {
+        "avator":"https://cdn.vuetifyjs.com/images/lists/1.jpg",
+        "name":"客B",
+        "log_date":"2022-03-26 14:00",
+        "log_note_view":"メモ：AAA　あとB",
+        "vtt_length":8,
+        "to":"/phone_log?date=2022-03-26"
+    }
+]

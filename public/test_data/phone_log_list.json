@@ -1,18 +1,26 @@
 [
     {
-        "avator":"https://cdn.vuetifyjs.com/images/lists/1.jpg",
-        "name":"客A",
-        "log_date":"2022-03-25 14:00",
-        "log_note_view":"メモ：AAA　あとB",
-        "vtt_length":8,
-        "to":"/phone_call?date=2022-03-25"
+        "avator": "https://cdn.vuetifyjs.com/images/lists/2.jpg",
+        "name": "〇〇工務店　伊藤様",
+        "log_date": "2022-03-06 14:05",
+        "log_note_view": "SUS304 2Bを15枚  SUS430 2Bを30枚  3/9まで",
+        "vtt_length": 8,
+        "to": "/phone_log?date=2022-03-06"
     },
     {
-        "avator":"https://cdn.vuetifyjs.com/images/lists/1.jpg",
-        "name":"客B",
-        "log_date":"2022-03-26 14:00",
-        "log_note_view":"メモ：AAA　あとB",
-        "vtt_length":8,
-        "to":"/phone_log?date=2022-03-26"
+        "avator": "https://cdn.vuetifyjs.com/images/lists/3.jpg",
+        "name": "▲▲工務店　山口様",
+        "log_date": "2022-03-05 11:32",
+        "log_note_view": "〇〇工務店紹介で問合せ　見積と製品説明を依頼　営業から折り返しTEL希望",
+        "vtt_length": 6,
+        "to": "/phone_log?date=2022-03-05"
+    },
+    {
+        "avator": "https://cdn.vuetifyjs.com/images/lists/4.jpg",
+        "name": "□□工務店　森様",
+        "log_date": "2022-03-04 09:19",
+        "log_note_view": "",
+        "vtt_length": 0,
+        "to": "/phone_log?date=2022-03-04"
     }
 ]
