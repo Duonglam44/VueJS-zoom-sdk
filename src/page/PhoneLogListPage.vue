@@ -114,88 +114,13 @@
         </v-list>
       </v-col>
     </v-row>
-    <v-bottom-sheet 
-    v-model="caller"
-    height="200"
-    width="200"
-    >
-      <v-sheet
-        color="#212936"
-        elevation="1"
-        height="200"
-        width="200"
-        >
-        <v-row class="d-flex justify-center">
-          <v-col cols="12">
-            <v-list color="#212936" dark>
-              <v-list-item>
-                <v-list-item-content>
-                  <v-list-item-title>{{customer_user_name}}</v-list-item-title>
-                </v-list-item-content>
-              </v-list-item>
-            </v-list>
-            
-          </v-col>
-        </v-row>
-        <v-row class="d-flex justify-center">
-          <v-col cols="6">
-            <v-btn
-              elevation="2"
-              fab
-              small
-              color="red darken-4"
-              class="d-flex justify-center ma-auto"
-              @click="caller=false"
-            ><v-icon color="white">mdi-phone-hangup</v-icon></v-btn>
-          </v-col>
-          <v-col cols="6">
-            <v-btn
-              elevation="2"
-              fab
-              small
-              color="green accent-3"
-              class="d-flex justify-center ma-auto"
-              to="/phone_call"
-            ><v-icon color="white">mdi-phone</v-icon></v-btn>
-          </v-col>
-        </v-row>
-      </v-sheet>
-    </v-bottom-sheet>
   </v-container>
 </template>
 
 <script>
-  export default {
+export default {
     name: 'PhoneLogListPage',
     components: {
-    },
-    mounted:function(){
-      fetch('/test_data/phone_log_list.json')
-      .then(res=>{
-        return res.json()
-      })
-      .then(data=>{
-        return this.call_logs = data
-      })
-      fetch('/test_data/phone_call.json')
-      .then(res=>{
-        return res.json()
-      })
-      .then(data=>{
-        return this.customer_user = data.customer_user
-      })
-    },
-    created: function() {
-      this.timerId = setTimeout(() => {
-        // let options = [{
-        //   "title":"着信",
-        //   "body":"着信",
-
-        // }]
-        // new Notification(options)
-        this.caller=true
-        clearTimeout(this.timerId)
-      }, 5000)
     },
     data () {
       return {
@@ -206,11 +131,36 @@
         caller:false,
         customer_user:{
             avator: "https://cdn.vuetifyjs.com/images/lists/2.jpg",
-            name: "〇〇工務店　伊藤様",
+            name: "〇〇工務店 伊藤様",
             number: "090-111-1111"
         },
-        customer_user_name:"〇〇工務店　伊藤様"
+        customer_user_name:"〇〇工務店 伊藤様",
       }
     },
+    created: function() {
+      
+    },
+    mounted:function(){
+      this.dummy_setup()
+    },
+    methods:{
+      dummy_setup(){
+        
+        fetch('/test_data/phone_log_list.json')
+        .then(res=>{
+          return res.json()
+        })
+        .then(data=>{
+          return this.call_logs = data
+        })
+        fetch('/test_data/phone_call.json')
+        .then(res=>{
+          return res.json()
+        })
+        .then(data=>{
+          return this.customer_user = data.customer_user
+        })
+      }
+    }
   }
 </script>

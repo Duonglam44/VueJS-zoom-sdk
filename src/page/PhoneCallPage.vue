@@ -192,6 +192,9 @@ import MemoList from '../components/MemoList';
         tag_1_list:[],
         tag_2_list:[],
         timer_counter:100,
+        speech:null,
+        recorder:null,
+        client:null
       }
     },
     watch:{

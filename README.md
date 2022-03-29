@@ -3,6 +3,7 @@
 ## Project setup
 ```
 npm install
+set GOOGLE_APPLICATION_CREDENTIALS=.\src\assets\fifth-mechanism-344306-1d893159ae83.json
 ```
 
 ### Compiles and hot-reloads for development

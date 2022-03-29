@@ -11,6 +11,7 @@ protocol.registerSchemesAsPrivileged([
 ])
 
 async function createWindow() {
+  // Window起動時に環境変数を設定しないといけない
   // Create the browser window.
   const win = new BrowserWindow({
     width: 800,

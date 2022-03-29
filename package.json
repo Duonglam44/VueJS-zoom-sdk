@@ -13,7 +13,11 @@
   },
   "main": "background.js",
   "dependencies": {
+    "@twilio/voice-sdk": "^2.1.1",
     "core-js": "^3.8.3",
+    "electron-fetch": "^1.7.4",
+    "node-record-lpcm16": "^1.0.1",
+    "twilio-client": "^1.14.0",
     "vue": "^2.6.14",
     "vue-router": "^2.8.1",
     "vuetify": "^2.6.0"
