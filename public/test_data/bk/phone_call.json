@@ -1,0 +1,38 @@
+[
+    {
+        "operator_user":{
+            "avator":"https://cdn.vuetifyjs.com/images/lists/1.jpg",
+            "name":"オペ",
+            "number":"090-aaa-bbb"
+        },
+        "customer_user":{
+            "avator":"https://cdn.vuetifyjs.com/images/lists/1.jpg",
+            "name":"客A",
+            "number":"090-aaa-bbb"
+        },
+        "log_date":{
+            "start":"2022-03-25 14:00",
+            "end":"2022-03-25 14:10"
+        },
+        "vtt":[
+            {
+            "user":"operator_user",
+            "text":"はいもしもし",
+            "time":"00:01",
+            "meta":{
+                "tag_1":true,
+                "tag_2":true
+                }
+            },
+            {
+            "user":"customer_user",
+            "text":"型番-AAを注文したいのですが",
+            "time":"00:05",
+            "meta":{
+                "tag_1":true,
+                "tag_2":false
+                }
+            }
+        ]
+    }
+]

@@ -1,0 +1,58 @@
+[
+    {
+        "operator_user": {
+            "avator": "https://cdn.vuetifyjs.com/images/lists/1.jpg",
+            "name": "松下商店　山田",
+            "short_name": "山田",
+            "number": "050-999-9999"
+        },
+        "customer_user": {
+            "avator": "https://cdn.vuetifyjs.com/images/lists/2.jpg",
+            "name": "〇〇工務店　伊藤様",
+            "short_name": "伊藤",
+            "number": "090-111-1111"
+        },
+        "log_date": {
+            "start": "2022-03-06 14:00",
+            "end": "2022-03-06 14:05"
+        },
+        "vtt": [
+            {
+                "user": "customer_user",
+                "text": "えっと、SUS304 2Bを15枚お願いします。あとは、SUS430 2Bを30枚ですね。なるべく今週までには欲しいんですが。",
+                "time": "00:03",
+                "meta": [0]
+            },
+            {
+                "user": "operator_user",
+                "text": "かしこまりました。そちらでしたら最短納期は明日午後になりますがいかがでしょうか。",
+                "time": "00:02",
+                "meta": null
+            },
+            {
+                "user": "customer_user",
+                "text": "あ、すみません。では最短納期でお願いします。",
+                "time": "00:02",
+                "meta": [0,1]
+            },
+            {
+                "user": "operator_user",
+                "text": "承知いたしました。",
+                "time": "00:01",
+                "meta": null
+            },
+            {
+                "user": "customer_user",
+                "text": "すみません。あと、もう一ついいですかね。先週納品してもらったやつなんですが、えーと。",
+                "time": "00:04",
+                "meta": null
+            },
+            {
+                "user": "customer_user",
+                "text": "あれをもう一回発注したいんです。",
+                "time": "00:01",
+                "meta": null
+            }
+        ]
+    }
+]
