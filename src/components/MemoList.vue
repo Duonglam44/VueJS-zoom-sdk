@@ -1,44 +1,42 @@
 <template>
   <div class="balloon_l">
     <v-sheet
-    v-if="meta.includes(0)"
-    width="5"
-    height="50"
-    color="#ff7d7d"
-    class="mr-1"
+      v-if="meta.includes(0)"
+      width="5"
+      height="50"
+      color="#ff7d7d"
+      class="mr-1"
     >
     </v-sheet>
     <v-sheet
-    v-if="meta.includes(1)"
-    width="5"
-    height="50"
-    color="#ffc421"
-    class="mr-1"
+      v-if="meta.includes(1)"
+      width="5"
+      height="50"
+      color="#ffc421"
+      class="mr-1"
     >
     </v-sheet>
     <div class="face_icon">
       <v-avatar color="blue">
         <span class="white--text">
-          {{user.short_name}}
+          {{ user.short_name }}
         </span>
       </v-avatar>
     </div>
     <div>
       <p class="says">
-        {{chat.text}}
+        {{ chat.text }}
       </p>
     </div>
   </div>
 </template>
 <script>
-  export default {
-    name: 'MemoList',
-    props:['meta','chat','user'],
-    mounted:function(){
-    },
-    methods: {
-    }
-  }
+export default {
+  name: 'MemoList',
+  props: ['meta', 'chat', 'user'],
+  mounted() {},
+  methods: {},
+};
 </script>
 <style scoped>
 .balloon_l,
@@ -84,20 +82,18 @@
   margin-top: 0 !important;
 }
 .says:after {
-  content: "";
+  content: '';
   position: absolute;
   border: 10px solid transparent;
   margin-top: -3px;
 }
 .balloon_l .says:after {
   left: -26px;
-  border-right: 22px solid #f2f2f2
-;
+  border-right: 22px solid #f2f2f2;
 }
 .balloon_r .says:after {
   right: -26px;
-  border-left: 22px solid #f2f2f2
-;
+  border-left: 22px solid #f2f2f2;
 }
 .says2 {
   max-width: 300px;
@@ -106,8 +102,7 @@
   position: relative;
   padding: 10px;
   border-radius: 12px;
-  background: #cbfdff
-;
+  background: #cbfdff;
   box-sizing: border-box;
   margin: 0 !important;
   line-height: 1.5;
@@ -120,19 +115,17 @@
   margin-top: 0 !important;
 }
 .says2:after {
-  content: "";
+  content: '';
   position: absolute;
   border: 10px solid transparent;
   margin-top: -3px;
 }
 .balloon_l .says2:after {
   left: -26px;
-  border-right: 22px solid #cbfdff
-;
+  border-right: 22px solid #cbfdff;
 }
 .balloon_r .says2:after {
   right: -26px;
-  border-left: 22px solid #cbfdff
-;
+  border-left: 22px solid #cbfdff;
 }
 </style>

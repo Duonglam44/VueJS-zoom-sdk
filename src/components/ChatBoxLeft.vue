@@ -1,10 +1,9 @@
 <template>
-  
   <div class="balloon_l">
     <div class="face_icon">
       <v-avatar color="blue">
         <span class="white--text">
-          {{user.short_name}}
+          {{ user.short_name }}
         </span>
       </v-avatar>
     </div>
@@ -13,7 +12,7 @@
         v-model="inputedValue"
         multiple
         dense
-        class="d-flex justify-end" 
+        class="d-flex justify-end"
       >
         <v-btn small>
           <v-icon color="#ffc421">mdi-label</v-icon>
@@ -23,40 +22,38 @@
         </v-btn>
       </v-btn-toggle>
       <p class="says">
-        {{chat.text}}
+        {{ chat.text }}
       </p>
     </div>
     <div class="d-flex flex-column mt-10">
-      <v-icon v-if="tag && tag.includes(0)" color="#ffc421" >mdi-label</v-icon>
-      <v-icon v-if="tag && tag.includes(1)" color="#ff7d7d" >mdi-label</v-icon>
+      <v-icon v-if="tag && tag.includes(0)" color="#ffc421">mdi-label</v-icon>
+      <v-icon v-if="tag && tag.includes(1)" color="#ff7d7d">mdi-label</v-icon>
     </div>
   </div>
 </template>
 <script>
-  export default {
-    name: 'ChatBoxLeft',
-    props:['tag','chat','user'],
-    mounted:function(){
-    },
-    data () {
-      return {
-        tags:null
-      }
-    },
-    computed: {
-      inputedValue: {
-        get() {
-          return this.tag
-        },
-        set(newValue) {
-          console.log(newValue)
-        this.$emit("update", newValue);
+export default {
+  name: 'ChatBoxLeft',
+  props: ['tag', 'chat', 'user'],
+  data() {
+    return {
+      tags: null,
+    };
+  },
+  computed: {
+    inputedValue: {
+      get() {
+        return this.tag;
       },
+      set(newValue) {
+        console.log(newValue);
+        this.$emit('update', newValue);
       },
     },
-    methods: {
-    }
-  }
+  },
+  mounted() {},
+  methods: {},
+};
 </script>
 <style scoped>
 .balloon_l,
@@ -102,7 +99,7 @@
   margin-top: 0 !important;
 }
 .says:after {
-  content: "";
+  content: '';
   position: absolute;
   border: 10px solid transparent;
   margin-top: -3px;
