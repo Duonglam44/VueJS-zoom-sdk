@@ -8,19 +8,21 @@
           scroll-target="#scrolling-techniques-7"
           height="60"
         >
-          <img src="../assets/logo-icon.png" alt="Logo" class="ma-1 pa-1">
+          <img src="../assets/logo-icon.png" alt="Logo" class="ma-1 pa-1" />
 
-          <v-toolbar-title class="white--text font-weight-black ma-2 pa-1">通話履歴</v-toolbar-title>
-    
+          <v-toolbar-title class="white--text font-weight-black ma-2 pa-1"
+            >通話履歴</v-toolbar-title
+          >
+
           <v-spacer></v-spacer>
           <v-text-field
-              prepend-inner-icon="mdi-magnify"
-              placeholder="検索キーワード"
-              solo
-              rounded
-              dense
-              class="my-auto pa-1"
-            ></v-text-field>
+            prepend-inner-icon="mdi-magnify"
+            placeholder="検索キーワード"
+            solo
+            rounded
+            dense
+            class="my-auto pa-1"
+          ></v-text-field>
           <v-spacer></v-spacer>
         </v-app-bar>
       </v-col>
@@ -35,7 +37,7 @@
           persistent
           width="290px"
         >
-          <template v-slot:activator="{ on, attrs }">
+          <template #activator="{ on, attrs }">
             <v-text-field
               v-model="date"
               solo
@@ -55,18 +57,8 @@
             color="#505c65"
           >
             <v-spacer></v-spacer>
-            <v-btn
-              text
-              color="primary"
-              @click="modal = false"
-            >
-              Cancel
-            </v-btn>
-            <v-btn
-              text
-              color="primary"
-              @click="$refs.dialog.save(date)"
-            >
+            <v-btn text color="primary" @click="modal = false"> Cancel </v-btn>
+            <v-btn text color="primary" @click="$refs.dialog.save(date)">
               OK
             </v-btn>
           </v-date-picker>
@@ -79,35 +71,30 @@
         <v-list subheader>
           <v-list-item-group>
             <v-subheader>今日</v-subheader>
-            <v-list-item v-for="item in call_logs" :key="item.name" :to="item.to">
+            <v-list-item
+              v-for="item in call_logs"
+              :key="item.name"
+              :to="item.to"
+            >
               <v-list-item-avatar>
-                <v-img
-                  :src="item.avator"
-                ></v-img>
+                <v-img :src="item.avator"></v-img>
               </v-list-item-avatar>
               <v-list-item-content>
-                <v-list-item-title>{{item.name}}</v-list-item-title>
+                <v-list-item-title>{{ item.name }}</v-list-item-title>
               </v-list-item-content>
               <v-list-item-content>
-                <v-list-item-title>{{item.log_date}}</v-list-item-title>
+                <v-list-item-title>{{ item.log_date }}</v-list-item-title>
               </v-list-item-content>
               <v-list-item-content>
-                <v-list-item-title>{{item.log_note_view}}</v-list-item-title>
+                <v-list-item-title>{{ item.log_note_view }}</v-list-item-title>
               </v-list-item-content>
               <v-list-item-icon>
-                <v-icon >
-                  mdi-message
-                </v-icon>
-                <v-badge
-                  overlap
-                  :content="item.vtt_length"
-                ></v-badge>
+                <v-icon> mdi-message </v-icon>
+                <v-badge overlap :content="item.vtt_length"></v-badge>
               </v-list-item-icon>
               <v-spacer></v-spacer>
               <v-list-item-icon>
-                <v-icon >
-                  mdi-delete
-                </v-icon>
+                <v-icon> mdi-delete </v-icon>
               </v-list-item-icon>
             </v-list-item>
           </v-list-item-group>
@@ -119,48 +106,44 @@
 
 <script>
 export default {
-    name: 'PhoneLogListPage',
-    components: {
-    },
-    data () {
-      return {
-        timerId:null,
-        modal: false,
-        date: new Date().toISOString().substr(0, 7),
-        call_logs:null,
-        caller:false,
-        customer_user:{
-            avator: "https://cdn.vuetifyjs.com/images/lists/2.jpg",
-            name: "〇〇工務店 伊藤様",
-            number: "090-111-1111"
-        },
-        customer_user_name:"〇〇工務店 伊藤様",
-      }
-    },
-    created: function() {
-      
-    },
-    mounted:function(){
-      this.dummy_setup()
-    },
-    methods:{
-      dummy_setup(){
-        
-        fetch('/test_data/phone_log_list.json')
-        .then(res=>{
-          return res.json()
+  name: 'PhoneLogListPage',
+  components: {},
+  data() {
+    return {
+      timerId: null,
+      modal: false,
+      date: new Date().toISOString().substr(0, 7),
+      call_logs: null,
+      caller: false,
+      customer_user: {
+        avator: 'https://cdn.vuetifyjs.com/images/lists/2.jpg',
+        name: '〇〇工務店 伊藤様',
+        number: '090-111-1111',
+      },
+      customer_user_name: '〇〇工務店 伊藤様',
+    };
+  },
+  created() {},
+  mounted() {
+    this.dummy_setup();
+  },
+  methods: {
+    dummy_setup() {
+      fetch('/test_data/phone_log_list.json')
+        .then((res) => {
+          return res.json();
         })
-        .then(data=>{
-          return this.call_logs = data
+        .then((data) => {
+          this.call_logs = data;
+        });
+      fetch('/test_data/phone_call.json')
+        .then((res) => {
+          return res.json();
         })
-        fetch('/test_data/phone_call.json')
-        .then(res=>{
-          return res.json()
-        })
-        .then(data=>{
-          return this.customer_user = data.customer_user
-        })
-      }
-    }
-  }
+        .then((data) => {
+          this.customer_user = data.customer_user;
+        });
+    },
+  },
+};
 </script>
