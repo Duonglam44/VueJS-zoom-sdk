@@ -65,7 +65,7 @@ export default {
             // オペレーター
             this.twilio_connection.mediaStream
               .getUserMedia({ video: false, audio: true })
-              .then(function (stream) {
+              .then((stream) => {
                 this.stream1 = stream;
                 // createMedia(this.stream1)
               });
@@ -89,7 +89,7 @@ export default {
           /**
            * 着信イベント
            */
-          this.device.on('incoming', function (conn) {
+          this.device.on('incoming', (conn) => {
             // conn is a Twilio.Connection object
             this.twilio_connection = conn;
           });

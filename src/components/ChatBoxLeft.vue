@@ -46,7 +46,6 @@ export default {
         return this.tag;
       },
       set(newValue) {
-        console.log(newValue);
         this.$emit('update', newValue);
       },
     },

@@ -21,7 +21,9 @@
     "electron-fetch": "^1.7.4",
     "node-record-lpcm16": "^1.0.1",
     "twilio-client": "^1.14.0",
+    "vee-validate": "^3.4.14",
     "vue": "^2.6.14",
+    "vue-i18n": "^8.27.2",
     "vue-router": "^2.8.1",
     "vuetify": "^2.6.0"
   },

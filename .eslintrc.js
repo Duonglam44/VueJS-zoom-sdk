@@ -14,6 +14,7 @@ module.exports = {
   plugins: ['prettier'],
   // add your custom rules here
   rules: {
+    'vue/multi-word-component-names': 'off',
     'class-methods-use-this': 'off',
     'import/no-extraneous-dependencies': 'off',
     'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
