@@ -15,6 +15,7 @@ export default {
     },
     profileLink: 'プロフィール',
     logoutLink: 'ログアウト',
+    phoneLogs: '通話履歴',
   },
   toastTitle: {
     success: '成功',

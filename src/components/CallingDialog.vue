@@ -52,8 +52,6 @@ export default {
   },
   mounted() {
     this.timerId = setTimeout(() => {
-      // eslint-disable-next-line no-new
-      new Notification('着信が来ました。アプリを確認してください。');
       this.caller = true;
       clearTimeout(this.timerId);
     }, 5000);

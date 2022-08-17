@@ -2,34 +2,14 @@
   <v-container>
     <v-row>
       <v-col cols="12">
-        <v-app-bar
-          fixed
-          color="#505c65"
-          scroll-target="#scrolling-techniques-7"
-          height="60"
-        >
-          <img src="../assets/logo-icon.png" alt="Logo" class="ma-1 pa-1" />
-
-          <v-toolbar-title class="white--text font-weight-black ma-2 pa-1"
-            >通話履歴</v-toolbar-title
-          >
-
-          <v-spacer></v-spacer>
-          <v-text-field
-            prepend-inner-icon="mdi-magnify"
-            placeholder="検索キーワード"
-            solo
-            rounded
-            dense
-            class="my-auto pa-1"
-          ></v-text-field>
-          <v-spacer></v-spacer>
-        </v-app-bar>
+        <AppNavBar />
       </v-col>
     </v-row>
     <v-row class="mt-13">
       <v-col cols="5" class="d-flex">
-        <v-btn icon><v-icon>mdi-arrow-left-thick</v-icon></v-btn>
+        <v-btn icon>
+          <v-icon>mdi-arrow-left</v-icon>
+        </v-btn>
         <v-dialog
           ref="dialog"
           v-model="modal"
@@ -40,11 +20,10 @@
           <template #activator="{ on, attrs }">
             <v-text-field
               v-model="date"
-              solo
               prepend-inner-icon="mdi-calendar"
               readonly
-              rounded
               dense
+              solo
               v-bind="attrs"
               v-on="on"
             ></v-text-field>
@@ -57,63 +36,68 @@
             color="#505c65"
           >
             <v-spacer></v-spacer>
-            <v-btn text color="primary" @click="modal = false"> Cancel </v-btn>
+            <v-btn text color="primary" @click="modal = false"> Cancel</v-btn>
             <v-btn text color="primary" @click="$refs.dialog.save(date)">
               OK
             </v-btn>
           </v-date-picker>
         </v-dialog>
-        <v-btn icon><v-icon>mdi-arrow-right-thick</v-icon></v-btn>
+        <v-btn icon>
+          <v-icon>mdi-arrow-right</v-icon>
+        </v-btn>
+      </v-col>
+      <v-col style="padding-top: 8px" cols="5">
+        <v-text-field
+          v-model="search"
+          dense
+          solo
+          prepend-inner-icon="mdi-magnify"
+          :placeholder="t('searchPlaceholder')"
+          class="my-auto pa-1"
+        ></v-text-field>
+      </v-col>
+      <v-col cols="2">
+        <v-btn
+          :disabled="search === ''"
+          style="min-height: 38px"
+          color="success"
+          class="white--text"
+        >
+          <v-icon left> mdi-phone</v-icon>
+          {{ t('outGoing') }}
+        </v-btn>
       </v-col>
     </v-row>
-    <v-row>
-      <v-col cols="12">
-        <v-list subheader>
-          <v-list-item-group>
-            <v-subheader>今日</v-subheader>
-            <v-list-item
-              v-for="item in call_logs"
-              :key="item.name"
-              :to="item.to"
-            >
-              <v-list-item-avatar>
-                <v-img :src="item.avator"></v-img>
-              </v-list-item-avatar>
-              <v-list-item-content>
-                <v-list-item-title>{{ item.name }}</v-list-item-title>
-              </v-list-item-content>
-              <v-list-item-content>
-                <v-list-item-title>{{ item.log_date }}</v-list-item-title>
-              </v-list-item-content>
-              <v-list-item-content>
-                <v-list-item-title>{{ item.log_note_view }}</v-list-item-title>
-              </v-list-item-content>
-              <v-list-item-icon>
-                <v-icon> mdi-message </v-icon>
-                <v-badge overlap :content="item.vtt_length"></v-badge>
-              </v-list-item-icon>
-              <v-spacer></v-spacer>
-              <v-list-item-icon>
-                <v-icon> mdi-delete </v-icon>
-              </v-list-item-icon>
-            </v-list-item>
-          </v-list-item-group>
-        </v-list>
-      </v-col>
-    </v-row>
+    <PhoneLogList
+      :title="t('monthSection')"
+      :history="call_logs"
+      @item-clicked="onItemClick"
+    />
+    <PhoneLogList
+      :title="t('daySection')"
+      :history="call_logs"
+      @item-clicked="onItemClick"
+    />
   </v-container>
 </template>
 
 <script>
+import AppNavBar from '@/components/AppNavBar.vue';
+import PhoneLogList from '@/components/PhoneLogList.vue';
+
 export default {
   name: 'PhoneLogListPage',
-  components: {},
+  components: {
+    PhoneLogList,
+    AppNavBar,
+  },
   data() {
     return {
       timerId: null,
       modal: false,
       date: new Date().toISOString().substr(0, 7),
-      call_logs: null,
+      search: '',
+      call_logs: undefined,
       caller: false,
       customer_user: {
         avator: 'https://cdn.vuetifyjs.com/images/lists/2.jpg',
@@ -123,11 +107,16 @@ export default {
       customer_user_name: '〇〇工務店 伊藤様',
     };
   },
-  created() {},
   mounted() {
     this.dummy_setup();
   },
   methods: {
+    t(key) {
+      return this.$t(`phoneLogs.${key}`).toString();
+    },
+    onItemClick(url) {
+      this.$router.push(url);
+    },
     dummy_setup() {
       fetch('/test_data/phone_log_list.json')
         .then((res) => {

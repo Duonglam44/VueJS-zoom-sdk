@@ -184,9 +184,9 @@
 </template>
 
 <script>
-import ChatBoxRight from '../components/ChatBoxRight.vue';
-import ChatBoxLeft from '../components/ChatBoxLeft.vue';
-import MemoList from '../components/MemoList.vue';
+import ChatBoxRight from '@/components/ChatBoxRight.vue';
+import ChatBoxLeft from '@/components/ChatBoxLeft.vue';
+import MemoList from '@/components/MemoList.vue';
 
 export default {
   name: 'PhoneLogPage',

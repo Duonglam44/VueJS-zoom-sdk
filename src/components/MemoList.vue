@@ -33,7 +33,20 @@
 <script>
 export default {
   name: 'MemoList',
-  props: ['meta', 'chat', 'user'],
+  props: {
+    meta: {
+      type: Array,
+      default: () => [],
+    },
+    chat: {
+      type: Object,
+      default: () => {},
+    },
+    user: {
+      type: Object,
+      default: () => {},
+    },
+  },
   mounted() {},
   methods: {},
 };
@@ -46,22 +59,28 @@ export default {
   justify-content: flex-start;
   align-items: flex-start;
 }
+
 .balloon_r {
   justify-content: flex-end;
 }
+
 .face_icon img {
   width: 80px;
   height: auto;
 }
+
 .balloon_r .face_icon {
   margin-left: 25px;
 }
+
 .balloon_l .face_icon {
   margin-right: 25px;
 }
+
 .balloon_r .face_icon {
   order: 2 !important;
 }
+
 .says {
   max-width: 300px;
   display: flex;
@@ -75,26 +94,32 @@ export default {
   line-height: 1.5;
   /*   align-items: center; */
 }
+
 .says p {
   margin: 8px 0 0 !important;
 }
+
 .says p:first-child {
   margin-top: 0 !important;
 }
+
 .says:after {
   content: '';
   position: absolute;
   border: 10px solid transparent;
   margin-top: -3px;
 }
+
 .balloon_l .says:after {
   left: -26px;
   border-right: 22px solid #f2f2f2;
 }
+
 .balloon_r .says:after {
   right: -26px;
   border-left: 22px solid #f2f2f2;
 }
+
 .says2 {
   max-width: 300px;
   display: flex;
@@ -108,22 +133,27 @@ export default {
   line-height: 1.5;
   /*   align-items: center; */
 }
+
 .says2 p {
   margin: 8px 0 0 !important;
 }
+
 .says2 p:first-child {
   margin-top: 0 !important;
 }
+
 .says2:after {
   content: '';
   position: absolute;
   border: 10px solid transparent;
   margin-top: -3px;
 }
+
 .balloon_l .says2:after {
   left: -26px;
   border-right: 22px solid #cbfdff;
 }
+
 .balloon_r .says2:after {
   right: -26px;
   border-left: 22px solid #cbfdff;

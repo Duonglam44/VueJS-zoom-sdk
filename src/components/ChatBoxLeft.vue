@@ -34,7 +34,26 @@
 <script>
 export default {
   name: 'ChatBoxLeft',
-  props: ['tag', 'chat', 'user'],
+  props: {
+    tag: {
+      type: Array,
+      default() {
+        return [];
+      },
+    },
+    user: {
+      type: Object,
+      default() {
+        return {};
+      },
+    },
+    chat: {
+      type: Object,
+      default() {
+        return {};
+      },
+    },
+  },
   data() {
     return {
       tags: null,

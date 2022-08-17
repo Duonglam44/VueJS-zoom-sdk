@@ -1,0 +1,52 @@
+[
+  {
+    "operator_user": {
+      "avator": "https://cdn.vuetifyjs.com/images/lists/5.jpg",
+      "name": "松下商店　東",
+      "short_name": "東",
+      "number": "050-999-9999"
+    },
+    "customer_user": {
+      "avator": "https://cdn.vuetifyjs.com/images/lists/3.jpg",
+      "name": "▲▲工務店　山口様",
+      "short_name": "山口",
+      "number": "090-111-1111"
+    },
+    "log_date": {
+      "start": "2022-03-05 11:00",
+      "end": "2022-03-05 11:05"
+    },
+    "vtt": [
+      {
+        "user": "operator_user",
+        "text": "はい。山下商店でございます。",
+        "time": "00:02",
+        "meta": []
+      },
+      {
+        "user": "customer_user",
+        "text": "あ。私、▲▲工務店の山口です。お世話様です。",
+        "time": "00:02",
+        "meta": []
+      },
+      {
+        "user": "operator_user",
+        "text": "お世話になっております。",
+        "time": "00:01",
+        "meta": []
+      },
+      {
+        "user": "customer_user",
+        "text": "あのー。〇〇工務店さんの、山下さんの紹介で松下商店さんのホームページを拝見したんですが、お見積りをお願いしたいんですが、電話でお願いすればいいんですかね？",
+        "time": "00:10",
+        "meta": [1]
+      },
+      {
+        "user": "operator_user",
+        "text": "ありがとうございます。弊社のカタログについては御覧になりましたか？",
+        "time": "00:02",
+        "meta": []
+      }
+    ]
+  }
+]
