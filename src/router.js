@@ -1,8 +1,10 @@
 import Vue from 'vue';
 import Router from 'vue-router';
-import PhoneLogListPage from './page/PhoneLogListPage.vue';
-import PhoneCallPage from './page/PhoneCallPage.vue';
-import PhoneLogPage from './page/PhoneLogPage.vue';
+
+const PhoneLogListPage = () => import('./page/PhoneLogListPage.vue');
+const PhoneCallPage = () => import('./page/PhoneCallPage.vue');
+const PhoneLogPage = () => import('./page/PhoneLogPage.vue');
+const Login = () => import('./page/Login.vue');
 
 Vue.use(Router);
 
@@ -22,6 +24,10 @@ export default new Router({
       path: '/phone_log',
       component: PhoneLogPage,
       meta: { index: 2 },
+    },
+    {
+      path: '/login',
+      component: Login,
     },
   ],
 });
