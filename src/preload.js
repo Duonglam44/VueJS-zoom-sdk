@@ -1,5 +1,8 @@
 import { contextBridge, ipcRenderer } from 'electron';
+import ElectronStore from 'electron-store';
+import { COOKIEKEY } from './shared/constant/common';
 
+const electronStore = new ElectronStore();
 const ipcRendererApi = {
   sendMessage(channel, args) {
     ipcRenderer.send(channel, args);
@@ -15,6 +18,25 @@ const ipcRendererApi = {
   },
 };
 
+const store = {
+  getAuth() {
+    return electronStore.get(COOKIEKEY.accessToken);
+  },
+
+  setAuth(value) {
+    electronStore.set(COOKIEKEY.accessToken, value);
+  },
+
+  removeToken() {
+    electronStore.delete(COOKIEKEY.accessToken);
+  },
+
+  removeStore() {
+    electronStore.clear();
+  },
+};
+
 contextBridge.exposeInMainWorld('electron', {
   ipcRenderer: ipcRendererApi,
+  store,
 });
