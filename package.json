@@ -17,8 +17,10 @@
   "main": "background.js",
   "dependencies": {
     "@twilio/voice-sdk": "^2.1.1",
+    "axios": "^0.27.2",
     "core-js": "^3.8.3",
     "electron-fetch": "^1.7.4",
+    "eslint-import-resolver-alias": "^1.1.2",
     "node-record-lpcm16": "^1.0.1",
     "twilio-client": "^1.14.0",
     "vee-validate": "^3.4.14",

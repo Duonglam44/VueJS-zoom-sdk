@@ -40,4 +40,12 @@ module.exports = {
     semi: 'off',
     camelcase: 'off',
   },
+  settings: {
+    'import/resolver': {
+      alias: {
+        map: [['@', './src/']],
+        extensions: ['.js', '.vue'],
+      },
+    },
+  },
 };

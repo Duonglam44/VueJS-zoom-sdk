@@ -1,4 +1,4 @@
-import { app, protocol, BrowserWindow } from 'electron';
+import { app, protocol, BrowserWindow, ipcMain } from 'electron';
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib';
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer';
 
@@ -58,6 +58,7 @@ app.on('ready', async () => {
     try {
       await installExtension(VUEJS_DEVTOOLS);
     } catch (e) {
+      // eslint-disable-next-line no-console
       console.error('Vue Devtools failed to install:', e.toString());
     }
   }
@@ -78,3 +79,10 @@ if (isDevelopment) {
     });
   }
 }
+
+ipcMain.on('ipc-example', async (event, arg) => {
+  const msgTemplate = (pingPong) => `IPC test: ${pingPong}`;
+  // eslint-disable-next-line no-console
+  console.log(msgTemplate(arg));
+  event.reply('ipc-example', msgTemplate('pong'));
+});

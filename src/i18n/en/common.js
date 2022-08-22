@@ -14,6 +14,7 @@ export default {
     },
     profileLink: 'Profile',
     logoutLink: 'Sign Out',
+    phoneLogs: 'Phone logs',
   },
   toastTitle: {
     success: 'Success',
