@@ -1,8 +1,11 @@
 <template>
   <div class="card mx-auto my-auto form-signin" style="width: 30rem">
-    <img class="card-img-top" src="../../assets/DXP_logo.png" alt="" />
+    <img class="card-img-top" src="@/assets/DXP_logo.png" alt="" />
     <ValidationObserver v-slot="{ handleSubmit }">
       <form @submit.prevent="handleSubmit(onLogin)">
+        <p :v-show="!!errorsLogin" class="mes-error">
+          {{ errorsLogin.error }}
+        </p>
         <ValidationProvider
           v-slot="{ errors }"
           :name="$t('login.email')"
@@ -41,7 +44,14 @@
           </div>
         </ValidationProvider>
 
-        <v-btn type="submit" class="btn-login" depressed color="primary">
+        <v-btn
+          type="submit"
+          :loading="isLoading"
+          :disabled="isLoading"
+          class="btn-login"
+          depressed
+          color="primary"
+        >
           {{ $t('login.btn_submit') }}
         </v-btn>
       </form>
@@ -50,6 +60,8 @@
 </template>
 
 <script>
+import { mapActions, mapState } from 'vuex';
+
 export default {
   data() {
     return {
@@ -57,8 +69,18 @@ export default {
       password: '',
     };
   },
+
+  computed: {
+    ...mapState('auth', ['errorsLogin', 'isLoading']),
+  },
+
   methods: {
-    onLogin() {},
+    ...mapActions('auth', ['login']),
+
+    onLogin() {
+      const user = { email: this.email, password: this.password };
+      this.login(user);
+    },
   },
 };
 </script>

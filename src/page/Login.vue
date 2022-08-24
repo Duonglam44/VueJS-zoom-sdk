@@ -29,6 +29,6 @@ export default {
 }
 
 .card-footer {
-  background: rgb(232, 232, 232);
+  background: rgb(232, 232, 232) !important;
 }
 </style>

@@ -20,14 +20,18 @@
     "axios": "^0.27.2",
     "core-js": "^3.8.3",
     "electron-fetch": "^1.7.4",
+    "electron-store": "^8.1.0",
     "eslint-import-resolver-alias": "^1.1.2",
+    "humps": "^2.0.1",
+    "js-cookie": "^3.0.1",
     "node-record-lpcm16": "^1.0.1",
     "twilio-client": "^1.14.0",
     "vee-validate": "^3.4.14",
     "vue": "^2.6.14",
     "vue-i18n": "^8.27.2",
     "vue-router": "^2.8.1",
-    "vuetify": "^2.6.0"
+    "vuetify": "^2.6.0",
+    "vuex": "^3.6.2"
   },
   "devDependencies": {
     "@babel/core": "^7.12.16",
