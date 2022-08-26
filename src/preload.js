@@ -36,7 +36,17 @@ const store = {
   },
 };
 
+const notification = {
+  incomingCall(args) {
+    ipcRendererApi.sendMessage('incoming-call', args);
+  },
+  cancelCall() {
+    ipcRendererApi.sendMessage('cancel-call');
+  },
+};
+
 contextBridge.exposeInMainWorld('electron', {
   ipcRenderer: ipcRendererApi,
   store,
+  notification,
 });

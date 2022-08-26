@@ -1,10 +1,11 @@
-import { app, protocol, BrowserWindow, ipcMain } from 'electron';
+import { app, protocol, BrowserWindow, ipcMain, Notification } from 'electron';
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib';
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer';
 import path from 'path';
 
 const isDevelopment = process.env.NODE_ENV !== 'production';
 let win;
+let notification;
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
   { scheme: 'app', privileges: { secure: true, standard: true } },
@@ -14,8 +15,8 @@ async function createWindow() {
   // Window起動時に環境変数を設定しないといけない
   // Create the browser window.
   win = new BrowserWindow({
-    width: 800,
-    height: 600,
+    width: 1200,
+    height: 900,
     webPreferences: {
       // Use pluginOptions.nodeIntegration, leave this alone
       // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
@@ -81,9 +82,33 @@ if (isDevelopment) {
   }
 }
 
-ipcMain.on('ipc-example', async (event, arg) => {
-  const msgTemplate = (pingPong) => `IPC test: ${pingPong}`;
-  // eslint-disable-next-line no-console
-  console.log(msgTemplate(arg));
-  event.reply('ipc-example', msgTemplate('pong'));
+function navigate(routePath) {
+  if (win.webContents) {
+    win.webContents.send('navigate', routePath);
+  }
+}
+
+function answerCall() {
+  if (win.webContents) {
+    win.webContents.send('answerCall');
+  }
+}
+
+ipcMain.on('incoming-call', (_, { caller }) => {
+  notification = new Notification({
+    title: 'Incoming call',
+    body: `Incoming call from ${caller}`,
+  });
+
+  notification.show();
+
+  notification.on('click', () => {
+    win.focus();
+    navigate('PhoneCall');
+    answerCall();
+  });
+});
+
+ipcMain.on('cancel-call', () => {
+  notification.removeAllListeners();
 });

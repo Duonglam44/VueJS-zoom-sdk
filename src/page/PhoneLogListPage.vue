@@ -62,6 +62,7 @@
           style="min-height: 38px"
           color="success"
           class="white--text"
+          @click="callToPhoneNumber"
         >
           <v-icon left> mdi-phone</v-icon>
           {{ t('outGoing') }}
@@ -69,13 +70,11 @@
       </v-col>
     </v-row>
     <PhoneLogList
+      :status="apiStatus"
+      :total-page="thisMonthPhoneLogs.totalPage"
       :title="t('monthSection')"
-      :history="call_logs"
-      @item-clicked="onItemClick"
-    />
-    <PhoneLogList
-      :title="t('daySection')"
-      :history="call_logs"
+      :history="thisMonthPhoneLogs.data"
+      @page-changed="(p) => onPageChange(p, 'thisMonthPhoneLogs')"
       @item-clicked="onItemClick"
     />
   </v-container>
@@ -84,6 +83,7 @@
 <script>
 import AppNavBar from '@/components/AppNavBar.vue';
 import PhoneLogList from '@/components/PhoneLogList.vue';
+import phoneLogService from '@/service/phone-log-service';
 
 export default {
   name: 'PhoneLogListPage',
@@ -93,45 +93,60 @@ export default {
   },
   data() {
     return {
-      timerId: null,
+      todayPhoneLogs: {
+        totalPage: 1,
+        currentPage: 1,
+        data: [],
+      },
+      thisMonthPhoneLogs: {
+        totalPage: 1,
+        currentPage: 1,
+        data: [],
+      },
+      search: '',
+      apiStatus: 'IDLE',
       modal: false,
       date: new Date().toISOString().substr(0, 7),
-      search: '',
-      call_logs: undefined,
-      caller: false,
-      customer_user: {
-        avator: 'https://cdn.vuetifyjs.com/images/lists/2.jpg',
-        name: '〇〇工務店 伊藤様',
-        number: '090-111-1111',
-      },
-      customer_user_name: '〇〇工務店 伊藤様',
     };
   },
+
   mounted() {
-    this.dummy_setup();
+    this.loadPhoneLogs();
   },
+
   methods: {
+    onPageChange(page, key) {
+      this[key].currentPage = page;
+      this.loadPhoneLogs(page);
+    },
     t(key) {
       return this.$t(`phoneLogs.${key}`).toString();
     },
-    onItemClick(url) {
-      this.$router.push(url);
+    onItemClick() {
+      // fixme: dummy data. replace with /phone_log?id=xxx
+      this.$router.push('/phone_log?date=2022-03-04');
     },
-    dummy_setup() {
-      fetch('/test_data/phone_log_list.json')
+    loadPhoneLogs(page = 1) {
+      this.apiStatus = 'PENDING';
+      phoneLogService
+        .getAll(page)
         .then((res) => {
-          return res.json();
+          this.thisMonthPhoneLogs = this.mapResponseToData(res);
+          this.apiStatus = 'SUCCESS';
         })
-        .then((data) => {
-          this.call_logs = data;
+        .catch(() => {
+          this.apiStatus = 'ERROR';
         });
-      fetch('/test_data/phone_call.json')
-        .then((res) => {
-          return res.json();
-        })
-        .then((data) => {
-          this.customer_user = data.customer_user;
-        });
+    },
+    mapResponseToData({ total, per_page, ...res }) {
+      return {
+        ...res,
+        totalPage: Math.ceil(total / per_page),
+      };
+    },
+    callToPhoneNumber() {
+      // const params = { phoneNumber: this.search };
+      this.$device.connect();
     },
   },
 };

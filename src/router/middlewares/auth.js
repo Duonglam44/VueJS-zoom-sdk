@@ -1,8 +1,11 @@
 import { CookiesStorage } from '@/shared/config/cookie';
+import store from '@/store';
 
 export const authMiddleware = (to, from, next) => {
+  const token = CookiesStorage.getAccessToken();
+
+  store.commit('auth/setAuthenticated', !!token);
   if (to.matched.some((record) => record.meta.guest)) {
-    const token = CookiesStorage.getAccessToken();
     if (token) {
       next('/');
       return;

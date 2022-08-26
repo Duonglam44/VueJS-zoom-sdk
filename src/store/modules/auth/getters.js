@@ -1,5 +1,3 @@
-const gettersAuth = {
-  isAuthenticated: (state) => !!state.user.accessToken,
-};
+const gettersAuth = {};
 
 export default gettersAuth;
