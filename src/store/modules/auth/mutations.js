@@ -14,6 +14,10 @@ const mutationsAuth = {
   logout(state) {
     state.user = null;
   },
+
+  setAuthenticated(state, isAuthenticated) {
+    state.isAuthenticated = isAuthenticated;
+  },
 };
 
 export default mutationsAuth;

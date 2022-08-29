@@ -7,36 +7,37 @@
 </template>
 
 <script>
-import twilioService from '@/service/twilio-service';
-import { Device } from '@twilio/voice-sdk';
+import { mapState } from 'vuex';
 
 export default {
   name: 'App',
-  components: {},
-  data() {
-    return {
-      device: undefined,
-    };
+  computed: {
+    ...mapState('auth', ['isAuthenticated']),
+    ...mapState('connection', ['connection']),
   },
-  created() {
-    this.initTwilio();
-  },
-  methods: {
-    async initTwilio() {
-      try {
-        const token = await twilioService.getToken();
-        const device = new Device(token);
-        device
-          .on(Device.EventName.Registered, this.onRegistered)
-          .on(Device.EventName.Connect, this.onConnect)
-          .on(Device.EventName.Incoming, this.onIncoming);
-      } catch (e) {
-        // todo: handle error
-      }
+  watch: {
+    isAuthenticated: {
+      handler(newValue, oldValue) {
+        if (newValue && newValue !== oldValue) {
+          // push to stash waiting for init device
+          setTimeout(() => {
+            if (this.$device) {
+              this.$device.register();
+            }
+          });
+        }
+      },
+      immediate: true,
     },
-    onRegistered() {},
-    onConnect() {},
-    onIncoming() {},
+  },
+  mounted() {
+    window.electron.ipcRenderer.on('navigate', (routePath) => {
+      this.$router.push({ name: routePath });
+    });
+
+    window.electron.ipcRenderer.on('answerCall', () => {
+      this.connection.accept();
+    });
   },
 };
 </script>
