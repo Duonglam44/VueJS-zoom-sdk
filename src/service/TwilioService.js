@@ -1,6 +1,6 @@
 import axiosInstance from '@/service/axios';
 
-function TwilioAPI() {
+function TwilioService() {
   function getToken() {
     return axiosInstance.get('/phone_logs/getToken');
   }
@@ -9,4 +9,4 @@ function TwilioAPI() {
   };
 }
 
-export default new TwilioAPI();
+export default new TwilioService();

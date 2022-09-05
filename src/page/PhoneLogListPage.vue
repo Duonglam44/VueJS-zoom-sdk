@@ -84,6 +84,7 @@
 import AppNavBar from '@/components/AppNavBar.vue';
 import PhoneLogList from '@/components/PhoneLogList.vue';
 import phoneLogService from '@/service/phone-log-service';
+import { mapState } from 'vuex';
 
 export default {
   name: 'PhoneLogListPage',
@@ -108,6 +109,10 @@ export default {
       modal: false,
       date: new Date().toISOString().substr(0, 7),
     };
+  },
+
+  computed: {
+    ...mapState('twilio', ['device']),
   },
 
   mounted() {
@@ -146,7 +151,7 @@ export default {
     },
     callToPhoneNumber() {
       // const params = { phoneNumber: this.search };
-      this.$device.connect();
+      this.device.connect();
     },
   },
 };
