@@ -1,15 +1,49 @@
-import { app, protocol, BrowserWindow, ipcMain, Notification } from 'electron';
+import {
+  app,
+  protocol,
+  BrowserWindow,
+  ipcMain,
+  Notification,
+  Tray,
+  nativeImage,
+  Menu,
+} from 'electron';
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib';
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer';
 import path from 'path';
+import ElectronStore from 'electron-store';
 
+ElectronStore.initRenderer();
 const isDevelopment = process.env.NODE_ENV !== 'production';
 let win;
+let tray;
 let notification;
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
   { scheme: 'app', privileges: { secure: true, standard: true } },
 ]);
+
+function initTray() {
+  const iconPath =
+    process.platform === 'darwin'
+      ? '../public/app-icon.png'
+      : '../public/favicon.ico';
+  const icon = nativeImage.createFromPath(path.join(__dirname, iconPath));
+  tray = new Tray(icon);
+  const menu = Menu.buildFromTemplate([
+    {
+      label: 'Quit app',
+      click() {
+        app.quit();
+      },
+    },
+  ]);
+  tray.setToolTip('Electron app');
+  tray.setContextMenu(menu);
+  tray.on('click', () => {
+    win.show();
+  });
+}
 
 async function createWindow() {
   // Window起動時に環境変数を設定しないといけない
@@ -34,7 +68,20 @@ async function createWindow() {
     // Load the index.html when not in development
     win.loadURL('app://./index.html');
   }
+
+  win.on('close', (event) => {
+    if (app.quitting) {
+      win = null;
+    } else {
+      event.preventDefault();
+      win.hide();
+    }
+  });
 }
+
+app.on('before-quit', () => {
+  app.quitting = true;
+});
 
 // Quit when all windows are closed.
 app.on('window-all-closed', () => {
@@ -48,7 +95,7 @@ app.on('window-all-closed', () => {
 app.on('activate', () => {
   // On macOS it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
-  if (BrowserWindow.getAllWindows().length === 0) createWindow();
+  win.show();
 });
 
 // This method will be called when Electron has finished
@@ -64,6 +111,7 @@ app.on('ready', async () => {
       console.error('Vue Devtools failed to install:', e.toString());
     }
   }
+  initTray();
   createWindow();
 });
 
