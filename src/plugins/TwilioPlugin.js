@@ -1,4 +1,4 @@
-import TwilioAPI from '@/service/twilioAPI';
+import TwilioAPI from '@/service/TwilioService';
 import store from '@/store';
 import { Device } from '@twilio/voice-sdk';
 
@@ -14,18 +14,25 @@ const onIncoming = (connection) => {
   });
 
   showNotification(connection.parameters.From);
-  store.commit('connection/setConnection', connection);
+  store.commit('twilio/setConnection', connection);
 };
 
 const onRegistered = () => {};
 const onDestroyed = () => {};
 const onError = () => {};
-const onTokenWillExpire = () => {};
+const onTokenWillExpire = async (device) => {
+  try {
+    const res = await TwilioAPI.getToken();
+    device.updateToken(res.accessToken);
+  } catch (error) {
+    store.commit('twilio/setDevice', null);
+  }
+};
 
 const initTwilio = async () => {
   try {
     const res = await TwilioAPI.getToken();
-    const device = new Device(res.data.token, {
+    const device = new Device(res.accessToken, {
       codecPreferences: ['opus', 'pcmu'],
       fakeLocalDTMF: true,
       enableRingingState: true,
@@ -36,12 +43,14 @@ const initTwilio = async () => {
       .on(Device.EventName.Incoming, onIncoming)
       .on(Device.EventName.Destroyed, onDestroyed)
       .on(Device.EventName.Error, onError)
-      .on(Device.EventName.TokenWillExpire, onTokenWillExpire);
+      .on(Device.EventName.TokenWillExpire, () => onTokenWillExpire(device));
 
+    device.register();
+
+    store.commit('twilio/setDevice', device);
     return device;
   } catch (e) {
-    // eslint-disable-next-line no-console
-    console.error(e);
+    store.commit('twilio/setDevice', null);
     return null;
   }
 };
@@ -49,6 +58,6 @@ const initTwilio = async () => {
 export default {
   async install(app) {
     // eslint-disable-next-line no-param-reassign
-    app.prototype.$device = await initTwilio();
+    app.prototype.$initTwilio = initTwilio;
   },
 };

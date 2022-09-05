@@ -13,18 +13,13 @@ export default {
   name: 'App',
   computed: {
     ...mapState('auth', ['isAuthenticated']),
-    ...mapState('connection', ['connection']),
+    ...mapState('twilio', ['connection']),
   },
   watch: {
     isAuthenticated: {
       handler(newValue, oldValue) {
         if (newValue && newValue !== oldValue) {
-          // push to stash waiting for init device
-          setTimeout(() => {
-            if (this.$device) {
-              this.$device.register();
-            }
-          });
+          this.$initTwilio();
         }
       },
       immediate: true,
