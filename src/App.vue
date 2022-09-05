@@ -7,12 +7,12 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import { mapGetters, mapState } from 'vuex';
 
 export default {
   name: 'App',
   computed: {
-    ...mapState('auth', ['isAuthenticated']),
+    ...mapGetters('auth', ['isAuthenticated']),
     ...mapState('twilio', ['connection']),
   },
   watch: {

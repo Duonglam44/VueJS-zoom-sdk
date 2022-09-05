@@ -8,7 +8,6 @@ const actionsAuth = {
     axiosInstance
       .post('auth/login', user)
       .then((res) => {
-        commit('setUser', res);
         CookiesStorage.setAccessToken(res.accessToken);
         router.push({ name: 'Home' });
       })
