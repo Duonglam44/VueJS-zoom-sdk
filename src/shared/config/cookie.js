@@ -15,15 +15,33 @@ export const CookiesStorage = {
     }
   },
 
+  setRefreshToken(refreshToken) {
+    if (!isElectron()) {
+      Cookies.set(COOKIEKEY.refreshToken, refreshToken, {
+        domain: getCurrentDomain(),
+        path: '/',
+        expires: 1,
+      });
+    } else {
+      window.electron.store.setRefreshToken(refreshToken);
+    }
+  },
+
   getAccessToken() {
     if (!isElectron()) return Cookies.get(COOKIEKEY.accessToken);
     return window.electron.store.getAuth();
+  },
+
+  getRefreshToken() {
+    if (!isElectron()) return Cookies.get(COOKIEKEY.refreshToken);
+    return window.electron.store.getRefreshToken();
   },
 
   clearAccessToken() {
     if (!isElectron()) {
       const domain = getCurrentDomain();
       Cookies.remove(COOKIEKEY.accessToken, { domain });
+      Cookies.remove(COOKIEKEY.refreshToken, { domain });
     } else {
       window.electron.store.removeToken();
     }

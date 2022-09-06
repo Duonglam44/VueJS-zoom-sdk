@@ -11,6 +11,7 @@ const actionsAuth = {
       .post('auth/login', user)
       .then((res) => {
         CookiesStorage.setAccessToken(res.accessToken);
+        CookiesStorage.setRefreshToken(res.refreshToken);
         router.push({ name: 'Home' });
       })
       .catch((err) => {
