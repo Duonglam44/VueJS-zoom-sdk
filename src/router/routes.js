@@ -3,37 +3,46 @@ const PhoneCallPage = () => import('@/page/PhoneCallPage.vue');
 const PhoneLogPage = () => import('@/page/PhoneLogPage.vue');
 const Login = () => import('@/page/Login.vue');
 const ProfilePage = () => import('@/page/ProfilePage.vue');
+const AuthLayout = () => import('@/components/layouts/AuthLayout.vue');
 
 const routes = [
   {
     path: '/',
-    component: PhoneLogListPage,
+    component: AuthLayout,
     name: 'Home',
-    meta: { index: 0, requiresAuth: true },
-  },
-  {
-    path: '/phone_call',
-    name: 'PhoneCall',
-    component: PhoneCallPage,
-    meta: { index: 1, requiresAuth: true },
-  },
-  {
-    path: '/phone_log',
-    name: 'PhoneLog',
-    component: PhoneLogPage,
-    meta: { index: 2, requiresAuth: true },
+    redirect: () => ({ name: 'PhoneLogListRoute' }),
+    children: [
+      {
+        path: '/phone_log_list',
+        name: 'PhoneLogListRoute',
+        component: PhoneLogListPage,
+        meta: { index: 1, requiresAuth: true },
+      },
+      {
+        path: '/phone_call',
+        name: 'PhoneCallRoute',
+        component: PhoneCallPage,
+        meta: { index: 1, requiresAuth: true },
+      },
+      {
+        path: '/phone_log',
+        name: 'PhoneLogRoute',
+        component: PhoneLogPage,
+        meta: { index: 2, requiresAuth: true },
+      },
+      {
+        path: '/profile',
+        component: ProfilePage,
+        name: 'ProfileRoute',
+        meta: { requiresAuth: true },
+      },
+    ],
   },
   {
     path: '/login',
-    name: 'Login',
+    name: 'LoginRoute',
     component: Login,
     meta: { guest: true },
-  },
-  {
-    path: '/profile',
-    component: ProfilePage,
-    name: 'Profile',
-    meta: { requiresAuth: true },
   },
 ];
 

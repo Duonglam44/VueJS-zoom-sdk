@@ -4,4 +4,13 @@ const getMe = () => {
   return axiosInstance.get('/auth/user-profile');
 };
 
-export { getMe };
+const logout = () => {
+  return axiosInstance.post('/auth/logout');
+};
+
+const authService = {
+  logout,
+  getMe,
+};
+
+export default authService;

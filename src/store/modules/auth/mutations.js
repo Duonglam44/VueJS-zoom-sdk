@@ -11,10 +11,6 @@ const mutationsAuth = {
     state.errorsLogin = errors;
   },
 
-  logout(state) {
-    state.user = null;
-  },
-
   setAuthenticated(state, isAuthenticated) {
     state.isAuthenticated = isAuthenticated;
   },

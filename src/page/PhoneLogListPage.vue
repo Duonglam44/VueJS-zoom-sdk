@@ -1,10 +1,5 @@
 <template>
   <v-container>
-    <v-row>
-      <v-col cols="12">
-        <AppNavBar />
-      </v-col>
-    </v-row>
     <v-row class="mt-13">
       <v-col cols="5" class="d-flex">
         <v-btn icon>
@@ -81,7 +76,6 @@
 </template>
 
 <script>
-import AppNavBar from '@/components/AppNavBar.vue';
 import PhoneLogList from '@/components/PhoneLogList.vue';
 import phoneLogService from '@/service/phone-log-service';
 import { mapState } from 'vuex';
@@ -90,7 +84,6 @@ export default {
   name: 'PhoneLogListPage',
   components: {
     PhoneLogList,
-    AppNavBar,
   },
   data() {
     return {

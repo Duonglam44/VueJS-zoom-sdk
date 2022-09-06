@@ -1,4 +1,4 @@
-import { getMe } from '@/service/AuthService';
+import authService from '@/service/AuthService';
 import { CookiesStorage } from '@/shared/config/cookie';
 import store from '@/store';
 
@@ -14,7 +14,7 @@ export const authMiddleware = async (to, from, next) => {
       }
 
       if (!user) {
-        const res = await getMe();
+        const res = await authService.getMe();
         if (res) {
           store.commit('auth/setUser', res);
           next('/');
