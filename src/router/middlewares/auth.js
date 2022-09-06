@@ -1,16 +1,33 @@
+import { getMe } from '@/service/AuthService';
 import { CookiesStorage } from '@/shared/config/cookie';
 import store from '@/store';
 
-export const authMiddleware = (to, from, next) => {
-  const token = CookiesStorage.getAccessToken();
-
-  store.commit('auth/setAuthenticated', !!token);
+export const authMiddleware = async (to, from, next) => {
   if (to.matched.some((record) => record.meta.guest)) {
-    if (token) {
+    try {
+      const token = CookiesStorage.getAccessToken();
+      const { user } = store.state.auth;
+
+      if (!token) {
+        next();
+        return;
+      }
+
+      if (!user) {
+        const res = await getMe();
+        if (res) {
+          store.commit('auth/setUser', res);
+          next('/');
+          return;
+        }
+        store.commit('auth/setUser', null);
+        next();
+      }
+
       next('/');
-      return;
+    } catch (error) {
+      next();
     }
-    next();
   } else {
     next();
   }

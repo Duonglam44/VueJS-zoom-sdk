@@ -2,6 +2,7 @@ const PhoneLogListPage = () => import('@/page/PhoneLogListPage.vue');
 const PhoneCallPage = () => import('@/page/PhoneCallPage.vue');
 const PhoneLogPage = () => import('@/page/PhoneLogPage.vue');
 const Login = () => import('@/page/Login.vue');
+const ProfilePage = () => import('@/page/ProfilePage.vue');
 
 const routes = [
   {
@@ -27,6 +28,12 @@ const routes = [
     name: 'Login',
     component: Login,
     meta: { guest: true },
+  },
+  {
+    path: '/profile',
+    component: ProfilePage,
+    name: 'Profile',
+    meta: { requiresAuth: true },
   },
 ];
 
