@@ -12,9 +12,15 @@
       </v-toolbar-title>
     </router-link>
     <v-spacer></v-spacer>
-    <v-menu left offset-y>
+    <v-menu v-if="user" left offset-y>
       <template #activator="{ on, attrs }">
-        <v-btn text v-bind="attrs" class="white--text" v-on="on">
+        <v-btn
+          text
+          v-bind="attrs"
+          class="white--text"
+          :loading="loading"
+          v-on="on"
+        >
           <span>{{ user.name }}</span>
         </v-btn>
       </template>
@@ -27,7 +33,7 @@
             </v-list-item-title>
           </router-link>
         </v-list-item>
-        <v-list-item link>
+        <v-list-item @click="handleLogout">
           <v-list-item-title>
             {{ $t('headerBar.logoutLink') }}
           </v-list-item-title>
@@ -38,12 +44,27 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import { mapState, mapActions } from 'vuex';
 
 export default {
   name: 'AppNavBar',
+
+  data() {
+    return { loading: false };
+  },
+
   computed: {
     ...mapState('auth', ['user']),
+  },
+
+  methods: {
+    ...mapActions('auth', ['logout']),
+
+    async handleLogout() {
+      this.loading = true;
+      await this.logout();
+      this.loading = false;
+    },
   },
 };
 </script>

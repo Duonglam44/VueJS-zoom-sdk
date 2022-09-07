@@ -19,7 +19,7 @@ const handleErrorStatus = (data) => {
         resolve('resolve');
       });
       promiseData.then(() => {
-        router.push({ name: 'Login' });
+        router.push({ name: 'LoginRoute' });
       });
       return data;
     default:

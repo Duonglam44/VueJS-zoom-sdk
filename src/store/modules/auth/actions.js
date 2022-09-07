@@ -1,6 +1,8 @@
 import router from '@/router';
+
 import axiosInstance from '@/service/axios';
 import { CookiesStorage } from '@/shared/config/cookie';
+import authService from '@/service/AuthService';
 
 const actionsAuth = {
   login({ commit }, user) {
@@ -15,6 +17,20 @@ const actionsAuth = {
         commit('setErrorLogin', err);
       })
       .finally(() => commit('setLoading', false));
+  },
+
+  async logout({ commit }) {
+    try {
+      await authService.logout();
+
+      commit('setUser', null);
+      CookiesStorage.clearAccessToken();
+      router.push({ name: 'LoginRoute' });
+
+      return Promise.resolve();
+    } catch (error) {
+      return Promise.reject(error);
+    }
   },
 };
 
