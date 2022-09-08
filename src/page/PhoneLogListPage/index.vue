@@ -53,11 +53,10 @@
       </v-col>
       <v-col cols="2">
         <v-btn
-          :disabled="search === ''"
           style="min-height: 38px"
           color="success"
           class="white--text"
-          @click="callToPhoneNumber"
+          @click="dialogCall = true"
         >
           <v-icon left> mdi-phone</v-icon>
           {{ t('outGoing') }}
@@ -72,6 +71,7 @@
       @page-changed="(p) => onPageChange(p, 'thisMonthPhoneLogs')"
       @item-clicked="onItemClick"
     />
+    <CallAwayDialog :open-dialog="dialogCall" @toggle-dialog="dialogCall" />
   </v-container>
 </template>
 
@@ -79,10 +79,12 @@
 import PhoneLogList from '@/components/PhoneLogList.vue';
 import phoneLogService from '@/service/phone-log-service';
 import { mapState } from 'vuex';
+import CallAwayDialog from './components/CallAwayDialog.vue';
 
 export default {
   name: 'PhoneLogListPage',
   components: {
+    CallAwayDialog,
     PhoneLogList,
   },
   data() {
@@ -101,6 +103,7 @@ export default {
       apiStatus: 'IDLE',
       modal: false,
       date: new Date().toISOString().substr(0, 7),
+      dialogCall: false,
     };
   },
 
@@ -141,10 +144,6 @@ export default {
         ...res,
         totalPage: Math.ceil(total / per_page),
       };
-    },
-    callToPhoneNumber() {
-      // const params = { phoneNumber: this.search };
-      this.device.connect();
     },
   },
 };
