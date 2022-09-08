@@ -10,4 +10,8 @@ export default {
   extension: '内線',
   externalCall: '外線発信',
   cutting: '切断',
+  noMoreUser: 'もうユーザーはいません',
+  noResultsUser: '結果なしのユーザー',
+  noMoreAddress: 'もうアドレスはありません',
+  noResultsAddress: '結果アドレスなし',
 };

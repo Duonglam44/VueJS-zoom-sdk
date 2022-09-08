@@ -1,46 +1,33 @@
+import phoneLogService from '@/service/phone-log-service';
+
 const actions = {
-  async getUsers({ commit }) {
+  async getUsers({ commit }, params) {
     try {
-      // TODO: call API and get data commit to vuex
+      const { data, currentPage, nextPageUrl } = await phoneLogService.getUsers(
+        params
+      );
+      commit('setUsers', { data, page: params.page });
+      commit('setUsersPagination', {
+        currentPage,
+        nextPageUrl,
+      });
 
-      commit('setUsers', [
-        {
-          id: '1',
-          profile_image: 'sda',
-          phone_number: '050-3188-6036',
-          name: 'unixonテストユーザー1',
-        },
-        {
-          id: '2',
-          profile_image: 'sda',
-          phone_number: '050-3188-6036',
-          name: 'unixonテストユーザー1',
-        },
-      ]);
-
-      return Promise.resolve();
+      return Promise.resolve(data);
     } catch (error) {
       return Promise.reject(error);
     }
   },
-  async getAddressList({ commit }) {
+  async getAddressList({ commit }, params) {
     try {
-      // TODO: call API and get data commit to vuex
+      const { data, currentPage, nextPageUrl } =
+        await phoneLogService.getAddress(params);
+      commit('setAddressList', { data, page: params.page });
+      commit('setAddressListPagination', {
+        currentPage,
+        nextPageUrl,
+      });
 
-      commit('setAddressList', [
-        {
-          id: '1',
-          phone_number: '050-3188-6036',
-          name: 'unixonテストユーザー1',
-        },
-        {
-          id: '2',
-          phone_number: '050-3188-6036',
-          name: 'unixonテストユーザー1',
-        },
-      ]);
-
-      return Promise.resolve();
+      return Promise.resolve(data);
     } catch (error) {
       return Promise.reject(error);
     }

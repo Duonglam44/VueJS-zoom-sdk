@@ -7,6 +7,7 @@ import {
 } from 'vee-validate';
 import { messages } from 'vee-validate/dist/locale/ja.json';
 import { email, min, required } from 'vee-validate/dist/rules';
+import InfiniteLoading from 'vue-infinite-loading';
 import i18n from './i18n';
 import App from './App.vue';
 import store from './store';
@@ -24,6 +25,7 @@ Vue.component('ValidationObserver', ValidationObserver);
 Vue.component('ValidationProvider', ValidationProvider);
 
 Vue.use(TwilioPlugin);
+Vue.use(InfiniteLoading);
 
 Vue.config.productionTip = false;
 new Vue({
