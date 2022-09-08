@@ -10,6 +10,7 @@
           v-slot="{ errors }"
           :name="$t('login.email')"
           rules="required|email"
+          mode="lazy"
         >
           <div class="form-group d-flex flex-column">
             <label for="inputEmail">{{ $t('login.email') }}</label>
@@ -19,7 +20,6 @@
               type="email"
               class="form-control"
               :placeholder="$t('login.email_placeholder')"
-              required="true"
             />
             <span class="mes-error d-block">{{ errors[0] }}</span>
           </div>
@@ -29,6 +29,7 @@
           v-slot="{ errors }"
           :name="$t('login.password')"
           rules="required|min:8"
+          mode="lazy"
         >
           <div class="form-group d-flex flex-column">
             <label for="password">{{ $t('login.password') }}</label>
@@ -38,7 +39,6 @@
               type="password"
               class="form-control"
               :placeholder="$t('login.password_placeholder')"
-              required="true"
             />
             <span class="mes-error d-block">{{ errors[0] }}</span>
           </div>
@@ -76,7 +76,6 @@ export default {
 
   methods: {
     ...mapActions('auth', ['login']),
-
     onLogin() {
       const user = { email: this.email, password: this.password };
       this.login(user);

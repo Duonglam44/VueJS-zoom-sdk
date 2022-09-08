@@ -15,7 +15,7 @@ const actionsAuth = {
         router.push({ name: 'Home' });
       })
       .catch((err) => {
-        commit('setErrorLogin', err);
+        commit('setErrorLogin', err.response.data);
       })
       .finally(() => commit('setLoading', false));
   },
