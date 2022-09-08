@@ -23,12 +23,21 @@ const store = {
     return electronStore.get(COOKIEKEY.accessToken);
   },
 
+  getRefreshToken() {
+    return electronStore.get(COOKIEKEY.refreshToken);
+  },
+
   setAuth(value) {
     electronStore.set(COOKIEKEY.accessToken, value);
   },
 
+  setRefreshToken(value) {
+    electronStore.set(COOKIEKEY.refreshToken, value);
+  },
+
   removeToken() {
     electronStore.delete(COOKIEKEY.accessToken);
+    electronStore.delete(COOKIEKEY.refreshToken);
   },
 
   removeStore() {

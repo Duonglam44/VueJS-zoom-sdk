@@ -4,26 +4,62 @@ import { camelizeKeys, decamelizeKeys } from 'humps';
 import router from '@/router';
 import { CookiesStorage } from '@/shared/config/cookie';
 import { VUE_APP_API_URL } from '@/shared/config/setting';
+import authService from '@/service/AuthService';
 
 const removeAccessToken = () => {
   CookiesStorage.clearAccessToken();
 };
 
-const handleErrorStatus = (data) => {
-  const status = data?.status || data?.response?.status || null;
+let refreshTokenRequest = null;
+
+const handleErrorStatus = async (error) => {
+  const status = error?.status || error?.response?.status || null;
+  const refetchToken = CookiesStorage.getRefreshToken();
   switch (status) {
     case 401:
-      // eslint-disable-next-line no-case-declarations
-      const promiseData = new Promise((resolve) => {
-        removeAccessToken();
-        resolve('resolve');
-      });
-      promiseData.then(() => {
-        router.push({ name: 'LoginRoute' });
-      });
-      return data;
+      if (error.config.isRetryRequest || !refetchToken) {
+        const promiseData = new Promise((resolve) => {
+          removeAccessToken();
+          resolve('resolve');
+        });
+        promiseData.then(() => {
+          router.push({ name: 'LoginRoute' });
+        });
+        refreshTokenRequest = null;
+
+        return Promise.reject(error);
+      }
+
+      try {
+        refreshTokenRequest = refreshTokenRequest || authService.refreshToken();
+        const { accessToken, refreshToken } = await refreshTokenRequest;
+        CookiesStorage.setAccessToken(accessToken);
+        CookiesStorage.setRefreshToken(refreshToken);
+
+        return axios({
+          ...error.config,
+          headers: {
+            ...error.config?.headers,
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
+      } catch (_err) {
+        const promiseData = new Promise((resolve) => {
+          removeAccessToken();
+          resolve('resolve');
+        });
+        promiseData.then(() => {
+          router.push({ name: 'LoginRoute' });
+        });
+
+        return Promise.reject(error);
+      } finally {
+        // eslint-disable-next-line no-param-reassign
+        error.config.isRetryRequest = true;
+        refreshTokenRequest = null;
+      }
     default:
-      return data;
+      return Promise.reject(error);
   }
 };
 
@@ -42,7 +78,7 @@ axiosInstance.interceptors.request.use(
       config.params = decamelizeKeys(config.params);
     }
     if (config.url === 'auth/login') return config;
-    if (token) {
+    if (token && !config.headers.Authorization) {
       config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
@@ -55,8 +91,7 @@ axiosInstance.interceptors.request.use(
 axiosInstance.interceptors.response.use(
   (res) => camelizeKeys(res.data),
   (error) => {
-    handleErrorStatus(error);
-    return Promise.reject(error.response.data);
+    return handleErrorStatus(error);
   }
 );
 
