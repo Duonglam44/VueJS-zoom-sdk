@@ -5,4 +5,9 @@ export default {
   outGoing: 'Outgoing',
   onHold: 'On hold',
   goOut: 'Go out',
+  userList: 'User list',
+  addressList: 'Adress list',
+  extension: 'Extension',
+  externalCall: 'External call',
+  cutting: 'Cutting',
 };

@@ -1,4 +1,4 @@
-const PhoneLogListPage = () => import('@/page/PhoneLogListPage.vue');
+const PhoneLogListPage = () => import('@/page/PhoneLogListPage');
 const PhoneCallPage = () => import('@/page/PhoneCallPage.vue');
 const PhoneLogPage = () => import('@/page/PhoneLogPage.vue');
 const Login = () => import('@/page/Login.vue');
