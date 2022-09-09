@@ -11,13 +11,14 @@ const removeAccessToken = () => {
 };
 
 let refreshTokenRequest = null;
+let isRetryRequest = false;
 
 const handleErrorStatus = async (error) => {
   const status = error?.status || error?.response?.status || null;
   const refetchToken = CookiesStorage.getRefreshToken();
   switch (status) {
     case 401:
-      if (error.config.isRetryRequest || !refetchToken) {
+      if (isRetryRequest || !refetchToken) {
         const promiseData = new Promise((resolve) => {
           removeAccessToken();
           resolve('resolve');
@@ -31,6 +32,7 @@ const handleErrorStatus = async (error) => {
       }
 
       try {
+        isRetryRequest = true;
         refreshTokenRequest = refreshTokenRequest || authService.refreshToken();
         const { accessToken, refreshToken } = await refreshTokenRequest;
         CookiesStorage.setAccessToken(accessToken);
@@ -54,8 +56,7 @@ const handleErrorStatus = async (error) => {
 
         return Promise.reject(error);
       } finally {
-        // eslint-disable-next-line no-param-reassign
-        error.config.isRetryRequest = true;
+        isRetryRequest = false;
         refreshTokenRequest = null;
       }
     default:
