@@ -20,4 +20,14 @@ export default {
   toastTitle: {
     success: '成功',
   },
+  callTypeModal: {
+    reply: '出る',
+    replyTransfer: '転送受入',
+    cancel: '切断',
+    title: {
+      pendingCall: '着信通知',
+      inboundCall: '内線 通話中',
+      transferCall: '転送依頼 通話中',
+    },
+  },
 };

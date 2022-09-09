@@ -3,4 +3,10 @@ const COOKIEKEY = {
   refreshToken: 'refreshToken',
 };
 
-export { COOKIEKEY };
+const CALL_TYPE = {
+  INBOUND_CALL: 'inbound_call',
+  ONHOLD_INBOUND: 'onhold_inbound',
+  OUTBOUND_CALL: 'outbound_call',
+};
+
+export { COOKIEKEY, CALL_TYPE };
