@@ -130,30 +130,16 @@ if (isDevelopment) {
   }
 }
 
-function navigate(routePath) {
-  if (win.webContents) {
-    win.webContents.send('navigate', routePath);
-  }
-}
-
-function answerCall() {
-  if (win.webContents) {
-    win.webContents.send('answerCall');
-  }
-}
-
-ipcMain.on('incoming-call', (_, { caller }) => {
+ipcMain.on('incoming-call', () => {
   notification = new Notification({
-    title: 'Incoming call',
-    body: `Incoming call from ${caller}`,
+    title: '着信通知',
   });
 
   notification.show();
 
   notification.on('click', () => {
+    win.show();
     win.focus();
-    navigate('PhoneCall');
-    answerCall();
   });
 });
 

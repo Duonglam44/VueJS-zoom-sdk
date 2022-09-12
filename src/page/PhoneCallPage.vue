@@ -187,6 +187,10 @@
 </template>
 
 <script>
+import { mapState, mapActions } from 'vuex';
+
+import { CALL_TYPE } from '@/shared/constant/common';
+
 import ChatBoxRight from '../components/ChatBoxRight.vue';
 import ChatBoxLeft from '../components/ChatBoxLeft.vue';
 import MemoList from '../components/MemoList.vue';
@@ -198,6 +202,7 @@ export default {
     ChatBoxLeft,
     MemoList,
   },
+
   data() {
     return {
       intervalId: null,
@@ -218,12 +223,11 @@ export default {
       client: null,
     };
   },
-  watch: {
-    phone_log: {
-      immediate: true,
-      handler() {},
-    },
+
+  computed: {
+    ...mapState('twilio', ['connection']),
   },
+
   mounted() {
     this.date = this.$route.query.date;
     fetch('/test_data/phone_call.json')
@@ -237,7 +241,12 @@ export default {
         this.phone_log.vtt = [];
       });
   },
+
   created() {
+    if (this.callType !== CALL_TYPE.OUTBOUND_CALL) {
+      this.router$.push({ name: 'PhoneLogListRoute' });
+    }
+
     this.intervalId = setInterval(() => {
       const item = this.tmp_phone_log_vtt.shift();
       this.phone_log.vtt.push(item);
@@ -259,8 +268,13 @@ export default {
       }
     }, 1000);
   },
-  method: {
-    create_tag_list: () => {},
+
+  beforeDestroy() {
+    this.disconnectCall();
+  },
+
+  methods: {
+    ...mapActions('twilio', ['disconnectCall']),
   },
 };
 </script>

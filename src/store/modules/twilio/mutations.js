@@ -5,6 +5,9 @@ const mutations = {
   setDevice(state, device) {
     state.device = device;
   },
+  setIsShowCallTypeModal(state, value) {
+    state.isShowCallTypeModal = value;
+  },
 };
 
 export default mutations;
