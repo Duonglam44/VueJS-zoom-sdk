@@ -71,7 +71,10 @@
       @page-changed="(p) => onPageChange(p, 'thisMonthPhoneLogs')"
       @item-clicked="onItemClick"
     />
-    <CallAwayDialog :open-dialog="dialogCall" @toggle-dialog="dialogCall" />
+    <CallAwayDialog
+      :open-dialog="dialogCall"
+      @toggle-dialog="(value) => (dialogCall = value)"
+    />
   </v-container>
 </template>
 
@@ -130,7 +133,7 @@ export default {
     loadPhoneLogs(page = 1) {
       this.apiStatus = 'PENDING';
       phoneLogService
-        .getAll(page)
+        .getAll({ page })
         .then((res) => {
           this.thisMonthPhoneLogs = this.mapResponseToData(res);
           this.apiStatus = 'SUCCESS';

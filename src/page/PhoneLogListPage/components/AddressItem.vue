@@ -3,7 +3,7 @@
     <v-list-item-content>
       <v-list-item-title>{{ address.name }}</v-list-item-title>
       <v-list-item-subtitle>
-        {{ address.phone_number }}
+        {{ address.phoneNumber }}
       </v-list-item-subtitle>
     </v-list-item-content>
     <v-list-item-action>

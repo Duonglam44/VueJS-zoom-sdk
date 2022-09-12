@@ -1,10 +1,12 @@
 import axios from 'axios';
 import { camelizeKeys, decamelizeKeys } from 'humps';
+import { isNil } from 'lodash';
 
 import router from '@/router';
 import { CookiesStorage } from '@/shared/config/cookie';
 import { VUE_APP_API_URL } from '@/shared/config/setting';
 import authService from '@/service/AuthService';
+import { stringifyParams } from '@/shared/utils';
 
 const removeAccessToken = () => {
   CookiesStorage.clearAccessToken();
@@ -95,5 +97,13 @@ axiosInstance.interceptors.response.use(
     return handleErrorStatus(error);
   }
 );
+
+axiosInstance.defaults.paramsSerializer = (params) =>
+  stringifyParams({
+    params: decamelizeKeys({ ...params }),
+    option: {
+      encode: !isNil(params?.tags) || false,
+    },
+  });
 
 export default axiosInstance;

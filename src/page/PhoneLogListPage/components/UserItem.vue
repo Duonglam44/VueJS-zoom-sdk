@@ -1,10 +1,9 @@
 <template>
   <v-list-item>
     <v-list-item-avatar>
-      <v-avatar color="#e9ecef" size="56" class="mt-5 mb-3 ml-3">
-        <v-img v-if="user.profile_image" :src="user.profile_image"></v-img>
-        <span v-else class="white--text headline">
-          {{ user ? user.name : '' }}
+      <v-avatar color="#e9ecef" size="56">
+        <span class="white--text headline">
+          {{ user.name | avatar }}
         </span>
       </v-avatar>
     </v-list-item-avatar>
@@ -12,7 +11,7 @@
     <v-list-item-content>
       <v-list-item-title>{{ user.name }}</v-list-item-title>
       <v-list-item-subtitle>
-        {{ user.phone_number }}
+        {{ user.phoneNumber }}
       </v-list-item-subtitle>
     </v-list-item-content>
     <v-list-item-action>
@@ -30,9 +29,11 @@
 </template>
 <script>
 import { mapState } from 'vuex';
+import systemMixins from '@/mixins/system';
 
 export default {
   name: 'UserItem',
+  mixins: [systemMixins],
   props: { user: { type: Object, required: true } },
   computed: {
     ...mapState('twilio', ['device']),

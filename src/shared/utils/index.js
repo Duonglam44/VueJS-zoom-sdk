@@ -1,3 +1,6 @@
+import { isNil, omitBy } from 'lodash';
+import qs from 'qs';
+
 function getCurrentDomain() {
   const parts = window.location.hostname;
   return parts;
@@ -34,4 +37,25 @@ function isElectron() {
   return false;
 }
 
-export { getCurrentDomain, isElectron };
+function handlePayload(payload) {
+  const newPayload = {};
+  if (payload) {
+    Object.keys(payload).forEach((key) => {
+      newPayload[key] = payload[key] === '' ? null : payload[key];
+    });
+  }
+  return omitBy(newPayload, isNil);
+}
+
+const stringifyParams = (data) => {
+  const { params, option } = data;
+  return qs.stringify(handlePayload({ ...params }), {
+    arrayFormat: 'comma',
+    encode: false,
+    skipNull: true,
+    strictNullHandling: true,
+    ...option,
+  });
+};
+
+export { getCurrentDomain, isElectron, stringifyParams };

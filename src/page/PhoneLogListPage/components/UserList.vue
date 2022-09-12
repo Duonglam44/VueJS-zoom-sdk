@@ -1,10 +1,26 @@
 <template>
-  <v-card flat>
+  <v-skeleton-loader
+    v-if="loading"
+    class="mx-auto"
+    max-width="400"
+    type="list-item-avatar-three-line"
+  />
+  <v-card v-else flat max-height="400" style="overflow: auto">
     <v-card-text>
       <v-list three-line>
-        <UserItem v-for="user in users" :key="user.id" :user="user" />
+        <UserItem v-for="user in users" :key="user.userId" :user="user" />
       </v-list>
     </v-card-text>
+    <infinite-loading
+      v-if="usersPagination.nextPageUrl"
+      identifier="user-list"
+      force-use-infinite-wrapper
+      spinner="spiral"
+      @infinite="getMoreUser"
+    >
+      <div slot="no-more">{{ $t('phoneLogs.noMoreUser') }}</div>
+      <div slot="no-results">{{ $t('phoneLogs.noResultsUser') }}</div>
+    </infinite-loading>
   </v-card>
 </template>
 <script>
@@ -16,16 +32,31 @@ export default {
   components: {
     UserItem,
   },
-  computed: {
-    ...mapState('phoneLog', ['users']),
+  data() {
+    return {
+      loading: false,
+    };
   },
-  created() {
-    this.getUsers();
+  computed: {
+    ...mapState('phoneLog', ['users', 'usersPagination']),
+  },
+  async created() {
+    this.loading = true;
+    await this.getUsers({ page: 1 });
+    this.loading = false;
   },
   methods: {
     ...mapActions('phoneLog', ['getUsers']),
-    callToAddress() {
-      this.device.connect();
+    getMoreUser($state) {
+      this.getUsers({
+        page: this.usersPagination.currentPage + 1,
+      }).then((users) => {
+        if (users.length === 0) {
+          $state.complete();
+        } else {
+          $state.loaded();
+        }
+      });
     },
   },
 };

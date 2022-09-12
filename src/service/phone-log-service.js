@@ -1,13 +1,21 @@
 import axiosInstance from '@/service/axios';
 
-function PhoneLogService() {
-  function getAll(page) {
-    return axiosInstance.get(`phone_logs?page=${page}`);
-  }
-
-  return {
-    getAll,
-  };
+function getAll(params) {
+  return axiosInstance.get('phone_logs', { params });
 }
 
-export default new PhoneLogService();
+function getAddress(params) {
+  return axiosInstance.get('/address', { params });
+}
+
+function getUsers(params) {
+  return axiosInstance.get('/users', { params });
+}
+
+const PhoneLogService = {
+  getAll,
+  getAddress,
+  getUsers,
+};
+
+export default PhoneLogService;

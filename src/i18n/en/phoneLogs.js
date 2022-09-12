@@ -10,4 +10,8 @@ export default {
   extension: 'Extension',
   externalCall: 'External call',
   cutting: 'Cutting',
+  noMoreUser: 'No more user',
+  noResultsUser: 'No results user',
+  noMoreAddress: 'No more address',
+  noResultsAddress: 'No results address',
 };
