@@ -11,7 +11,12 @@ const showNotification = (from) => {
 const onIncoming = (connection) => {
   connection.on('cancel', () => {
     window.electron.notification.cancelCall();
-    store.commit('twilio/setIsShowCallTypeModal', false);
+    store.dispatch('twilio/disconnectCall');
+  });
+
+  connection.on('disconnect', () => {
+    window.electron.notification.cancelCall();
+    store.dispatch('twilio/disconnectCall');
   });
 
   showNotification(connection.parameters.From);

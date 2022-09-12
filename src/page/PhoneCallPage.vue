@@ -10,9 +10,9 @@
           <v-btn to="/" text x-large color="#505c65" class="white--text">
             ＜戻る
           </v-btn>
-          <v-toolbar-title class="white--text font-weight-black">{{
+          <!-- <v-toolbar-title class="white--text font-weight-black">{{
             phone_log.customer_user.name
-          }}</v-toolbar-title>
+          }}</v-toolbar-title> -->
 
           <v-spacer></v-spacer>
           <v-btn elevation="2" icon outlined color="white" class="mx-1"
@@ -22,9 +22,14 @@
             ><v-icon>mdi-microphone</v-icon></v-btn
           >
 
-          <v-btn elevation="2" color="#f35757" class="white--text mx-3"
-            ><v-icon>mdi-phone-hangup</v-icon>終了</v-btn
+          <v-btn
+            elevation="2"
+            color="#f35757"
+            class="white--text mx-3"
+            @click="endCall"
           >
+            <v-icon>mdi-phone-hangup</v-icon>終了
+          </v-btn>
 
           <span class="white--text mx-1"
             >通話中:<span id="timer_id" class="white--text mx-2">{{
@@ -34,7 +39,7 @@
         </v-app-bar>
       </v-col>
     </v-row>
-    <v-row style="height: 90vh">
+    <!-- <v-row style="height: 90vh">
       <v-col cols="8" class="pt-15">
         <v-row>
           <v-col cols="4">
@@ -182,25 +187,25 @@
           </v-tab-item>
         </v-tabs>
       </v-col>
-    </v-row>
+    </v-row> -->
   </v-container>
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex';
+import { mapState, mapActions, mapGetters } from 'vuex';
 
 import { CALL_TYPE } from '@/shared/constant/common';
 
-import ChatBoxRight from '../components/ChatBoxRight.vue';
-import ChatBoxLeft from '../components/ChatBoxLeft.vue';
-import MemoList from '../components/MemoList.vue';
+// import ChatBoxRight from '../components/ChatBoxRight.vue';
+// import ChatBoxLeft from '../components/ChatBoxLeft.vue';
+// import MemoList from '../components/MemoList.vue';
 
 export default {
   name: 'PhoneCall',
   components: {
-    ChatBoxRight,
-    ChatBoxLeft,
-    MemoList,
+    // ChatBoxRight,
+    // ChatBoxLeft,
+    // MemoList,
   },
 
   data() {
@@ -226,6 +231,7 @@ export default {
 
   computed: {
     ...mapState('twilio', ['connection']),
+    ...mapGetters('twilio', ['callType']),
   },
 
   mounted() {
@@ -244,7 +250,7 @@ export default {
 
   created() {
     if (this.callType !== CALL_TYPE.OUTBOUND_CALL) {
-      this.router$.push({ name: 'PhoneLogListRoute' });
+      this.$router.push({ name: 'PhoneLogListRoute' });
     }
 
     this.intervalId = setInterval(() => {
@@ -275,6 +281,11 @@ export default {
 
   methods: {
     ...mapActions('twilio', ['disconnectCall']),
+
+    endCall() {
+      this.disconnectCall();
+      this.$router.push({ name: 'PhoneLogListRoute' });
+    },
   },
 };
 </script>

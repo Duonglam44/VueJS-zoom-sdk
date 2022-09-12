@@ -106,13 +106,6 @@ export default {
       } else {
         this.rejectCall();
       }
-
-      this.closeCall();
-    },
-
-    closeCall() {
-      this.setIsShowCallTypeModal(false);
-      this.setConnection(null);
     },
   },
 };
