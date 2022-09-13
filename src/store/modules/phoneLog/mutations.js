@@ -1,12 +1,8 @@
 import uniqBy from 'lodash/uniqBy';
 
 const mutations = {
-  setUsers(state, { data, page }) {
-    if (page === 1) {
-      state.users = data;
-    } else {
-      state.users = uniqBy([...state.users].concat(data), 'userId');
-    }
+  setUsers(state, users) {
+    state.users = users;
   },
   setAddressList(state, { data, page }) {
     if (page === 1) {

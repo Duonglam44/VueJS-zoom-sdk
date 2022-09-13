@@ -9,4 +9,9 @@ const CALL_TYPE = {
   OUTBOUND_CALL: 'outbound_call',
 };
 
-export { COOKIEKEY, CALL_TYPE };
+const OUTGOING_CALL_TYPE = {
+  IN_BOUND: 'in_bound',
+  OUT_BOUND: 'out_bound',
+};
+
+export { COOKIEKEY, CALL_TYPE, OUTGOING_CALL_TYPE };

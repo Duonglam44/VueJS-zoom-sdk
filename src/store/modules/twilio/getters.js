@@ -12,6 +12,16 @@ const getters = {
 
     return CALL_TYPE.OUTBOUND_CALL;
   },
+  isInCalling(state) {
+    if (
+      state.connection?.status() === 'pending' ||
+      state.connection?.status() === 'open'
+    ) {
+      return true;
+    }
+
+    return false;
+  },
 };
 
 export default getters;

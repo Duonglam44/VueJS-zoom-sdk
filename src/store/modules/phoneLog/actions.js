@@ -1,12 +1,23 @@
 import phoneLogService from '@/service/phone-log-service';
+import { uniqBy } from 'lodash';
 
 const actions = {
-  async getUsers({ commit }, params) {
+  async getUsers({ commit, state, rootState }, params) {
     try {
       const { data, currentPage, nextPageUrl } = await phoneLogService.getUsers(
         params
       );
-      commit('setUsers', { data, page: params.page });
+
+      let users = data;
+      users = users.filter(
+        (item) => item.userId !== rootState.auth.user.userId
+      );
+
+      if (params.page !== 1) {
+        users = uniqBy([...state.users].concat(users), 'userId');
+      }
+
+      commit('setUsers', users);
       commit('setUsersPagination', {
         currentPage,
         nextPageUrl,
