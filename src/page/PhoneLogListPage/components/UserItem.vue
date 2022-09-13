@@ -19,6 +19,7 @@
         style="min-height: 38px"
         color="success"
         class="white--text"
+        :disabled="isInCalling"
         @click="callToUser"
       >
         <v-icon left> mdi-phone</v-icon>
@@ -28,19 +29,39 @@
   </v-list-item>
 </template>
 <script>
-import { mapState } from 'vuex';
+import { mapMutations, mapState } from 'vuex';
+
+import { OUTGOING_CALL_TYPE } from '@/shared/constant/common';
 import systemMixins from '@/mixins/system';
+import connectionMixins from '@/mixins/connection';
 
 export default {
   name: 'UserItem',
-  mixins: [systemMixins],
+  mixins: [systemMixins, connectionMixins],
   props: { user: { type: Object, required: true } },
   computed: {
     ...mapState('twilio', ['device']),
   },
   methods: {
+    ...mapMutations('twilio', ['setConnection']),
+
     callToUser() {
-      this.device.connect();
+      if (this.isInCalling) return;
+
+      const { phoneNumber, tennantId } = this.currentUser.hasTennant;
+      const callType =
+        tennantId !== this.user.hasTennant.tennantId
+          ? OUTGOING_CALL_TYPE.OUT_BOUND
+          : OUTGOING_CALL_TYPE.IN_BOUND;
+      const params = {
+        From: phoneNumber,
+        To: this.user.phoneNumber,
+        call_type: callType,
+        tennant: this.user.hasTennant.tennantId,
+        user_id: this.user.userId,
+      };
+
+      this.handleCall(params);
     },
   },
 };

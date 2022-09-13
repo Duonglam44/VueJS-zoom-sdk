@@ -31,7 +31,7 @@
 
 <script>
 import { mapActions, mapMutations, mapState, mapGetters } from 'vuex';
-import { CALL_TYPE } from '@/shared/constant/common';
+import { CALL_TYPE, OUTGOING_CALL_TYPE } from '@/shared/constant/common';
 
 export default {
   name: 'CallTypeModal',
@@ -72,7 +72,11 @@ export default {
       }
 
       if (this.connection?.direction === 'OUTGOING') {
-        return 'OUTGOING';
+        if (this.callType === OUTGOING_CALL_TYPE.IN_BOUND) {
+          return this.$t('callTypeModal.title.inboundCall');
+        }
+
+        return this.$t('callTypeModal.title.transferCall');
       }
 
       return this.connection?.direction;

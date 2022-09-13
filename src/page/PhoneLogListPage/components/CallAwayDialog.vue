@@ -1,6 +1,16 @@
 <template>
-  <v-dialog v-model="dialogModel" width="500">
-    <v-sheet color="#fff" elevation="1">
+  <v-dialog v-model="dialogModel" width="500" persistent>
+    <v-sheet color="#fff" elevation="1" style="position: relative">
+      <v-btn
+        icon
+        dark
+        absolute
+        class="float-right"
+        style="top: 0; right: 0; z-index: 1"
+        @click="dialogModel = false"
+      >
+        <v-icon>mdi-close</v-icon>
+      </v-btn>
       <v-tabs
         v-model="tab"
         background-color="#4caf50"
@@ -22,7 +32,7 @@
       </v-tabs-items>
       <ValidationObserver v-slot="{ handleSubmit }">
         <form @submit.prevent="handleSubmit(onCall)">
-          <ValidationProvider v-slot="{ errors }" rules="required">
+          <ValidationProvider rules="required">
             <div class="form-group d-flex">
               <input
                 id="phoneNumber"
@@ -35,7 +45,8 @@
                 style="min-height: 38px"
                 color="success"
                 class="white--text btn-call"
-                :disabled="!errors[0]"
+                :disabled="!phoneNumber || isInCalling"
+                @click="onCall"
               >
                 <v-icon left> mdi-phone-outgoing</v-icon>
                 {{ $t('phoneLogs.externalCall') }}
@@ -44,7 +55,7 @@
                 style="min-height: 38px"
                 color="error"
                 class="white--text btn-call"
-                :disabled="!errors[0]"
+                :disabled="!phoneNumber || isInCalling"
               >
                 <v-icon left> mdi-phone-remove</v-icon>
                 {{ $t('phoneLogs.cutting') }}
@@ -57,16 +68,25 @@
   </v-dialog>
 </template>
 <script>
+import { mapMutations } from 'vuex';
+
+import { OUTGOING_CALL_TYPE } from '@/shared/constant/common';
+import connectionMixins from '@/mixins/connection';
 import UserList from './UserList.vue';
 import AddressList from './AddressList.vue';
 
 export default {
   name: 'CallAwayDialog',
+
   components: {
     UserList,
     AddressList,
   },
+
+  mixins: [connectionMixins],
+
   props: { openDialog: { type: Boolean, default: false } },
+
   data() {
     return {
       loading: false,
@@ -75,6 +95,7 @@ export default {
       phoneNumber: '',
     };
   },
+
   computed: {
     dialogModel: {
       get() {
@@ -85,8 +106,21 @@ export default {
       },
     },
   },
+
   methods: {
-    onCall() {},
+    ...mapMutations('twilio', ['setIsShowCallTypeModal', 'setConnection']),
+
+    onCall() {
+      if (!this.phoneNumber || this.isInCalling) return;
+
+      const params = {
+        From: this.currentUser.hasTennant.phoneNumber,
+        To: this.phoneNumber,
+        call_type: OUTGOING_CALL_TYPE.OUT_BOUND,
+      };
+
+      this.handleCall(params);
+    },
   },
 };
 </script>
