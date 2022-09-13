@@ -31,10 +31,11 @@
             <v-icon>mdi-phone-hangup</v-icon>終了
           </v-btn>
 
-          <span class="white--text mx-1"
-            >通話中:<span id="timer_id" class="white--text mx-2">{{
-              timer
-            }}</span></span
+          <span class="white--text mx-1">
+            {{ $t('phoneCall.talking') }}:
+            <span id="timer_id" class="white--text mx-2">
+              {{ min | padStart }}:{{ sec | padStart }}
+            </span></span
           >
         </v-app-bar>
       </v-col>
@@ -208,6 +209,12 @@ export default {
     // MemoList,
   },
 
+  filters: {
+    padStart(number) {
+      return number.toString().padStart(2, 0);
+    },
+  },
+
   data() {
     return {
       intervalId: null,
@@ -215,7 +222,6 @@ export default {
       phone_log: [],
       tmp_phone_log: [],
       tmp_phone_log_vtt: [],
-      timer: '00:00',
       tag_none: '0',
       tag_1: '1',
       tag_2: '2',
@@ -226,12 +232,32 @@ export default {
       speech: null,
       recorder: null,
       client: null,
+      sec: 0,
+      min: 0,
+      timer: null,
     };
   },
 
   computed: {
     ...mapState('twilio', ['connection']),
     ...mapGetters('twilio', ['callType']),
+
+    status() {
+      return this.connection?.status();
+    },
+  },
+
+  watch: {
+    status: {
+      handler(newValue) {
+        if (newValue === 'open') {
+          this.startTimer();
+        } else if (newValue === 'closed') {
+          this.clearTimer();
+        }
+      },
+      immediate: true,
+    },
   },
 
   mounted() {
@@ -277,13 +303,40 @@ export default {
 
   beforeDestroy() {
     this.disconnectCall();
+    this.clearTimer();
   },
 
   methods: {
     ...mapActions('twilio', ['disconnectCall']),
 
+    startTimer() {
+      this.playingTimer();
+      this.timer = setInterval(() => this.playingTimer(), 1000);
+    },
+
+    playingTimer() {
+      this.sec += 1;
+      if (this.sec >= 59) {
+        this.sec = 0;
+        this.min += 1;
+      }
+      if (this.min >= 59) {
+        this.min = 0;
+      }
+    },
+
+    clearTimer() {
+      if (this.timer) {
+        clearInterval(this.timer);
+        this.timer = null;
+      }
+      this.sec = 0;
+      this.min = 0;
+    },
+
     endCall() {
       this.disconnectCall();
+      this.clearTimer();
       this.$router.push({ name: 'PhoneLogListRoute' });
     },
   },
