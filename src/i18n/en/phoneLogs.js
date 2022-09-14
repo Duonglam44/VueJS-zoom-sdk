@@ -8,10 +8,9 @@ export default {
   userList: 'User list',
   addressList: 'Adress list',
   extension: 'Extension',
+  outsideCall: 'Outside call',
   externalCall: 'External call',
   cutting: 'Cutting',
-  noMoreUser: 'No more user',
-  noResultsUser: 'No results user',
-  noMoreAddress: 'No more address',
-  noResultsAddress: 'No results address',
+  noMore: 'No more',
+  noResults: 'No results',
 };

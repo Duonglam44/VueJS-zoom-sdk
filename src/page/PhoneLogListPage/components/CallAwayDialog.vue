@@ -18,8 +18,8 @@
         slider-color="black"
         color="white"
       >
-        <v-tab href="#tab-user">{{ $t('phoneLogs.userList') }}</v-tab>
-        <v-tab href="#tab-adress">{{ $t('phoneLogs.addressList') }}</v-tab>
+        <v-tab href="#tab-user">{{ $t('phoneLogs.extension') }}</v-tab>
+        <v-tab href="#tab-adress">{{ $t('phoneLogs.outsideCall') }}</v-tab>
       </v-tabs>
 
       <v-tabs-items v-model="tab">
@@ -28,42 +28,41 @@
         </v-tab-item>
         <v-tab-item value="tab-adress">
           <AddressList />
+          <ValidationObserver tag="form" @submit.prevent="onCall">
+            <ValidationProvider rules="required">
+              <div class="form-group d-flex">
+                <input
+                  id="phoneNumber"
+                  v-model="phoneNumber"
+                  type="text"
+                  class="form-control"
+                  required="true"
+                />
+                <v-btn
+                  style="min-height: 38px"
+                  color="success"
+                  class="white--text btn-call"
+                  :disabled="!phoneNumber || isInCalling"
+                  type="submit"
+                >
+                  <v-icon left> mdi-phone-outgoing</v-icon>
+                  {{ $t('phoneLogs.externalCall') }}
+                </v-btn>
+                <v-btn
+                  style="min-height: 38px"
+                  color="error"
+                  class="white--text btn-call"
+                  :disabled="!phoneNumber || isInCalling"
+                  type="button"
+                >
+                  <v-icon left> mdi-phone-remove</v-icon>
+                  {{ $t('phoneLogs.cutting') }}
+                </v-btn>
+              </div>
+            </ValidationProvider>
+          </ValidationObserver>
         </v-tab-item>
       </v-tabs-items>
-      <ValidationObserver v-slot="{ handleSubmit }">
-        <form @submit.prevent="handleSubmit(onCall)">
-          <ValidationProvider rules="required">
-            <div class="form-group d-flex">
-              <input
-                id="phoneNumber"
-                v-model="phoneNumber"
-                type="text"
-                class="form-control"
-                required="true"
-              />
-              <v-btn
-                style="min-height: 38px"
-                color="success"
-                class="white--text btn-call"
-                :disabled="!phoneNumber || isInCalling"
-                @click="onCall"
-              >
-                <v-icon left> mdi-phone-outgoing</v-icon>
-                {{ $t('phoneLogs.externalCall') }}
-              </v-btn>
-              <v-btn
-                style="min-height: 38px"
-                color="error"
-                class="white--text btn-call"
-                :disabled="!phoneNumber || isInCalling"
-              >
-                <v-icon left> mdi-phone-remove</v-icon>
-                {{ $t('phoneLogs.cutting') }}
-              </v-btn>
-            </div>
-          </ValidationProvider>
-        </form>
-      </ValidationObserver>
     </v-sheet>
   </v-dialog>
 </template>

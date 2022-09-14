@@ -5,7 +5,7 @@
     max-width="400"
     type="list-item-avatar-three-line"
   />
-  <v-card v-else flat max-height="400" style="overflow: auto">
+  <v-card v-else flat max-height="500" style="overflow: auto">
     <v-card-text>
       <v-list three-line>
         <AddressItem
@@ -22,8 +22,8 @@
       spinner="spiral"
       @infinite="getMoreAddress"
     >
-      <div slot="no-more">{{ $t('phoneLogs.noMoreAddress') }}</div>
-      <div slot="no-results">{{ $t('phoneLogs.noResultsAddress') }}</div>
+      <div slot="no-more">{{ $t('phoneLogs.noMore') }}</div>
+      <div slot="no-results">{{ $t('phoneLogs.noResults') }}</div>
     </infinite-loading>
   </v-card>
 </template>

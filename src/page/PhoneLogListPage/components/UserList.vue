@@ -5,7 +5,7 @@
     max-width="400"
     type="list-item-avatar-three-line"
   />
-  <v-card v-else flat max-height="400" style="overflow: auto">
+  <v-card v-else flat max-height="500" style="overflow: auto">
     <v-card-text>
       <v-list three-line>
         <UserItem v-for="user in users" :key="user.userId" :user="user" />
@@ -18,8 +18,8 @@
       spinner="spiral"
       @infinite="getMoreUser"
     >
-      <div slot="no-more">{{ $t('phoneLogs.noMoreUser') }}</div>
-      <div slot="no-results">{{ $t('phoneLogs.noResultsUser') }}</div>
+      <div slot="no-more">{{ $t('phoneLogs.noMore') }}</div>
+      <div slot="no-results">{{ $t('phoneLogs.noResults') }}</div>
     </infinite-loading>
   </v-card>
 </template>
