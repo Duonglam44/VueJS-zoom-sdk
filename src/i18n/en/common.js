@@ -19,4 +19,7 @@ export default {
   toastTitle: {
     success: 'Success',
   },
+  error: {
+    undefined: 'An error has occurred',
+  },
 };

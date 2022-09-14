@@ -5,19 +5,22 @@ import { CookiesStorage } from '@/shared/config/cookie';
 import authService from '@/service/AuthService';
 
 const actionsAuth = {
-  login({ commit }, user) {
+  async login({ commit }, user) {
     commit('setLoading', true);
-    axiosInstance
-      .post('auth/login', user)
-      .then((res) => {
-        CookiesStorage.setAccessToken(res.accessToken);
-        CookiesStorage.setRefreshToken(res.refreshToken);
-        router.push({ name: 'Home' });
-      })
-      .catch((err) => {
-        commit('setErrorLogin', err.response.data);
-      })
-      .finally(() => commit('setLoading', false));
+    try {
+      const { accessToken, refreshToken } = await axiosInstance.post(
+        'auth/login',
+        user
+      );
+      CookiesStorage.setAccessToken(accessToken);
+      CookiesStorage.setRefreshToken(refreshToken);
+      router.push({ name: 'Home' });
+      return Promise.resolve('success');
+    } catch (error) {
+      return Promise.reject(error.response);
+    } finally {
+      commit('setLoading', false);
+    }
   },
 
   async logout({ commit, rootState }) {

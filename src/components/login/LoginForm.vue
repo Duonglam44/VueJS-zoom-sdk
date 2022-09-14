@@ -3,9 +3,18 @@
     <img class="card-img-top" src="@/assets/DXP_logo.png" alt="" />
     <ValidationObserver v-slot="{ handleSubmit }">
       <form @submit.prevent="handleSubmit(onLogin)">
-        <p :v-show="!!errorsLogin" class="mes-error">
-          {{ errorsLogin.error }}
-        </p>
+        <template v-if="errorLogin">
+          <p class="mes-error">
+            {{
+              $t(
+                errorLogin.status === httpStatus.BAD_REQUEST
+                  ? 'login.wrongLogin'
+                  : 'error.undefined'
+              )
+            }}
+          </p>
+        </template>
+
         <ValidationProvider
           v-slot="{ errors }"
           :name="$t('login.email')"
@@ -19,7 +28,7 @@
               v-model="email"
               type="email"
               class="form-control"
-              :placeholder="$t('login.email_placeholder')"
+              :placeholder="$t('login.emailPlaceholder')"
             />
             <span class="mes-error d-block">{{ errors[0] }}</span>
           </div>
@@ -38,7 +47,7 @@
               v-model="password"
               type="password"
               class="form-control"
-              :placeholder="$t('login.password_placeholder')"
+              :placeholder="$t('login.passwordPlaceholder')"
             />
             <span class="mes-error d-block">{{ errors[0] }}</span>
           </div>
@@ -52,7 +61,7 @@
           depressed
           color="primary"
         >
-          {{ $t('login.btn_submit') }}
+          {{ $t('login.btnSubmit') }}
         </v-btn>
       </form>
     </ValidationObserver>
@@ -61,24 +70,29 @@
 
 <script>
 import { mapActions, mapState } from 'vuex';
+import { HTTP_STATUS } from '@/shared/constant/common';
 
 export default {
   data() {
     return {
       email: '',
       password: '',
+      errorLogin: null,
+      httpStatus: HTTP_STATUS,
     };
   },
 
   computed: {
-    ...mapState('auth', ['errorsLogin', 'isLoading']),
+    ...mapState('auth', ['isLoading']),
   },
 
   methods: {
     ...mapActions('auth', ['login']),
     onLogin() {
       const user = { email: this.email, password: this.password };
-      this.login(user);
+      this.login(user).catch((err) => {
+        this.errorLogin = err;
+      });
     },
   },
 };
