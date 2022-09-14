@@ -1,5 +1,6 @@
 <template>
   <v-container>
+    <Loading :loading="loading" />
     <v-row>
       <v-col cols="12">
         <v-app-bar
@@ -83,6 +84,7 @@
                 <v-textarea
                   outlined
                   rows="3"
+                  v-model="memo"
                   row-height="25"
                   background-color="#ffffff"
                   class="rounded-lg"
@@ -193,9 +195,11 @@
 </template>
 
 <script>
-import { mapState, mapActions, mapGetters } from 'vuex';
+import { mapActions, mapGetters } from 'vuex';
+import recordMixins from '@/mixins/record';
 
 import { CALL_TYPE } from '@/shared/constant/common';
+import Loading from '@/components/Loading.vue';
 
 // import ChatBoxRight from '../components/ChatBoxRight.vue';
 // import ChatBoxLeft from '../components/ChatBoxLeft.vue';
@@ -204,6 +208,7 @@ import { CALL_TYPE } from '@/shared/constant/common';
 export default {
   name: 'PhoneCall',
   components: {
+    Loading,
     // ChatBoxRight,
     // ChatBoxLeft,
     // MemoList,
@@ -214,6 +219,8 @@ export default {
       return number.toString().padStart(2, 0);
     },
   },
+
+  mixins: [recordMixins],
 
   data() {
     return {
@@ -235,11 +242,11 @@ export default {
       sec: 0,
       min: 0,
       timer: null,
+      memo: '',
     };
   },
 
   computed: {
-    ...mapState('twilio', ['connection']),
     ...mapGetters('twilio', ['callType']),
 
     status() {
@@ -262,46 +269,19 @@ export default {
 
   mounted() {
     this.date = this.$route.query.date;
-    fetch('/test_data/phone_call.json')
-      .then((res) => {
-        return res.json();
-      })
-      .then((data) => {
-        [this.phone_log] = data;
-        this.tmp_phone_log = this.phone_log;
-        this.tmp_phone_log_vtt = this.phone_log.vtt;
-        this.phone_log.vtt = [];
-      });
+    setTimeout(() => {
+      this.startRecord();
+    });
   },
 
   created() {
     if (this.callType !== CALL_TYPE.OUTBOUND_CALL) {
       this.$router.push({ name: 'PhoneLogListRoute' });
     }
-
-    this.intervalId = setInterval(() => {
-      const item = this.tmp_phone_log_vtt.shift();
-      this.phone_log.vtt.push(item);
-      if (item.meta != null) {
-        if (item.meta.includes(0) && item.meta.includes(1)) {
-          this.tag_1_list.push(item);
-          this.tag_2_list.push(item);
-          this.tag_all_list.push(item);
-        } else if (item.meta.includes(0)) {
-          this.tag_1_list.push(item);
-          this.tag_all_list.push(item);
-        } else if (item.meta.includes(1)) {
-          this.tag_2_list.push(item);
-          this.tag_all_list.push(item);
-        }
-      }
-      if (this.tmp_phone_log_vtt.length === 0) {
-        clearInterval(this.intervalId);
-      }
-    }, 1000);
   },
 
-  beforeDestroy() {
+  async beforeDestroy() {
+    await this.sendRecordData();
     this.disconnectCall();
     this.clearTimer();
   },
@@ -334,7 +314,8 @@ export default {
       this.min = 0;
     },
 
-    endCall() {
+    async endCall() {
+      await this.sendRecordData();
       this.disconnectCall();
       this.clearTimer();
       this.$router.push({ name: 'PhoneLogListRoute' });

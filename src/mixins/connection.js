@@ -1,6 +1,6 @@
-import { mapGetters, mapMutations, mapState } from 'vuex';
+import { mapActions, mapGetters, mapMutations, mapState } from 'vuex';
 
-import { OUTGOING_CALL_TYPE } from '@/shared/constant/common';
+import { CALL_TYPE, OUTGOING_CALL_TYPE } from '@/shared/constant/common';
 
 export default {
   computed: {
@@ -14,9 +14,14 @@ export default {
   methods: {
     ...mapMutations('twilio', ['setIsShowCallTypeModal', 'setConnection']),
 
+    ...mapActions('twilio', ['disconnectCall']),
+
     handleEndCall() {
-      this.setIsShowCallTypeModal(false);
-      this.setConnection(null);
+      this.disconnectCall();
+
+      if (this.callType !== CALL_TYPE.OUTBOUND_CALL) {
+        this.$router.push({ name: 'PhoneLogListRoute' });
+      }
     },
 
     async handleCall(params) {
