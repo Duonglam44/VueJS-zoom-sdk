@@ -30,4 +30,7 @@ export default {
       transferCall: '転送依頼 通話中',
     },
   },
+  error: {
+    undefined: 'エラーが発生しました',
+  },
 };
