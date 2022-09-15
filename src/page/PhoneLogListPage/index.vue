@@ -70,10 +70,24 @@
     </v-row>
 
     <PhoneLogList
+      :status="apiStatusTodayList"
+      :phone-logs="todayPhoneLogs"
+      :title="t('daySection')"
+      :historys="todayPhoneLogs.data || []"
+      :total="todayPhoneLogs.total"
+      :per-page="todayPhoneLogs.perPage"
+      @page-changed="loadTodayPhoneLogs"
+      @item-clicked="onItemClick"
+    />
+
+    <PhoneLogList
       :status="apiStatus"
       :phone-logs="phoneLogs"
       :title="t('monthSection')"
-      @page-changed="(p) => onPageChange(p, 'phoneLogs')"
+      :historys="phoneLogs.data || []"
+      :total="phoneLogs.total"
+      :per-page="phoneLogs.perPage"
+      @page-changed="loadPhoneLogs"
       @item-clicked="onItemClick"
     />
     <CallAwayDialog
@@ -92,44 +106,60 @@ import CallAwayDialog from './components/CallAwayDialog.vue';
 
 export default {
   name: 'PhoneLogListPage',
+
   components: {
     CallAwayDialog,
     PhoneLogList,
   },
+
   data() {
     return {
       search: '',
       modal: false,
       date: new Date().toISOString().substr(0, 7),
       dialogCall: false,
-      phoneLogs: [],
+      phoneLogs: {},
+      todayPhoneLogs: {},
       apiStatus: ApiStatus.IDLE,
+      apiStatusTodayList: ApiStatus.IDLE,
     };
   },
+
   computed: {
     ...mapState('twilio', ['device']),
   },
 
   mounted() {
+    this.loadTodayPhoneLogs();
     this.loadPhoneLogs();
   },
 
   methods: {
-    onPageChange(page, key) {
-      this[key].currentPage = page;
-      this.loadPhoneLogs(page);
-    },
     t(key) {
       return this.$t(`phoneLogs.${key}`).toString();
     },
+
     onItemClick() {
       // fixme: dummy data. replace with /phone_log?id=xxx
       this.$router.push('/phone_log?date=2022-03-04');
     },
+
+    async loadTodayPhoneLogs(page = 1) {
+      this.apiStatusTodayList = ApiStatus.LOADING;
+      try {
+        this.todayPhoneLogs = await phoneLogsService.getTodayPhoneLogs({
+          page,
+        });
+        this.apiStatusTodayList = ApiStatus.SUCCESS;
+      } catch (error) {
+        this.apiStatusTodayList = ApiStatus.FAILURE;
+      }
+    },
+
     async loadPhoneLogs(page = 1) {
       this.apiStatus = ApiStatus.LOADING;
       try {
-        this.phoneLogs = await phoneLogsService.getAll({ page });
+        this.phoneLogs = await phoneLogsService.getPhoneLogs({ page });
         this.apiStatus = ApiStatus.SUCCESS;
       } catch (error) {
         this.apiStatus = ApiStatus.FAILURE;
