@@ -20,6 +20,9 @@ export default {
   toastTitle: {
     success: '成功',
   },
+  notFound: {
+    noData: '対象データがありませんでした。',
+  },
   callTypeModal: {
     reply: '出る',
     replyTransfer: '転送受入',

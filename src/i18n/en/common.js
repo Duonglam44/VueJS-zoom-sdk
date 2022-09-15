@@ -19,6 +19,9 @@ export default {
   toastTitle: {
     success: 'Success',
   },
+  notFound: {
+    noData: 'No data',
+  },
   error: {
     undefined: 'An error has occurred',
   },
