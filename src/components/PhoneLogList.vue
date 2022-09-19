@@ -8,30 +8,67 @@
         <ListContainer :status="status" :is-data="!!historys.length">
           <div v-for="(item, index) in historys" :key="item.phoneLogId">
             <v-list-item @click.native="$emit('item-clicked', item.phoneLogId)">
-              <v-icon class="mr-2">$telephoneInbound</v-icon>
+              <div>
+                <template v-if="isToday && item.onHold">
+                  <v-list-item-action>
+                    <v-menu
+                      bottom
+                      origin="center center"
+                      transition="scale-transition"
+                    >
+                      <template #activator="{ on, attrs }">
+                        <v-btn
+                          color="success"
+                          dark
+                          v-bind="attrs"
+                          v-on="on"
+                          @click.prevent="getUserList"
+                        >
+                          {{ $t('phoneLogs.onHold') }}
+                          <v-icon right> mdi-menu-down </v-icon>
+                        </v-btn>
+                      </template>
 
-              <!-- <v-list-item-action> dùng cho chức năng on_hold
-                <v-menu
-                  bottom
-                  origin="center center"
-                  transition="scale-transition"
-                >
-                  <template #activator="{ on, attrs }">
-                    <v-btn color="success" dark v-bind="attrs" v-on="on">
-                      {{ $t('phoneLogs.onHold') }}
-                      <v-icon right> mdi-menu-down </v-icon>
-                    </v-btn>
-                  </template>
+                      <v-skeleton-loader
+                        v-if="loading"
+                        class="mx-auto"
+                        type="list-item-two-line"
+                      />
+                      <v-list v-else>
+                        <v-list-item>
+                          <v-list-item-title>{{
+                            $t('phoneLogs.goOut')
+                          }}</v-list-item-title>
+                        </v-list-item>
 
-                  <v-list>
-                    <v-list-item>
-                      <v-list-item-title>{{
-                        $t('phoneLogs.goOut')
-                      }}</v-list-item-title>
-                    </v-list-item>
-                  </v-list>
-                </v-menu>
-              </v-list-item-action> -->
+                        <div>
+                          <v-list-item v-for="user in users" :key="user.userId">
+                            <v-list-item-title>{{
+                              user.name
+                            }}</v-list-item-title>
+                          </v-list-item>
+
+                          <infinite-loading
+                            v-if="usersPagination.nextPageUrl"
+                            identifier="user-list-on-hold"
+                            force-use-infinite-wrapper
+                            spinner="spiral"
+                            @infinite="getMoreUsers"
+                          >
+                            <div slot="no-more">
+                              {{ $t('phoneLogs.noMore') }}
+                            </div>
+                            <div slot="no-results">
+                              {{ $t('phoneLogs.noResults') }}
+                            </div>
+                          </infinite-loading>
+                        </div>
+                      </v-list>
+                    </v-menu>
+                  </v-list-item-action>
+                </template>
+                <v-icon v-else class="mr-2">$telephoneInbound</v-icon>
+              </div>
 
               <v-list-item-avatar>
                 <v-avatar color="grey">
@@ -80,6 +117,7 @@
   </v-card>
 </template>
 <script>
+import { mapActions, mapState } from 'vuex';
 import { ApiStatus } from '@/store/constants';
 import ListContainer from './commons/ListContainer.vue';
 import Pagination from './commons/Pagination.vue';
@@ -91,6 +129,10 @@ export default {
   },
 
   props: {
+    isToday: {
+      type: Boolean,
+      default: false,
+    },
     status: {
       type: String,
       default: ApiStatus.IDLE,
@@ -119,13 +161,21 @@ export default {
     },
   },
 
+  data() {
+    return {
+      loading: false,
+    };
+  },
+
   computed: {
+    ...mapState('phoneLog', ['users', 'usersPagination']),
     isShowPagination() {
       return Math.ceil(this.total / this.perPage) > 1;
     },
   },
 
   methods: {
+    ...mapActions('phoneLog', ['getUsers']),
     changePage(page) {
       this.$emit('page-changed', page);
     },
@@ -133,6 +183,24 @@ export default {
     getDataAddressByKey(address, key) {
       if (!address) return '';
       return address[0][key] ?? '';
+    },
+
+    async getUserList() {
+      this.loading = true;
+      await this.getUsers({ page: 1 });
+      this.loading = false;
+    },
+
+    getMoreUsers($state) {
+      this.getUsers({
+        page: this.usersPagination.currentPage + 1,
+      }).then((users) => {
+        if (users.length === 0) {
+          $state.complete();
+        } else {
+          $state.loaded();
+        }
+      });
     },
   },
 };
