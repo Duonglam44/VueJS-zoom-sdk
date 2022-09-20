@@ -1,11 +1,16 @@
 import axiosInstance from '@/service/axios';
 
-const getAll = (params) => {
+const getPhoneLogs = (params) => {
   return axiosInstance.get('phone_logs', { params });
 };
 
+const getTodayPhoneLogs = (params) => {
+  return axiosInstance.get('phone_logs/today', { params });
+};
+
 const phoneLogsService = {
-  getAll,
+  getPhoneLogs,
+  getTodayPhoneLogs,
 };
 
 export default phoneLogsService;

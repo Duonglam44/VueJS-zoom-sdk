@@ -5,9 +5,8 @@
         <v-subheader class="font-weight-bold header-list">{{
           title
         }}</v-subheader>
-
-        <ListContainer :status="status" :is-data="!!phoneLogs.data.length">
-          <div v-for="item in phoneLogs.data" :key="`${item.phoneLogId}`">
+        <ListContainer :status="status" :is-data="!!historys.length">
+          <div v-for="(item, index) in historys" :key="item.phoneLogId">
             <v-list-item @click.native="$emit('item-clicked', item.phoneLogId)">
               <v-icon class="mr-2">$telephoneInbound</v-icon>
 
@@ -65,7 +64,7 @@
               </v-list-item-icon>
             </v-list-item>
 
-            <v-divider v-if="index < phoneLogs.data.length - 1"></v-divider>
+            <v-divider v-if="index < historys.length - 1" />
           </div>
         </ListContainer>
       </v-list-item-group>
@@ -73,8 +72,8 @@
 
     <div v-if="isShowPagination" class="mt-4">
       <Pagination
-        :total="phoneLogs.total"
-        :per-page="phoneLogs.perPage"
+        :total="total"
+        :per-page="perPage"
         @page-changed="changePage($event)"
       />
     </div>
@@ -96,12 +95,24 @@ export default {
       type: String,
       default: ApiStatus.IDLE,
     },
-    phoneLogs: {
+
+    historys: {
       type: Array,
       default() {
         return [];
       },
     },
+
+    total: {
+      type: Number,
+      default: 1,
+    },
+
+    perPage: {
+      type: Number,
+      default: 1,
+    },
+
     title: {
       type: String,
       required: true,
