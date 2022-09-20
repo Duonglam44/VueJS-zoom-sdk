@@ -11,9 +11,9 @@
           <v-btn to="/" text x-large color="#505c65" class="white--text">
             ＜戻る
           </v-btn>
-          <!-- <v-toolbar-title class="white--text font-weight-black">{{
-            phone_log.customer_user.name
-          }}</v-toolbar-title> -->
+          <v-toolbar-title class="white--text font-weight-black">{{
+            titleConnection
+          }}</v-toolbar-title>
 
           <v-spacer></v-spacer>
           <v-btn elevation="2" icon outlined color="white" class="mx-1"
@@ -41,8 +41,8 @@
         </v-app-bar>
       </v-col>
     </v-row>
-    <!-- <v-row style="height: 90vh">
-      <v-col cols="8" class="pt-15">
+    <v-row style="height: calc(100vh - 64px); margin-top: 40px">
+      <v-col cols="8" class="pt-6 convention-container">
         <v-row>
           <v-col cols="4">
             <v-subheader class="font-weight-black text-h6">{{
@@ -51,21 +51,30 @@
           </v-col>
           <v-spacer></v-spacer>
           <v-col cols="4" class="pt-1">
-            <v-btn elevation="2" outlined
+            <v-btn
+              elevation="2"
+              :outlined="!autoScrolling"
+              :color="autoScrolling ? 'accent' : ''"
+              @click="autoScrolling = !autoScrolling"
               ><v-icon>mdi-checkbox-marked-circle</v-icon
               >自動スクロールON</v-btn
             >
           </v-col>
         </v-row>
-        <v-row>
-          <v-col cols="12" class="pt-15">
-            <div v-for="item in phone_log.vtt" :key="item.user">
-              <div v-if="item.user === 'operator_user'">
-                <ChatBoxRight :user="phone_log.operator_user" :chat="item" />
+        <v-row class="convention-list">
+          <v-col ref="conventionList" cols="12" class="pt-6">
+            <div
+              v-for="item in speechResults"
+              :key="`speech_result_${item.id}_${
+                item.operator ? 'operator' : ''
+              }`"
+            >
+              <div v-if="item.operator">
+                <ChatBoxRight :user="currentUser" :chat="item" />
               </div>
-              <div v-if="item.user === 'customer_user'">
+              <div v-else>
                 <ChatBoxLeft
-                  :user="phone_log.customer_user"
+                  :user="item"
                   :chat="item"
                   :tag="item.meta"
                   @update="item.meta = $event"
@@ -82,12 +91,13 @@
               </v-col>
               <v-col cols="9">
                 <v-textarea
+                  v-model="memo"
                   outlined
                   rows="3"
-                  v-model="memo"
                   row-height="25"
                   background-color="#ffffff"
                   class="rounded-lg"
+                  hide-details
                 ></v-textarea>
               </v-col>
             </v-row>
@@ -102,118 +112,101 @@
 
           <v-tab class="rounded-t-xl" style="background-color: #f9f9f9"
             >すべて<v-badge
-              v-if="tag_all_list && tag_all_list.length > 0"
+              v-if="listTag > 0"
               inline
-              :content="tag_all_list.length"
-            ></v-badge
-          ></v-tab>
-          <v-tab
-            class="rounded-t-xl white--text"
-            style="background-color: #ff7d7d"
-            >営業連絡<v-badge
-              v-if="tag_1_list && tag_1_list.length > 0"
-              inline
-              :content="tag_1_list.length"
+              :content="listTag.length"
             ></v-badge
           ></v-tab>
           <v-tab
             class="rounded-t-xl white--text"
             style="background-color: #ffc421"
-            >注文<v-badge
-              v-if="tag_2_list && tag_2_list.length > 0"
+            >営業連絡<v-badge
+              v-if="listTag1 && listTag1.length > 0"
               inline
-              :content="tag_2_list.length"
+              :content="listTag1.length"
+            ></v-badge
+          ></v-tab>
+          <v-tab
+            class="rounded-t-xl white--text"
+            style="background-color: #ff7d7d"
+            >注文<v-badge
+              v-if="listTag2 && listTag2.length > 0"
+              inline
+              :content="listTag2.length"
             ></v-badge
           ></v-tab>
           <v-tab-item style="background-color: #f9f9f9">
             <v-sheet block height="5" color="#f9f9f9" class="mr-1"> </v-sheet>
-            <div v-for="item in tag_all_list" :key="item.user">
+            <div
+              v-for="item in listTag"
+              :key="`list_tag_${item.operator ? 'operator' : ''}_${item.id}`"
+            >
               <v-card elevation="2" class="ma-1 pa-1">
-                <div v-if="item.user === 'operator_user'">
-                  <MemoList
-                    :user="phone_log.operator_user"
-                    :chat="item"
-                    :meta="item.meta"
-                  />
-                </div>
-                <div v-if="item.user === 'customer_user'">
-                  <MemoList
-                    :user="phone_log.customer_user"
-                    :chat="item"
-                    :meta="item.meta"
-                  />
-                </div>
+                <MemoList
+                  :user="item.operator ? item : currentUser"
+                  :chat="item"
+                  :meta="item.meta"
+                />
               </v-card>
             </div>
           </v-tab-item>
           <v-tab-item>
             <v-sheet block height="5" color="#ff7d7d" class="mr-1"> </v-sheet>
-            <div v-for="item in tag_1_list" :key="item.user">
+            <div
+              v-for="item in listTag1"
+              :key="`list_tag1_${item.operator ? 'operator' : ''}_${item.id}`"
+            >
               <v-card elevation="2" class="ma-1 pa-1">
-                <div v-if="item.user === 'operator_user'">
-                  <MemoList
-                    :user="phone_log.operator_user"
-                    :chat="item"
-                    :meta="item.meta"
-                  />
-                </div>
-                <div v-if="item.user === 'customer_user'">
-                  <MemoList
-                    :user="phone_log.customer_user"
-                    :chat="item"
-                    :meta="item.meta"
-                  />
-                </div>
+                <MemoList
+                  :user="item.operator ? item : currentUser"
+                  :chat="item"
+                  :meta="item.meta"
+                />
               </v-card>
             </div>
           </v-tab-item>
           <v-tab-item>
             <v-sheet block height="5" color="#ffc421" class="mr-1"> </v-sheet>
-            <div v-for="item in tag_2_list" :key="item.user">
+            <div
+              v-for="item in listTag2"
+              :key="`list_tag2_${item.operator ? 'operator' : ''}_${item.id}`"
+            >
               <v-card elevation="2" class="ma-1 pa-1">
-                <div v-if="item.user === 'operator_user'">
-                  <MemoList
-                    :user="phone_log.operator_user"
-                    :chat="item"
-                    :meta="item.meta"
-                  />
-                </div>
-                <div v-if="item.user === 'customer_user'">
-                  <MemoList
-                    :user="phone_log.customer_user"
-                    :chat="item"
-                    :meta="item.meta"
-                  />
-                </div>
+                <MemoList
+                  :user="item.operator ? item : currentUser"
+                  :chat="item"
+                  :meta="item.meta"
+                />
               </v-card>
             </div>
           </v-tab-item>
         </v-tabs>
       </v-col>
-    </v-row> -->
+    </v-row>
   </v-container>
 </template>
 
 <script>
-import { mapActions, mapGetters } from 'vuex';
+import { mapActions, mapGetters, mapState } from 'vuex';
+import { isEmpty } from 'lodash';
 
 import recordMixins from '@/mixins/record';
 import recognizerMixins from '@/mixins/recognizer';
 
 import { CALL_TYPE } from '@/shared/constant/common';
 import Loading from '@/components/Loading.vue';
-
-// import ChatBoxRight from '../components/ChatBoxRight.vue';
-// import ChatBoxLeft from '../components/ChatBoxLeft.vue';
-// import MemoList from '../components/MemoList.vue';
+import ChatBoxRight from '@/components/ChatBoxRight.vue';
+import ChatBoxLeft from '@/components/ChatBoxLeft.vue';
+import MemoList from '@/components/MemoList.vue';
 
 export default {
   name: 'PhoneCall',
+
   components: {
     Loading,
-    // ChatBoxRight,
-    // ChatBoxLeft,
-    // MemoList,
+    ChatBoxRight,
+    ChatBoxLeft,
+    MemoList,
   },
 
   filters: {
@@ -228,31 +221,41 @@ export default {
     return {
       intervalId: null,
       date: null,
-      phone_log: [],
-      tmp_phone_log: [],
-      tmp_phone_log_vtt: [],
-      tag_none: '0',
-      tag_1: '1',
-      tag_2: '2',
-      tag_all_list: [],
-      tag_1_list: [],
-      tag_2_list: [],
-      timer_counter: 100,
-      speech: null,
-      recorder: null,
-      client: null,
       sec: 0,
       min: 0,
       timer: null,
       memo: '',
+      autoScrolling: false,
     };
   },
 
   computed: {
     ...mapGetters('twilio', ['callType']),
+    ...mapState('phoneCall', ['speechResults']),
 
     status() {
       return this.connection?.status();
+    },
+
+    listTag() {
+      return this.speechResults.filter((item) => !isEmpty(item.meta));
+    },
+
+    listTag1() {
+      return this.speechResults.filter((item) => item.meta?.includes?.(0));
+    },
+
+    listTag2() {
+      return this.speechResults.filter((item) => item.meta?.includes?.(1));
+    },
+
+    titleConnection() {
+      return this.connection?.direction === 'INCOMING'
+        ? this.connection?.customParameters?.get?.('From')
+        : this.connection?.customParameters?.get?.('To');
+    },
+    speechResultsLength() {
+      return this.speechResults.length;
     },
   },
 
@@ -266,6 +269,19 @@ export default {
         }
       },
       immediate: true,
+    },
+
+    speechResultsLength: {
+      async handler(newValue) {
+        if (newValue && this.autoScrolling) {
+          await this.$nextTick();
+          const el = this.$refs.conventionList.lastElementChild;
+          if (el) {
+            el.scrollIntoView({ behavior: 'smooth' });
+          }
+        }
+      },
+      deep: true,
     },
   },
 
@@ -328,3 +344,14 @@ export default {
   },
 };
 </script>
+
+<style scoped lang="scss">
+.convention-container {
+  display: flex;
+  flex-direction: column;
+  height: calc(100% - 106px);
+  .convention-list {
+    overflow: scroll;
+  }
+}
+</style>
