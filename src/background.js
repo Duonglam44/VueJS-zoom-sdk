@@ -26,9 +26,9 @@ protocol.registerSchemesAsPrivileged([
 function initTray() {
   const iconPath =
     process.platform === 'darwin'
-      ? '../public/app-icon.png'
-      : '../public/favicon.ico';
-  const icon = nativeImage.createFromPath(path.join(__dirname, iconPath));
+      ? path.join(__static, 'app-icon.png')
+      : path.join(__static, 'favicon.ico');
+  const icon = nativeImage.createFromPath(iconPath);
   tray = new Tray(icon);
   const menu = Menu.buildFromTemplate([
     {
