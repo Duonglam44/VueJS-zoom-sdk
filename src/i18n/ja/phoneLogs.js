@@ -11,4 +11,5 @@ export default {
   cutting: '切断',
   noMore: 'もういや',
   noResults: '結果がありません',
+  month: '{month} 月',
 };

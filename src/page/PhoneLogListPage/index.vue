@@ -2,47 +2,11 @@
   <div>
     <v-row class="mt-13">
       <v-col cols="5" class="d-flex">
-        <v-btn icon>
-          <v-icon>mdi-arrow-left</v-icon>
-        </v-btn>
-
-        <v-dialog
-          ref="dialog"
-          v-model="modal"
-          :return-value.sync="date"
-          persistent
-          width="290px"
-        >
-          <template #activator="{ on, attrs }">
-            <v-text-field
-              v-model="date"
-              prepend-inner-icon="mdi-calendar"
-              readonly
-              dense
-              solo
-              v-bind="attrs"
-              v-on="on"
-            ></v-text-field>
-          </template>
-
-          <v-date-picker
-            v-model="date"
-            type="month"
-            scrollable
-            locale="ja-JP"
-            color="#505c65"
-          >
-            <v-spacer></v-spacer>
-            <v-btn text color="primary" @click="modal = false"> Cancel</v-btn>
-            <v-btn text color="primary" @click="$refs.dialog.save(date)">
-              OK
-            </v-btn>
-          </v-date-picker>
-        </v-dialog>
-
-        <v-btn icon>
-          <v-icon>mdi-arrow-right</v-icon>
-        </v-btn>
+        <Datepicker
+          v-model="time"
+          :type="datepickerType.MONTH"
+          :format-type="formatDateType.MONTH_DATE"
+        />
       </v-col>
 
       <v-col style="padding-top: 8px" cols="5">
@@ -51,7 +15,7 @@
           dense
           solo
           prepend-inner-icon="mdi-magnify"
-          :placeholder="t('searchPlaceholder')"
+          :placeholder="$t('phoneLogs.searchPlaceholder')"
           class="my-auto pa-1"
         ></v-text-field>
       </v-col>
@@ -64,7 +28,7 @@
           @click="dialogCall = true"
         >
           <v-icon left> mdi-phone</v-icon>
-          {{ t('outGoing') }}
+          {{ $t('phoneLogs.outGoing') }}
         </v-btn>
       </v-col>
     </v-row>
@@ -72,7 +36,7 @@
     <PhoneLogList
       :status="apiStatusTodayList"
       :phone-logs="todayPhoneLogs"
-      :title="t('daySection')"
+      :title="$t('phoneLogs.daySection')"
       :historys="todayPhoneLogs.data || []"
       :total="todayPhoneLogs.total"
       :per-page="todayPhoneLogs.perPage"
@@ -83,11 +47,11 @@
     <PhoneLogList
       :status="apiStatus"
       :phone-logs="phoneLogs"
-      :title="t('monthSection')"
+      :title="titleList"
       :historys="phoneLogs.data || []"
       :total="phoneLogs.total"
       :per-page="phoneLogs.perPage"
-      @page-changed="loadPhoneLogs"
+      @page-changed="onPageChangeMonthList"
       @item-clicked="onItemClick"
     />
     <CallAwayDialog
@@ -100,9 +64,14 @@
 
 <script>
 import { mapState } from 'vuex';
+import { format } from 'date-fns';
 import { ApiStatus } from '@/store/constants';
 import PhoneLogList from '@/components/PhoneLogList.vue';
 import phoneLogsService from '@/service/PhoneLogsService';
+import Datepicker, {
+  FORMAT_DATE_TYPE,
+  DATEPICKER_TYPE,
+} from '@/components/commons/Datepicker.vue';
 import CallAwayDialog from './components/CallAwayDialog.vue';
 
 export default {
@@ -111,23 +80,45 @@ export default {
   components: {
     CallAwayDialog,
     PhoneLogList,
+    Datepicker,
   },
 
   data() {
     return {
       search: '',
-      modal: false,
-      date: new Date().toISOString().substr(0, 7),
+      time: format(new Date(), FORMAT_DATE_TYPE.MONTH_DATE),
       dialogCall: false,
       phoneLogs: {},
       todayPhoneLogs: {},
       apiStatus: ApiStatus.IDLE,
       apiStatusTodayList: ApiStatus.IDLE,
+      currentPageThisMonth: 1,
+      formatDateType: FORMAT_DATE_TYPE,
+      datepickerType: DATEPICKER_TYPE,
     };
   },
 
   computed: {
     ...mapState('twilio', ['device']),
+
+    titleList() {
+      const currentMonth = format(new Date(), FORMAT_DATE_TYPE.MONTH_DATE);
+      if (currentMonth === this.time) {
+        return this.$t('phoneLogs.monthSection');
+      }
+      const month = this.time.split('-')[1];
+      return this.$t('phoneLogs.month', { month });
+    },
+  },
+
+  watch: {
+    time: {
+      handler(newValue, oldValue) {
+        if (!oldValue) return;
+        this.loadPhoneLogs(this.currentPageThisMonth, newValue);
+      },
+      immediate: true,
+    },
   },
 
   mounted() {
@@ -136,8 +127,9 @@ export default {
   },
 
   methods: {
-    t(key) {
-      return this.$t(`phoneLogs.${key}`).toString();
+    onPageChangeMonthList(page) {
+      this.currentPageThisMonth = page;
+      this.loadPhoneLogs(page, this.time);
     },
 
     onItemClick() {
@@ -157,10 +149,15 @@ export default {
       }
     },
 
-    async loadPhoneLogs(page = 1) {
+    async loadPhoneLogs(page = 1, time = this.time) {
+      const [year, month] = time.split('-');
       this.apiStatus = ApiStatus.LOADING;
       try {
-        this.phoneLogs = await phoneLogsService.getPhoneLogs({ page });
+        this.phoneLogs = await phoneLogsService.getPhoneLogs({
+          page,
+          year,
+          month,
+        });
         this.apiStatus = ApiStatus.SUCCESS;
       } catch (error) {
         this.apiStatus = ApiStatus.FAILURE;
