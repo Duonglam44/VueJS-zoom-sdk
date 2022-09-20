@@ -1,11 +1,6 @@
-import { MediaRecorder, register } from 'extendable-media-recorder';
-import { connect } from 'extendable-media-recorder-wav-encoder';
+import { MediaRecorder } from 'extendable-media-recorder';
 
-export const initRecordSerive = async () => {
-  await register(await connect());
-};
-
-export default class RecorderAudio {
+export class RecorderAudio {
   constructor(stream) {
     this.stream = stream;
     this.audioChunks = [];

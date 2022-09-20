@@ -27,6 +27,7 @@
     "humps": "^2.0.1",
     "js-cookie": "^3.0.1",
     "lodash": "^4.17.21",
+    "microsoft-cognitiveservices-speech-sdk": "^1.23.0",
     "node-record-lpcm16": "^1.0.1",
     "qs": "^6.11.0",
     "twilio-client": "^1.14.0",
