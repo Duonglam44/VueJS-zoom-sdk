@@ -25,4 +25,8 @@ export default {
   error: {
     undefined: 'An error has occurred',
   },
+  datepicker: {
+    ok: 'Ok',
+    cancel: 'Cancel',
+  },
 };

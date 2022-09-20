@@ -36,4 +36,8 @@ export default {
   error: {
     undefined: 'エラーが発生しました',
   },
+  datepicker: {
+    ok: 'はい',
+    cancel: '解約',
+  },
 };
