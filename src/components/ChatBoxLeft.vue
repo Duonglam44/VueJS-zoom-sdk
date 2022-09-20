@@ -3,7 +3,7 @@
     <div class="face_icon">
       <v-avatar color="blue">
         <span class="white--text">
-          {{ user.short_name }}
+          {{ user.short_name || user.name }}
         </span>
       </v-avatar>
     </div>
