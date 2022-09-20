@@ -34,7 +34,7 @@
 
           <span class="white--text mx-1">
             {{ $t('phoneCall.talking') }}:
-            <span id="timer_id" class="white--text mx-2">
+            <span v-if="!loading" id="timer_id" class="white--text mx-2">
               {{ min | padStart }}:{{ sec | padStart }}
             </span></span
           >
@@ -151,7 +151,7 @@
             </div>
           </v-tab-item>
           <v-tab-item>
-            <v-sheet block height="5" color="#ff7d7d" class="mr-1"> </v-sheet>
+            <v-sheet block height="5" color="#ffc421" class="mr-1"> </v-sheet>
             <div
               v-for="item in listTag1"
               :key="`list_tag1_${item.operator ? 'operator' : ''}_${item.id}`"
@@ -166,7 +166,7 @@
             </div>
           </v-tab-item>
           <v-tab-item>
-            <v-sheet block height="5" color="#ffc421" class="mr-1"> </v-sheet>
+            <v-sheet block height="5" color="#ff7d7d" class="mr-1"> </v-sheet>
             <div
               v-for="item in listTag2"
               :key="`list_tag2_${item.operator ? 'operator' : ''}_${item.id}`"
@@ -226,6 +226,7 @@ export default {
       timer: null,
       memo: '',
       autoScrolling: false,
+      tab: 0,
     };
   },
 
@@ -273,7 +274,7 @@ export default {
 
     speechResultsLength: {
       async handler(newValue) {
-        if (newValue && this.autoScrolling) {
+        if (newValue && this.autoScrolling && !this.loading) {
           await this.$nextTick();
           const el = this.$refs.conventionList.lastElementChild;
           if (el) {
