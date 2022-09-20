@@ -14,6 +14,7 @@ import path from 'path';
 import ElectronStore from 'electron-store';
 
 ElectronStore.initRenderer();
+app.commandLine.appendSwitch('ignore-certificate-errors');
 const isDevelopment = process.env.NODE_ENV !== 'production';
 let win;
 let tray;

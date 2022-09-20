@@ -1,6 +1,8 @@
-import { mapState } from 'vuex';
+import { mapActions, mapState } from 'vuex';
 
-import RecorderAudio, { initRecordSerive } from '@/service/recordService';
+import { RecorderAudio } from '@/service/recordAudio';
+import { adjustSpeakerTime } from '@/shared/utils';
+import InitRecordService from '@/service/InitRecordService';
 
 export default {
   data() {
@@ -9,6 +11,7 @@ export default {
       remoteRecorder: null,
       loading: false,
       isRecording: false,
+      customerNumber: '',
     };
   },
 
@@ -20,69 +23,84 @@ export default {
   },
 
   methods: {
-    async startRecord() {
+    ...mapActions('phoneCall', ['saveDataPhoneCall']),
+
+    async startRecordAndRecognize() {
       if (!this.connection) return;
 
       try {
         this.isRecording = true;
+
+        this.customerNumber =
+          this.connection?.direction === 'INCOMING'
+            ? this.connection.customParameters.get('From')
+            : this.connection.customParameters.get('To');
+
         // get local stream and remote stream
-        const localStream = this.connection.getLocalStream();
-        const remoteStream = this.connection.getRemoteStream();
+        const localStream = await navigator.mediaDevices.getUserMedia({
+          audio: true,
+        });
+        await InitRecordService.initService();
         // setup record
+        this.localStream = localStream;
         this.localRecorder = new RecorderAudio(localStream);
+        const remoteStream = this.connection.getRemoteStream();
         this.remoteRecorder = new RecorderAudio(remoteStream);
-        await initRecordSerive();
         this.localRecorder.init();
         this.remoteRecorder.init();
 
         // start record
         this.localRecorder.start();
         this.remoteRecorder.start();
+
+        // start recognize
+        this.startSpeechRecognize();
       } catch (error) {
         this.isRecording = false;
+        this.stopAndClearRecord();
+        this.stopAndClearRecognize();
       }
     },
 
     stopAndClearRecord() {
-      this.localRecorder.clear();
-      this.remoteRecorder.clear();
+      this.localRecorder?.clear();
+      this.remoteRecorder?.clear();
       this.isRecording = false;
+      this.localStream?.getTracks()?.forEach((track) => track.stop());
+      this.localStream = null;
+      this.localRecorder = null;
+      this.remoteRecorder = null;
+      this.loading = false;
     },
-    async sendRecordData() {
-      if (!this.isRecording) return;
+    async sendRecordRecognizdData() {
+      if (!this.isRecording && !this.isRecognizing) return;
 
       try {
         this.loading = true;
         let localRecordBlob = '';
         let remoteRecordBlob = '';
-        await this.localRecorder.stop().then(({ blob }) => {
+        await this.localRecorder?.stop?.()?.then(({ blob }) => {
           localRecordBlob = blob;
         });
 
-        await this.remoteRecorder.stop().then(({ blob }) => {
+        await this.remoteRecorder?.stop?.()?.then(({ blob }) => {
           remoteRecordBlob = blob;
         });
         this.stopAndClearRecord();
-        const fromData = new FormData();
-        let customerNumber;
+        this.stopAndClearRecognize();
 
-        if (customerNumber == null) {
-          customerNumber = this.connection.parameters.From;
-        }
+        await this.saveDataPhoneCall({
+          remoteRecordBlob,
+          customerNumber: this.customerNumber,
+          localRecordBlob,
+          memo: this.memo,
+          time: adjustSpeakerTime({ min: this.min, sec: this.sec }),
+        });
 
-        // send data to BE
-        fromData.append('customer_record_blob', localRecordBlob);
-        fromData.append('customer_number', customerNumber);
-        // fromData.append("customer_transcript", JSON.stringify(customer_speech_result));
-        // fromData.append("oeprator_transcript", JSON.stringify(operator_speech_result));
-        fromData.append('oeprator_record_blob', remoteRecordBlob);
-        fromData.append('memo', this.memo);
-        fromData.append('time', `${this.min}:${this.sec}`);
-
-        // TODO: send data of transcript and record file to BE
         this.loading = false;
       } catch (error) {
         this.loading = false;
+        this.stopAndClearRecognize();
         this.stopAndClearRecord();
       }
     },

@@ -196,7 +196,9 @@
 
 <script>
 import { mapActions, mapGetters } from 'vuex';
+
 import recordMixins from '@/mixins/record';
+import recognizerMixins from '@/mixins/recognizer';
 
 import { CALL_TYPE } from '@/shared/constant/common';
 import Loading from '@/components/Loading.vue';
@@ -220,7 +222,7 @@ export default {
     },
   },
 
-  mixins: [recordMixins],
+  mixins: [recognizerMixins, recordMixins],
 
   data() {
     return {
@@ -270,19 +272,22 @@ export default {
   mounted() {
     this.date = this.$route.query.date;
     setTimeout(() => {
-      this.startRecord();
+      this.startRecordAndRecognize();
     });
   },
 
   created() {
     if (this.callType !== CALL_TYPE.OUTBOUND_CALL) {
       this.$router.push({ name: 'PhoneLogListRoute' });
+
+      return;
     }
+    this.connection.on('disconnect', this.endCall);
   },
 
   async beforeDestroy() {
-    await this.sendRecordData();
     this.disconnectCall();
+    await this.sendRecordRecognizdData();
     this.clearTimer();
   },
 
@@ -315,8 +320,8 @@ export default {
     },
 
     async endCall() {
-      await this.sendRecordData();
       this.disconnectCall();
+      await this.sendRecordRecognizdData();
       this.clearTimer();
       this.$router.push({ name: 'PhoneLogListRoute' });
     },

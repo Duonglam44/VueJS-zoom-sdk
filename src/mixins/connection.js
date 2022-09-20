@@ -1,6 +1,6 @@
 import { mapActions, mapGetters, mapMutations, mapState } from 'vuex';
 
-import { CALL_TYPE, OUTGOING_CALL_TYPE } from '@/shared/constant/common';
+import { OUTGOING_CALL_TYPE } from '@/shared/constant/common';
 
 export default {
   computed: {
@@ -18,10 +18,6 @@ export default {
 
     handleEndCall() {
       this.disconnectCall();
-
-      if (this.callType !== CALL_TYPE.OUTBOUND_CALL) {
-        this.$router.push({ name: 'PhoneLogListRoute' });
-      }
     },
 
     async handleCall(params) {

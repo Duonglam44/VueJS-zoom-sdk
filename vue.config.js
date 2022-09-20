@@ -11,4 +11,8 @@ module.exports = defineConfig({
   chainWebpack(config) {
     config.resolve.alias.set('@', path.resolve(__dirname, 'src'));
   },
+  devServer: {
+    https: true,
+    host: '0.0.0.0',
+  },
 });
