@@ -48,16 +48,12 @@ export default {
     callToUser() {
       if (this.isInCalling) return;
 
-      const { phoneNumber, tennantId } = this.currentUser.hasTennant;
-      const callType =
-        tennantId !== this.user.hasTennant.tennantId
-          ? OUTGOING_CALL_TYPE.OUT_BOUND
-          : OUTGOING_CALL_TYPE.IN_BOUND;
+      const { phoneNumber } = this.currentUser.hasTennant;
+
       const params = {
         From: phoneNumber,
         To: this.user.phoneNumber,
-        call_type: callType,
-        tennant: this.user.hasTennant.tennantId,
+        call_type: OUTGOING_CALL_TYPE.IN_BOUND,
         user_id: this.user.userId,
       };
 

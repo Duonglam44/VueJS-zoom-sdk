@@ -91,6 +91,7 @@
       @item-clicked="onItemClick"
     />
     <CallAwayDialog
+      v-if="dialogCall"
       :open-dialog="dialogCall"
       @toggle-dialog="(value) => (dialogCall = value)"
     />
