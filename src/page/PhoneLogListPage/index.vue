@@ -34,6 +34,7 @@
     </v-row>
 
     <PhoneLogList
+      :is-today="true"
       :status="apiStatusTodayList"
       :phone-logs="todayPhoneLogs"
       :title="$t('phoneLogs.daySection')"
