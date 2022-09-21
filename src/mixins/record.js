@@ -70,7 +70,6 @@ export default {
       this.localStream = null;
       this.localRecorder = null;
       this.remoteRecorder = null;
-      this.loading = false;
     },
     async sendRecordRecognizdData() {
       if (!this.isRecording && !this.isRecognizing) return;
