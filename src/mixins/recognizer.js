@@ -6,7 +6,7 @@ import {
 } from 'microsoft-cognitiveservices-speech-sdk';
 import { mapMutations } from 'vuex';
 
-import { AZURE_STT_SUBSCRIPTION } from '@/shared/config/setting';
+import { VUE_APP_AZURE_SUBSCRIPTION } from '@/shared/config/setting';
 import {
   REGION_OPTIONS,
   SPEECH_RECOGNITION_LANGUAGE,
@@ -39,7 +39,7 @@ export default {
           name,
         } = this.currentUser;
         const speechConfig = SpeechConfig.fromSubscription(
-          azureSttSubscription || AZURE_STT_SUBSCRIPTION,
+          azureSttSubscription || VUE_APP_AZURE_SUBSCRIPTION,
           REGION_OPTIONS
         );
 
@@ -86,7 +86,7 @@ export default {
                 start_time: startTimeLocal,
                 end_time: endTimeLocal,
                 text,
-                meta: [],
+                meta: null,
                 operator: true,
               });
             }
@@ -120,18 +120,23 @@ export default {
         this.recognizerRemote.recognized = (_, event) => {
           if (event.result.reason === ResultReason.RecognizedSpeech) {
             const { text } = event.result;
-            endTimeRemote = adjustSpeakerTime({ min: this.min, sec: this.sec });
+            if (text) {
+              endTimeRemote = adjustSpeakerTime({
+                min: this.min,
+                sec: this.sec,
+              });
 
-            this.receiveSpeechRecognized({
-              name: customerName,
-              start_time: startTimeRemote,
-              end_time: endTimeRemote,
-              text,
-              meta: [],
-            });
+              this.receiveSpeechRecognized({
+                name: customerName,
+                start_time: startTimeRemote,
+                end_time: endTimeRemote,
+                text,
+                meta: null,
+              });
 
-            startTimeRemote = null;
-            endTimeRemote = null;
+              startTimeRemote = null;
+              endTimeRemote = null;
+            }
           }
         };
 

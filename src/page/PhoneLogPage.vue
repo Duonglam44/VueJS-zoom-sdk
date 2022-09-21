@@ -1,5 +1,6 @@
 <template>
   <v-container>
+    <Loading :loading="loading" />
     <v-row>
       <v-col cols="12">
         <v-app-bar
@@ -10,55 +11,50 @@
           <v-btn to="/" text x-large color="#505c65" class="white--text">
             ＜戻る
           </v-btn>
-          <v-toolbar-title class="white--text font-weight-black"
-            >お客様名</v-toolbar-title
-          >
+          <v-toolbar-title class="white--text font-weight-black">
+            {{
+              getData(
+                phoneLog.address,
+                'name',
+                phoneLog.customerPhoneNumber || ''
+              )
+            }}
+          </v-toolbar-title>
 
           <v-spacer></v-spacer>
-          <v-btn elevation="2" icon outlined color="white" class="mx-1" disabled
-            ><v-icon>mdi-phone-settings</v-icon></v-btn
-          >
-          <v-btn elevation="2" icon outlined color="white" class="mx-1" disabled
-            ><v-icon>mdi-microphone</v-icon></v-btn
-          >
-
-          <v-btn elevation="2" color="#22d65e" class="white--text mx-3"
-            ><v-icon>mdi-phone-hangup</v-icon>発信</v-btn
-          >
+          <audio v-if="phoneLog.phoneLogId" controls :src="phoneToRecordURL" />
+          <audio
+            v-if="phoneLog.phoneLogId"
+            controls
+            :src="phoneFromRecordURL"
+          />
         </v-app-bar>
       </v-col>
     </v-row>
-    <v-row style="height: 90vh">
-      <v-col cols="8" class="pt-15">
-        <v-row>
-          <v-col cols="4" class="d-flex justify-start pt-1">
-            <v-btn to="/phone_log?date=2022-02-01" text x-large color="#505c65">
-              ＜前の通話
-            </v-btn>
-          </v-col>
-          <v-spacer></v-spacer>
-          <v-col cols="4" class="d-flex justify-center pt-1">
-            <v-subheader class="font-weight-black text-h6 mx-auto">{{
-              date
-            }}</v-subheader>
-          </v-col>
-          <v-col cols="4" class="d-flex justify-end pt-1">
-            <v-btn to="/phone_log?date=2022-02-01" text x-large color="#505c65">
-              次の通話＞
-            </v-btn>
-          </v-col>
-        </v-row>
-        <v-row>
-          <v-col cols="12" class="pt-15">
-            <div v-for="item in phone_log.vtt" :key="item.user">
-              <div v-if="item.user === 'operator_user'">
-                <ChatBoxRight :user="phone_log.operator_user" :chat="item" />
-              </div>
-              <div v-if="item.user === 'customer_user'">
-                <ChatBoxLeft
-                  :user="phone_log.customer_user"
+    <v-row style="height: calc(100vh - 64px); margin-top: 40px">
+      <v-col cols="8" class="pt-6 convention-container">
+        <v-row class="convention-list">
+          <v-col cols="12" class="pt-6">
+            <div
+              v-for="(item, index) in phoneLog.phoneTalkLogs"
+              :key="item.phoneTalkLogId"
+            >
+              <div v-if="item.speakerNumber !== phoneLog.customerPhoneNumber">
+                <ChatBoxRight
+                  :user="getData(item.user, '[0]', {})"
                   :chat="item"
-                  :tag="item.meta"
+                />
+              </div>
+              <div v-else>
+                <ChatBoxLeft
+                  :user="
+                    getData(item.address, '[0]', {
+                      name: phoneLog.customerPhoneNumber,
+                    })
+                  "
+                  :chat="item"
+                  :tag="item.vttMeta"
+                  @update="updateTag($event, index)"
                 />
               </div>
             </div>
@@ -66,91 +62,78 @@
           <v-footer fixed width="65vw" color="#bbbbbb">
             <v-row>
               <v-col cols="3">
-                <v-btn text x-large color="#505c65" class="white--text">
+                <v-btn
+                  text
+                  x-large
+                  color="#505c65"
+                  class="white--text"
+                  @click="updateMemo"
+                >
                   <v-icon>mdi-pencil</v-icon>MEMO
                 </v-btn>
               </v-col>
               <v-col cols="9">
                 <v-textarea
+                  v-model="phoneLog.memo"
                   outlined
+                  hide-details
                   rows="3"
                   row-height="25"
                   background-color="#ffffff"
                   class="rounded-lg"
-                ></v-textarea>
+                />
               </v-col>
             </v-row>
           </v-footer>
         </v-row>
       </v-col>
       <v-divider inset vertical></v-divider>
-      <v-col cols="4" class="pt-15">
+      <v-col cols="4" class="pt-6">
         <v-subheader class="font-weight-black text-h6">保存リスト</v-subheader>
         <v-tabs v-model="tab" align-with-title>
           <v-tabs-slider color="yellow"></v-tabs-slider>
 
           <v-tab class="rounded-t-xl" style="background-color: #f9f9f9"
             >すべて<v-badge
-              v-if="tag_all_list && tag_all_list.length > 0"
+              v-if="listTag && listTag.length > 0"
               inline
-              :content="tag_all_list.length"
-            ></v-badge
-          ></v-tab>
-          <v-tab
-            class="rounded-t-xl white--text"
-            style="background-color: #ff7d7d"
-            >営業連絡<v-badge
-              v-if="tag_1_list && tag_1_list.length > 0"
-              inline
-              :content="tag_1_list.length"
+              :content="listTag.length"
             ></v-badge
           ></v-tab>
           <v-tab
             class="rounded-t-xl white--text"
             style="background-color: #ffc421"
-            >注文<v-badge
-              v-if="tag_2_list && tag_2_list.length > 0"
+            >営業連絡<v-badge
+              v-if="listTag1 && listTag1.length > 0"
               inline
-              :content="tag_2_list.length"
+              :content="listTag1.length"
+            ></v-badge
+          ></v-tab>
+          <v-tab
+            class="rounded-t-xl white--text"
+            style="background-color: #ff7d7d"
+            >注文<v-badge
+              v-if="listTag2 && listTag2.length > 0"
+              inline
+              :content="listTag2.length"
             ></v-badge
           ></v-tab>
           <v-tab-item style="background-color: #f9f9f9">
             <v-sheet block height="5" color="#f9f9f9" class="mr-1"> </v-sheet>
-            <div v-for="item in tag_all_list" :key="item.user">
+            <div v-for="item in listTag" :key="item.phoneTalkLogId">
               <v-card elevation="2" class="ma-1 pa-1">
-                <div v-if="item.user === 'operator_user'">
+                <div v-if="item.speakerNumber !== phoneLog.customerPhoneNumber">
                   <MemoList
-                    :user="phone_log.operator_user"
+                    :user="getData(item.user, '[0]', {})"
                     :chat="item"
-                    :meta="item.meta"
+                    :meta="item.vttMeta"
                   />
                 </div>
-                <div v-if="item.user === 'customer_user'">
+                <div v-else>
                   <MemoList
-                    :user="phone_log.customer_user"
+                    :user="getData(item.address, '[0]', {})"
                     :chat="item"
-                    :meta="item.meta"
-                  />
-                </div>
-              </v-card>
-            </div>
-          </v-tab-item>
-          <v-tab-item>
-            <v-sheet block height="5" color="#ff7d7d" class="mr-1"> </v-sheet>
-            <div v-for="item in tag_1_list" :key="item.user">
-              <v-card elevation="2" class="ma-1 pa-1">
-                <div v-if="item.user === 'operator_user'">
-                  <MemoList
-                    :user="phone_log.operator_user"
-                    :chat="item"
-                    :meta="item.meta"
-                  />
-                </div>
-                <div v-if="item.user === 'customer_user'">
-                  <MemoList
-                    :user="phone_log.customer_user"
-                    :chat="item"
-                    :meta="item.meta"
+                    :meta="item.vttMeta"
                   />
                 </div>
               </v-card>
@@ -158,20 +141,41 @@
           </v-tab-item>
           <v-tab-item>
             <v-sheet block height="5" color="#ffc421" class="mr-1"> </v-sheet>
-            <div v-for="item in tag_2_list" :key="item.user">
+            <div v-for="item in listTag1" :key="item.phoneTalkLogId">
               <v-card elevation="2" class="ma-1 pa-1">
-                <div v-if="item.user === 'operator_user'">
+                <div v-if="item.speakerNumber !== phoneLog.customerPhoneNumber">
                   <MemoList
-                    :user="phone_log.operator_user"
+                    :user="getData(item.user, '[0]', {})"
                     :chat="item"
-                    :meta="item.meta"
+                    :meta="item.vttMeta"
                   />
                 </div>
-                <div v-if="item.user === 'customer_user'">
+                <div v-else>
                   <MemoList
-                    :user="phone_log.customer_user"
+                    :user="getData(item.address, '[0]', {})"
                     :chat="item"
-                    :meta="item.meta"
+                    :meta="item.vttMeta"
+                  />
+                </div>
+              </v-card>
+            </div>
+          </v-tab-item>
+          <v-tab-item>
+            <v-sheet block height="5" color="#ff7d7d" class="mr-1"> </v-sheet>
+            <div v-for="item in listTag2" :key="item.phoneTalkLogId">
+              <v-card elevation="2" class="ma-1 pa-1">
+                <div v-if="item.speakerNumber !== phoneLog.customerPhoneNumber">
+                  <MemoList
+                    :user="getData(item.user, '[0]', {})"
+                    :chat="item"
+                    :meta="item.vttMeta"
+                  />
+                </div>
+                <div v-else>
+                  <MemoList
+                    :user="getData(item.address, '[0]', {})"
+                    :chat="item"
+                    :meta="item.vttMeta"
                   />
                 </div>
               </v-card>
@@ -184,9 +188,14 @@
 </template>
 
 <script>
+import { isEmpty, get } from 'lodash';
+
 import ChatBoxRight from '@/components/ChatBoxRight.vue';
 import ChatBoxLeft from '@/components/ChatBoxLeft.vue';
 import MemoList from '@/components/MemoList.vue';
+import Loading from '@/components/Loading.vue';
+import phoneLogsService from '@/service/PhoneLogsService';
+import { VUE_APP_URL_RESOURCE } from '@/shared/config/setting';
 
 export default {
   name: 'PhoneLogPage',
@@ -195,34 +204,81 @@ export default {
     ChatBoxRight,
     ChatBoxLeft,
     MemoList,
+    Loading,
   },
   data() {
     return {
-      date: null,
-      phone_log: null,
-      tag_1_list: [],
-      tag_2_list: [],
-      tag_all_list: [],
+      loading: false,
+      tab: 0,
+      phoneLog: {},
     };
   },
-  created() {
-    this.date = this.$route.query.date;
-    fetch(`/test_data/phone-log_${this.date}.json`)
-      .then((res) => {
-        return res.json();
-      })
-      .then((data) => {
-        [this.phone_log] = data;
-        this.tag_all_list = this.phone_log.vtt.filter((item) => {
-          return item.meta.includes(0) || item.meta.includes(1);
-        });
-        this.tag_1_list = this.phone_log.vtt.filter((item) => {
-          return item.meta.includes(0);
-        });
-        this.tag_2_list = this.phone_log.vtt.filter((item) => {
-          return item.meta.includes(1);
-        });
+
+  computed: {
+    listTag() {
+      return this.phoneLog.phoneTalkLogs?.filter(
+        (item) => !isEmpty(item.vttMeta)
+      );
+    },
+
+    listTag1() {
+      return this.phoneLog.phoneTalkLogs?.filter((item) => item.vttMeta?.tag1);
+    },
+
+    listTag2() {
+      return this.phoneLog.phoneTalkLogs?.filter((item) => item.vttMeta?.tag2);
+    },
+
+    phoneToRecordURL() {
+      const [, ...arrLink] = get(this.phoneLog, 'wavFileFromPath', '').split(
+        '/'
+      );
+      return `${VUE_APP_URL_RESOURCE}/${arrLink.join('/')}`;
+    },
+
+    phoneFromRecordURL() {
+      const [, ...arrLink] = get(this.phoneLog, 'wavFileToPath', '').split('/');
+      return `${VUE_APP_URL_RESOURCE}/${arrLink.join('/')}`;
+    },
+  },
+  async created() {
+    const { id } = this.$route.params;
+    try {
+      this.loading = true;
+      this.phoneLog = await phoneLogsService.getPhoneLogDetail(id);
+    } finally {
+      this.loading = false;
+    }
+  },
+
+  methods: {
+    getData(object, key, valueDefault = '') {
+      return get(object, key, valueDefault);
+    },
+
+    updateMemo() {
+      phoneLogsService.updateMemo(this.phoneLog.phoneLogId, {
+        memo: this.phoneLog.memo,
       });
+    },
+
+    updateTag($event, index) {
+      this.phoneLog.phoneTalkLogs[index].vttMeta = $event;
+      // TODO: call API update tag
+      // const { phoneTalkLogId } = this.phoneLog.phoneTalkLogs[index];
+      // phoneLogsService.updateTagPhoneTalk({ id: phoneTalkLogId, meta: $event });
+    },
   },
 };
 </script>
+
+<style scoped lang="scss">
+.convention-container {
+  display: flex;
+  flex-direction: column;
+  height: calc(100% - 106px);
+  .convention-list {
+    overflow: scroll;
+  }
+}
+</style>
