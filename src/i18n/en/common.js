@@ -29,4 +29,11 @@ export default {
     ok: 'Ok',
     cancel: 'Cancel',
   },
+  modal: {
+    cancel: 'Cancel',
+    save: 'Save',
+    update: 'Update',
+    createSuccess: 'Create success!',
+    updateSuccess: 'Update success!',
+  },
 };
