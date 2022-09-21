@@ -11,7 +11,7 @@
           </v-btn>
 
           <v-btn
-            v-if="callType === CALL_TYPE.ONHOLD_INBOUND"
+            v-if="callType === INCOMING_CALL_TYPE.ONHOLD_INBOUND"
             color="primary"
             @click="handleTransfer"
           >
@@ -31,13 +31,16 @@
 
 <script>
 import { mapActions, mapMutations, mapState, mapGetters } from 'vuex';
-import { CALL_TYPE, OUTGOING_CALL_TYPE } from '@/shared/constant/common';
+import {
+  INCOMING_CALL_TYPE,
+  OUTGOING_CALL_TYPE,
+} from '@/shared/constant/common';
 
 export default {
   name: 'CallTypeModal',
 
   data() {
-    return { CALL_TYPE };
+    return { INCOMING_CALL_TYPE };
   },
 
   computed: {
@@ -64,7 +67,7 @@ export default {
       }
 
       if (this.connection?.direction === 'INCOMING') {
-        if (this.callType === CALL_TYPE.ONHOLD_INBOUND) {
+        if (this.callType === INCOMING_CALL_TYPE.ONHOLD_INBOUND) {
           return this.$t('callTypeModal.title.transferCall');
         }
 
@@ -94,7 +97,7 @@ export default {
     handleAccept() {
       this.connection?.accept();
 
-      if (this.callType === CALL_TYPE.OUTBOUND_CALL) {
+      if (this.callType === INCOMING_CALL_TYPE.SEND_OUTBOUND_CALL) {
         this.$router.push({ name: 'PhoneCallRoute' });
         this.setIsShowCallTypeModal(false);
       }

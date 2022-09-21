@@ -182,7 +182,7 @@ export default {
 
     getDataAddressByKey(address, key) {
       if (!address) return '';
-      return address[0][key] ?? '';
+      return address[0]?.[key] ?? '';
     },
 
     async getUserList() {

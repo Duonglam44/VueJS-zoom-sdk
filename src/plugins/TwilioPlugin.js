@@ -1,6 +1,7 @@
 import TwilioAPI from '@/service/TwilioService';
 import store from '@/store';
 import { Device } from '@twilio/voice-sdk';
+import { INCOMING_CALL_TYPE } from '@/shared/constant/common';
 
 const showNotification = (from) => {
   window.electron.notification.incomingCall({
@@ -9,6 +10,34 @@ const showNotification = (from) => {
 };
 
 const onIncoming = (connection) => {
+  const send_type = connection.customParameters.get('send_type');
+  const address = connection.customParameters.get('address');
+  const onhold_sid = connection.customParameters.get('onhold_sid');
+  const { userId } = store.state.auth.user || {};
+
+  const handleCallConnection = () => {
+    showNotification(connection.parameters.From);
+    store.commit('twilio/setConnection', connection);
+    store.commit('twilio/setIsShowCallTypeModal', true);
+  };
+
+  if (send_type) {
+    if (send_type === INCOMING_CALL_TYPE.ONHOLD_INBOUND && onhold_sid) {
+      // Implement call hold
+    } else if (send_type === INCOMING_CALL_TYPE.SEND_OUTBOUND_CALL) {
+      connection.ignore();
+      return;
+    } else {
+      handleCallConnection();
+    }
+  }
+
+  if (address === 'all' || address === userId) {
+    handleCallConnection();
+  } else {
+    connection.ignore();
+  }
+
   connection.on('cancel', () => {
     window.electron.notification.cancelCall();
     store.dispatch('twilio/disconnectCall');
@@ -18,10 +47,6 @@ const onIncoming = (connection) => {
     window.electron.notification.cancelCall();
     store.dispatch('twilio/disconnectCall');
   });
-
-  showNotification(connection.parameters.From);
-  store.commit('twilio/setConnection', connection);
-  store.commit('twilio/setIsShowCallTypeModal', true);
 };
 
 const onRegistered = () => {};

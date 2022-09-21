@@ -113,9 +113,9 @@ export default {
       if (!this.phoneNumber || this.isInCalling) return;
 
       const params = {
-        From: this.currentUser.hasTennant.phoneNumber,
+        From: this.currentUser.phoneNumber,
         To: this.phoneNumber,
-        call_type: OUTGOING_CALL_TYPE.OUT_BOUND,
+        call_type: OUTGOING_CALL_TYPE.SEND_OUTBOUND_CALL,
       };
 
       this.handleCall(params);

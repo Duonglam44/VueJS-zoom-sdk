@@ -24,7 +24,7 @@ export default {
       const connection = await this.device?.connect({ params });
       connection
         .on('accept', () => {
-          if (params.call_type === OUTGOING_CALL_TYPE.OUT_BOUND) {
+          if (params.call_type === OUTGOING_CALL_TYPE.SEND_OUTBOUND_CALL) {
             this.setIsShowCallTypeModal(false);
             this.$router.push({ name: 'PhoneCallRoute' });
 
