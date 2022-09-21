@@ -47,7 +47,7 @@ export default {
       const params = {
         From: this.user.hasTennant.phoneNumber,
         To: this.address.phoneNumber,
-        call_type: OUTGOING_CALL_TYPE.OUT_BOUND,
+        call_type: OUTGOING_CALL_TYPE.SEND_OUTBOUND_CALL,
       };
 
       this.handleCall(params);

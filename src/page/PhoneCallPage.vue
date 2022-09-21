@@ -193,7 +193,7 @@ import { isEmpty } from 'lodash';
 import recordMixins from '@/mixins/record';
 import recognizerMixins from '@/mixins/recognizer';
 
-import { CALL_TYPE } from '@/shared/constant/common';
+import { INCOMING_CALL_TYPE } from '@/shared/constant/common';
 import Loading from '@/components/Loading.vue';
 import ChatBoxRight from '@/components/ChatBoxRight.vue';
 import ChatBoxLeft from '@/components/ChatBoxLeft.vue';
@@ -294,7 +294,7 @@ export default {
   },
 
   created() {
-    if (this.callType !== CALL_TYPE.OUTBOUND_CALL) {
+    if (this.callType !== INCOMING_CALL_TYPE.SEND_OUTBOUND_CALL) {
       this.$router.push({ name: 'PhoneLogListRoute' });
 
       return;

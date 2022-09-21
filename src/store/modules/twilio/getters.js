@@ -1,4 +1,4 @@
-import { CALL_TYPE } from '@/shared/constant/common';
+import { INCOMING_CALL_TYPE } from '@/shared/constant/common';
 
 const getters = {
   callType(state) {
@@ -6,11 +6,11 @@ const getters = {
 
     const sendType = state.connection.customParameters?.get('send_type');
 
-    if (Object.values(CALL_TYPE).includes(sendType)) {
+    if (Object.values(INCOMING_CALL_TYPE).includes(sendType)) {
       return sendType;
     }
 
-    return CALL_TYPE.OUTBOUND_CALL;
+    return INCOMING_CALL_TYPE.SEND_OUTBOUND_CALL;
   },
   isInCalling(state) {
     if (
