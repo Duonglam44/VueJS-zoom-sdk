@@ -14,4 +14,5 @@ export default {
   noMore: 'No more',
   noResults: 'No results',
   month: '{month} Month',
+  searchResults: 'Search results',
 };

@@ -9,7 +9,7 @@
           <div v-for="(item, index) in historys" :key="item.phoneLogId">
             <v-list-item @click.native="$emit('item-clicked', item.phoneLogId)">
               <div>
-                <template v-if="isToday && item.onHold">
+                <template v-if="allowShowBtnOnhold && item.onHold">
                   <v-list-item-action>
                     <v-menu
                       bottom
@@ -174,7 +174,7 @@ export default {
   },
 
   props: {
-    isToday: {
+    allowShowBtnOnhold: {
       type: Boolean,
       default: false,
     },

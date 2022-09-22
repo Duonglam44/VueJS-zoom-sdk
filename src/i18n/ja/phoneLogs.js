@@ -12,4 +12,5 @@ export default {
   noMore: 'もういや',
   noResults: '結果がありません',
   month: '{month} 月',
+  searchResults: '検索結果',
 };
