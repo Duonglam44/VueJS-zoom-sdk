@@ -22,13 +22,13 @@ const routes = [
         path: '/phone_call',
         name: 'PhoneCallRoute',
         component: PhoneCallPage,
-        meta: { index: 1, requiresAuth: true },
+        meta: { index: 2, requiresAuth: true },
       },
       {
-        path: '/phone_log',
+        path: '/phone_log/:id',
         name: 'PhoneLogRoute',
         component: PhoneLogPage,
-        meta: { index: 2, requiresAuth: true },
+        meta: { index: 3, requiresAuth: true },
       },
       {
         path: '/profile',

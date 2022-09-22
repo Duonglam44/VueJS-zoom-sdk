@@ -70,6 +70,7 @@
 <script>
 import { mapState } from 'vuex';
 import { format } from 'date-fns';
+
 import { ApiStatus } from '@/store/constants';
 import PhoneLogList from '@/components/PhoneLogList.vue';
 import phoneLogsService from '@/service/PhoneLogsService';
@@ -148,9 +149,8 @@ export default {
       this.loadTodayPhoneLogs();
     },
 
-    onItemClick() {
-      // fixme: dummy data. replace with /phone_log?id=xxx
-      this.$router.push('/phone_log?date=2022-03-04');
+    onItemClick(id) {
+      this.$router.push(`/phone_log/${id}`);
     },
 
     async loadTodayPhoneLogs(page = 1) {

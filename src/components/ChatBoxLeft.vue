@@ -3,7 +3,7 @@
     <div class="face_icon">
       <v-avatar color="blue">
         <span class="white--text">
-          {{ user.short_name || user.name }}
+          {{ user.shortName || user.name | avatar }}
         </span>
       </v-avatar>
     </div>
@@ -22,23 +22,28 @@
         </v-btn>
       </v-btn-toggle>
       <p class="says">
-        {{ chat.text }}
+        {{ chat.text || chat.vtt }}
       </p>
     </div>
     <div class="d-flex flex-column mt-10">
-      <v-icon v-if="tag && tag.includes(0)" color="#ffc421">mdi-label</v-icon>
-      <v-icon v-if="tag && tag.includes(1)" color="#ff7d7d">mdi-label</v-icon>
+      <v-icon v-if="tag && tag.tag1" color="#ffc421">mdi-label</v-icon>
+      <v-icon v-if="tag && tag.tag2" color="#ff7d7d">mdi-label</v-icon>
     </div>
   </div>
 </template>
 <script>
+import systemMixins from '@/mixins/system';
+
 export default {
   name: 'ChatBoxLeft',
+
+  mixins: [systemMixins],
+
   props: {
     tag: {
-      type: Array,
+      type: Object,
       default() {
-        return [];
+        return {};
       },
     },
     user: {
@@ -62,15 +67,20 @@ export default {
   computed: {
     inputedValue: {
       get() {
-        return this.tag;
+        const mapData = { tag1: 0, tag2: 1 };
+        return Object.keys(this.tag || {}).map((item) => mapData[item]);
       },
       set(newValue) {
-        this.$emit('update', newValue);
+        const mapData = { 0: 'tag1', 1: 'tag2' };
+        const meta = newValue.reduce(
+          (a, v) => ({ ...a, [mapData[v]]: true }),
+          {}
+        );
+
+        this.$emit('update', meta);
       },
     },
   },
-  mounted() {},
-  methods: {},
 };
 </script>
 <style scoped>

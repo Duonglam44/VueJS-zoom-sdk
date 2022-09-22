@@ -243,11 +243,11 @@ export default {
     },
 
     listTag1() {
-      return this.speechResults.filter((item) => item.meta?.includes?.(0));
+      return this.speechResults.filter((item) => item.meta?.tag1);
     },
 
     listTag2() {
-      return this.speechResults.filter((item) => item.meta?.includes?.(1));
+      return this.speechResults.filter((item) => item.meta?.tag2);
     },
 
     titleConnection() {
