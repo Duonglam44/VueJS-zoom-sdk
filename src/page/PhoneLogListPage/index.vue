@@ -41,10 +41,10 @@
       :historys="todayPhoneLogs.data || []"
       :total="todayPhoneLogs.total"
       :per-page="todayPhoneLogs.perPage"
-      :page-selected="currentPageThisMonth"
+      :page-selected="currentPageToday"
       @page-changed="reloadTodayList"
       @item-clicked="onItemClick"
-      @reload-data="reloadTodayList(currentPageToday)"
+      @reload-data="reloadData"
     />
 
     <PhoneLogList
@@ -54,10 +54,10 @@
       :historys="phoneLogs.data || []"
       :total="phoneLogs.total"
       :per-page="phoneLogs.perPage"
-      :page-selected="currentPageToday"
+      :page-selected="currentPageThisMonth"
       @page-changed="reloadMonthList"
       @item-clicked="onItemClick"
-      @reload-data="reloadMonthList(currentPageThisMonth)"
+      @reload-data="reloadData"
     />
     <CallAwayDialog
       v-if="dialogCall"
@@ -133,6 +133,11 @@ export default {
   },
 
   methods: {
+    reloadData() {
+      this.reloadTodayList(this.currentPageToday);
+      this.reloadMonthList(this.currentPageThisMonth);
+    },
+
     reloadMonthList(page) {
       this.currentPageThisMonth = page;
       this.loadPhoneLogs(page, this.time);

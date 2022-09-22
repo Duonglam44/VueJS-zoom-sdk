@@ -80,6 +80,9 @@ axiosInstance.interceptors.request.use(
     if (config.params) {
       config.params = decamelizeKeys(config.params);
     }
+    if (config.data) {
+      config.data = decamelizeKeys(config.data);
+    }
     if (config.url === 'auth/login') return config;
     if (token && !config.headers.Authorization) {
       config.headers.Authorization = `Bearer ${token}`;
