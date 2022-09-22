@@ -14,10 +14,13 @@
           v-model="search"
           dense
           solo
-          prepend-inner-icon="mdi-magnify"
           :placeholder="$t('phoneLogs.searchPlaceholder')"
           class="my-auto pa-1"
-        ></v-text-field>
+        >
+          <v-icon slot="append" @click="searchPhoneLogsByText(1)">
+            mdi-magnify
+          </v-icon>
+        </v-text-field>
       </v-col>
 
       <v-col cols="2">
@@ -33,32 +36,47 @@
       </v-col>
     </v-row>
 
-    <PhoneLogList
-      :is-today="true"
-      :status="apiStatusTodayList"
-      :phone-logs="todayPhoneLogs"
-      :title="$t('phoneLogs.daySection')"
-      :historys="todayPhoneLogs.data || []"
-      :total="todayPhoneLogs.total"
-      :per-page="todayPhoneLogs.perPage"
-      :page-selected="currentPageToday"
-      @page-changed="reloadTodayList"
-      @item-clicked="onItemClick"
-      @reload-data="reloadData"
-    />
+    <template v-if="isLstSearchResult">
+      <PhoneLogList
+        :allow-show-btn-onhold="true"
+        :status="apiStatus"
+        :title="$t('phoneLogs.searchResults')"
+        :historys="phoneLogs.data || []"
+        :total="phoneLogs.total"
+        :per-page="phoneLogs.perPage"
+        :page-selected="currentPageSearch"
+        @page-changed="searchPhoneLogsByText"
+        @item-clicked="onItemClick"
+        @reload-data="reloadData"
+      />
+    </template>
 
-    <PhoneLogList
-      :status="apiStatus"
-      :phone-logs="phoneLogs"
-      :title="titleList"
-      :historys="phoneLogs.data || []"
-      :total="phoneLogs.total"
-      :per-page="phoneLogs.perPage"
-      :page-selected="currentPageThisMonth"
-      @page-changed="reloadMonthList"
-      @item-clicked="onItemClick"
-      @reload-data="reloadData"
-    />
+    <template v-else>
+      <PhoneLogList
+        :allow-show-btn-onhold="true"
+        :status="apiStatusTodayList"
+        :title="$t('phoneLogs.daySection')"
+        :historys="todayPhoneLogs.data || []"
+        :total="todayPhoneLogs.total"
+        :per-page="todayPhoneLogs.perPage"
+        :page-selected="currentPageToday"
+        @page-changed="reloadTodayList"
+        @item-clicked="onItemClick"
+        @reload-data="reloadData"
+      />
+
+      <PhoneLogList
+        :status="apiStatus"
+        :title="titleList"
+        :historys="phoneLogs.data || []"
+        :total="phoneLogs.total"
+        :per-page="phoneLogs.perPage"
+        :page-selected="currentPageThisMonth"
+        @page-changed="reloadMonthList"
+        @item-clicked="onItemClick"
+        @reload-data="reloadData"
+      />
+    </template>
     <CallAwayDialog
       v-if="dialogCall"
       :open-dialog="dialogCall"
@@ -73,11 +91,11 @@ import { format } from 'date-fns';
 
 import { ApiStatus } from '@/store/constants';
 import PhoneLogList from '@/components/PhoneLogList.vue';
-import phoneLogsService from '@/service/PhoneLogsService';
 import Datepicker, {
   FORMAT_DATE_TYPE,
   DATEPICKER_TYPE,
 } from '@/components/commons/Datepicker.vue';
+import phoneLogsService from '@/service/PhoneLogsService';
 import CallAwayDialog from './components/CallAwayDialog.vue';
 
 export default {
@@ -102,6 +120,8 @@ export default {
       currentPageToday: 1,
       formatDateType: FORMAT_DATE_TYPE,
       datepickerType: DATEPICKER_TYPE,
+      currentPageSearch: 1,
+      isLstSearchResult: false,
     };
   },
 
@@ -126,6 +146,14 @@ export default {
       },
       immediate: true,
     },
+
+    search: {
+      handler(newValue) {
+        if (newValue.length) return;
+        this.isLstSearchResult = false;
+      },
+      immediate: true,
+    },
   },
 
   mounted() {
@@ -135,6 +163,10 @@ export default {
 
   methods: {
     reloadData() {
+      if (this.search.length) {
+        this.searchPhoneLogsByText(this.currentPageSearch);
+        return;
+      }
       this.reloadTodayList(this.currentPageToday);
       this.reloadMonthList(this.currentPageThisMonth);
     },
@@ -165,7 +197,13 @@ export default {
       }
     },
 
-    async loadPhoneLogs(page = 1, time = this.time) {
+    async loadPhoneLogs(page = 1, time = this.time, text = '') {
+      if (text.length) {
+        this.isLstSearchResult = true;
+      } else {
+        this.search = '';
+        this.isLstSearchResult = false;
+      }
       const [year, month] = time.split('-');
       this.apiStatus = ApiStatus.LOADING;
       try {
@@ -173,11 +211,17 @@ export default {
           page,
           year,
           month,
+          text,
         });
         this.apiStatus = ApiStatus.SUCCESS;
       } catch (error) {
         this.apiStatus = ApiStatus.FAILURE;
       }
+    },
+
+    async searchPhoneLogsByText(page = 1) {
+      this.currentPageSearch = page;
+      this.loadPhoneLogs(page, '', this.search);
     },
   },
 };
