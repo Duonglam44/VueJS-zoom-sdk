@@ -25,6 +25,7 @@ export default {
       immediate: true,
     },
   },
+
   mounted() {
     window.electron.ipcRenderer.on('navigate', (routePath) => {
       this.$router.push({ name: routePath });

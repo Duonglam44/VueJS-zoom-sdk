@@ -17,23 +17,24 @@ export default {
       type: Number,
       default: 1,
     },
-  },
-
-  data() {
-    return {
-      page: 1,
-    };
+    pageSelected: {
+      type: Number,
+      default: 1,
+    },
   },
 
   computed: {
     totalPage() {
       return Math.ceil(this.total / this.perPage);
     },
-  },
 
-  watch: {
-    page(p) {
-      this.$emit('page-changed', p);
+    page: {
+      get() {
+        return this.pageSelected;
+      },
+      set(newPage) {
+        this.$emit('page-changed', newPage);
+      },
     },
   },
 };

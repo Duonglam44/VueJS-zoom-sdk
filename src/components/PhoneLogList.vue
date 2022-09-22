@@ -76,12 +76,45 @@
                 </v-avatar>
               </v-list-item-avatar>
 
-              <v-list-item-content class="d-flex flex-row">
-                <v-list-item-title>{{
-                  getDataAddressByKey(item.address, 'name')
-                }}</v-list-item-title>
+              <v-list-item-content class="ml-2">
+                <v-list-item-title>
+                  <span>{{ getDataAddressByKey(item.address, 'name') }} </span>
+                  <span>
+                    <v-list-item-action>
+                      <v-menu
+                        bottom
+                        origin="center center"
+                        transition="scale-transition"
+                      >
+                        <template #activator="{ on, attrs }">
+                          <v-btn
+                            v-if="!item.address || !item.address.name"
+                            color="success"
+                            class="ml-2"
+                            small
+                            v-bind="attrs"
+                            v-on="on"
+                            @click.prevent="showPopupAddress('add', item)"
+                          >
+                            <v-icon small> mdi-plus </v-icon>
+                          </v-btn>
+
+                          <v-btn
+                            v-if="item.address && item.address.name"
+                            class="ml-2"
+                            small
+                            @click.prevent="showPopupAddress('edit', item)"
+                          >
+                            <v-icon small> mdi-pencil </v-icon>
+                          </v-btn>
+                        </template>
+                      </v-menu>
+                    </v-list-item-action>
+                  </span>
+                </v-list-item-title>
+
                 <v-list-item-subtitle>{{
-                  getDataAddressByKey(item.address, 'numberPhone')
+                  item.customerPhoneNumberLocal
                 }}</v-list-item-subtitle>
               </v-list-item-content>
 
@@ -111,9 +144,17 @@
       <Pagination
         :total="total"
         :per-page="perPage"
+        :page-selected="pageSelected"
         @page-changed="changePage($event)"
       />
     </div>
+    <AddressDialog
+      v-if="isShowModalAdress"
+      :open-dialog="isShowModalAdress"
+      :phone-log="phoneLog"
+      @toggle-dialog="isShowModalAdress = $event"
+      @reload="$emit('reload-data')"
+    />
   </v-card>
 </template>
 <script>
@@ -121,11 +162,13 @@ import { mapActions, mapState } from 'vuex';
 import { ApiStatus } from '@/store/constants';
 import ListContainer from './commons/ListContainer.vue';
 import Pagination from './commons/Pagination.vue';
+import AddressDialog from './AddressDialog.vue';
 
 export default {
   components: {
     ListContainer,
     Pagination,
+    AddressDialog,
   },
 
   props: {
@@ -159,11 +202,19 @@ export default {
       type: String,
       required: true,
     },
+
+    pageSelected: {
+      type: Number,
+      default: 1,
+    },
   },
 
   data() {
     return {
       loading: false,
+      isShowModalAdress: false,
+      actionAddress: '',
+      phoneLog: null,
     };
   },
 
@@ -180,9 +231,15 @@ export default {
       this.$emit('page-changed', page);
     },
 
+    showPopupAddress(type, data) {
+      this.phoneLog = data;
+      this.isShowModalAdress = true;
+      this.actionAddress = type;
+    },
+
     getDataAddressByKey(address, key) {
-      if (!address) return '';
-      return address[0]?.[key] ?? '';
+      if (!address) return 'null';
+      return address[key] ?? '';
     },
 
     async getUserList() {

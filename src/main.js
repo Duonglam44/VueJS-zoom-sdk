@@ -5,6 +5,7 @@ import {
   extend,
   localize,
 } from 'vee-validate';
+import Toasted from 'vue-toasted';
 import { messages } from 'vee-validate/dist/locale/ja.json';
 import { email, min, required } from 'vee-validate/dist/rules';
 import InfiniteLoading from 'vue-infinite-loading';
@@ -27,6 +28,9 @@ Vue.component('ValidationProvider', ValidationProvider);
 Vue.use(TwilioPlugin);
 Vue.use(InfiniteLoading);
 
+Vue.use(Toasted, {
+  duration: 3000,
+});
 Vue.config.productionTip = false;
 new Vue({
   router,
