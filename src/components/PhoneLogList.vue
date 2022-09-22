@@ -94,7 +94,7 @@
                             small
                             v-bind="attrs"
                             v-on="on"
-                            @click.prevent="showPopupAddress('add', item)"
+                            @click.prevent="showPopupAddress(item)"
                           >
                             <v-icon small> mdi-plus </v-icon>
                           </v-btn>
@@ -103,7 +103,9 @@
                             v-if="item.address && item.address.name"
                             class="ml-2"
                             small
-                            @click.prevent="showPopupAddress('edit', item)"
+                            v-bind="attrs"
+                            v-on="on"
+                            @click.prevent="showPopupAddress(item)"
                           >
                             <v-icon small> mdi-pencil </v-icon>
                           </v-btn>
@@ -213,7 +215,6 @@ export default {
     return {
       loading: false,
       isShowModalAdress: false,
-      actionAddress: '',
       phoneLog: null,
     };
   },
@@ -231,10 +232,9 @@ export default {
       this.$emit('page-changed', page);
     },
 
-    showPopupAddress(type, data) {
+    showPopupAddress(data) {
       this.phoneLog = data;
       this.isShowModalAdress = true;
-      this.actionAddress = type;
     },
 
     getDataAddressByKey(address, key) {

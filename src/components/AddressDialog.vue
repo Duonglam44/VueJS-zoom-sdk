@@ -5,7 +5,13 @@
         <form @submit.prevent="handleSubmit(handleSave)">
           <v-card>
             <v-card-title class="text-h5 grey lighten-2">
-              {{ $t('addressModal.phoneBookCreate') }}
+              {{
+                $t(
+                  isActionAdd
+                    ? 'addressModal.phoneBookCreate'
+                    : 'addressModal.phoneBookEditing'
+                )
+              }}
             </v-card-title>
 
             <v-card-text class="pt-3">
@@ -52,7 +58,7 @@
                 :disabled="status === apiStatus.LOADING"
                 :loading="status === apiStatus.LOADING"
               >
-                {{ $t('modal.save') }}
+                {{ $t(isActionAdd ? 'modal.save' : 'modal.update') }}
               </v-btn>
             </v-card-actions>
           </v-card>
@@ -79,15 +85,11 @@ export default {
         return {};
       },
     },
-    type: {
-      type: String,
-      default: 'add',
-    },
   },
 
   data() {
     return {
-      name: '',
+      name: this.phoneLog?.address?.name || '',
       apiStatus: ApiStatus,
       status: ApiStatus.IDLE,
     };
@@ -103,6 +105,10 @@ export default {
       },
     },
 
+    isActionAdd() {
+      return !this.phoneLog.address;
+    },
+
     phoneAddress() {
       return this.phoneLog.customerPhoneNumberLocal;
     },
@@ -115,12 +121,20 @@ export default {
       if (this.status === ApiStatus.LOADING) return;
       this.status = ApiStatus.LOADING;
       try {
-        const body = {
-          phone_number: this.phoneAddress,
-          name: this.name,
-        };
-        await addressService.create(body);
-        this.$toasted.success(this.$t('modal.createSuccess'));
+        if (this.isActionAdd) {
+          const body = {
+            phoneNumber: this.phoneAddress,
+            name: this.name,
+          };
+          await addressService.create(body);
+          this.$toasted.success(this.$t('modal.createSuccess'));
+        } else {
+          await addressService.update(this.phoneAddress, {
+            userPhoneNumberUpdate: this.phoneAddress,
+            name: this.name,
+          });
+          this.$toasted.success(this.$t('modal.updateSuccess'));
+        }
         this.$emit('reload');
       } catch (error) {
         this.$toasted.error(this.$t('error.undefined'));
