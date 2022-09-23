@@ -3,10 +3,10 @@ import {
   protocol,
   BrowserWindow,
   ipcMain,
-  Notification,
   Tray,
   nativeImage,
   Menu,
+  screen,
 } from 'electron';
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib';
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer';
@@ -18,7 +18,7 @@ app.commandLine.appendSwitch('ignore-certificate-errors');
 const isDevelopment = process.env.NODE_ENV !== 'production';
 let win;
 let tray;
-let notification;
+let workerWindow;
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
   { scheme: 'app', privileges: { secure: true, standard: true } },
@@ -78,6 +78,36 @@ async function createWindow() {
       win.hide();
     }
   });
+
+  const display = screen.getPrimaryDisplay();
+  const { width } = display.bounds;
+
+  workerWindow = new BrowserWindow({
+    width: 320,
+    height: 220,
+    x: width,
+    y: 0,
+    resizable: false,
+    titleBarStyle: 'hiddenInset',
+    titleBarOverlay: true,
+    webPreferences: {
+      nodeIntegration: true,
+      contextIsolation: false,
+    },
+  });
+
+  workerWindow.setWindowButtonVisibility(false);
+  workerWindow.hide();
+  if (process.env.WEBPACK_DEV_SERVER_URL) {
+    await workerWindow.loadURL(`file://${__dirname}/../public/worker.html`);
+  } else {
+    createProtocol('app');
+    // Load the worker.html when not in development
+    workerWindow.loadURL('app://./worker.html');
+  }
+  workerWindow.on('closed', () => {
+    workerWindow = undefined;
+  });
 }
 
 app.on('before-quit', () => {
@@ -131,19 +161,24 @@ if (isDevelopment) {
   }
 }
 
-ipcMain.on('incoming-call', () => {
-  notification = new Notification({
-    title: '着信通知',
-  });
+ipcMain.on('incoming-call', (_, { caller }) => {
+  workerWindow.webContents.send('incoming', caller);
+  workerWindow.show();
+  workerWindow.focus();
+});
 
-  notification.show();
-
-  notification.on('click', () => {
-    win.show();
-    win.focus();
-  });
+ipcMain.on('accept', () => {
+  win.webContents.send('answerCall');
+  win.show();
+  win.focus();
+  workerWindow.hide();
 });
 
 ipcMain.on('cancel-call', () => {
-  notification.removeAllListeners();
+  workerWindow.hide();
+});
+
+ipcMain.on('ignore-call', () => {
+  workerWindow.hide();
+  win.webContents.send('ignoreCall');
 });

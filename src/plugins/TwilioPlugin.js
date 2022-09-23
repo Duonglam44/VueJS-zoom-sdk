@@ -18,7 +18,6 @@ const onIncoming = (connection) => {
   const handleCallConnection = () => {
     showNotification(connection.parameters.From);
     store.commit('twilio/setConnection', connection);
-    store.commit('twilio/setIsShowCallTypeModal', true);
   };
 
   if (send_type) {
