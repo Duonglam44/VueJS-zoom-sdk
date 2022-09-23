@@ -5,11 +5,6 @@
 
       <v-card-actions class="d-flex justify-center mb-2">
         <template v-if="status && status !== 'open'">
-          <v-btn color="success" @click="handleAccept">
-            <v-icon right dark> mdi-phone </v-icon>
-            {{ $t('callTypeModal.reply') }}
-          </v-btn>
-
           <v-btn
             v-if="callType === INCOMING_CALL_TYPE.ONHOLD_INBOUND"
             color="primary"
@@ -91,28 +86,15 @@ export default {
   },
 
   methods: {
-    ...mapActions('twilio', ['disconnectCall', 'rejectCall']),
-    ...mapMutations('twilio', ['setIsShowCallTypeModal', 'setConnection']),
-
-    handleAccept() {
-      this.connection?.accept();
-
-      if (this.callType === INCOMING_CALL_TYPE.SEND_OUTBOUND_CALL) {
-        this.$router.push({ name: 'PhoneCallRoute' });
-        this.setIsShowCallTypeModal(false);
-      }
-    },
+    ...mapActions('twilio', ['disconnectCall']),
+    ...mapMutations('twilio', ['setIsShowCallTypeModal']),
 
     handleTransfer() {
       this.setIsShowCallTypeModal(false);
     },
 
     handleCannel() {
-      if (this.status === 'open') {
-        this.disconnectCall();
-      } else {
-        this.rejectCall();
-      }
+      this.disconnectCall();
     },
   },
 };
