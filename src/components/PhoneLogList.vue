@@ -5,8 +5,8 @@
         <v-subheader class="font-weight-bold header-list">{{
           title
         }}</v-subheader>
-        <ListContainer :status="status" :is-data="!!historys.length">
-          <div v-for="(item, index) in historys" :key="item.phoneLogId">
+        <ListContainer :status="status" :is-data="!!historyList.length">
+          <div v-for="(item, index) in historyList" :key="item.phoneLogId">
             <v-list-item @click.native="$emit('item-clicked', item.phoneLogId)">
               <div>
                 <template v-if="allowShowBtnOnhold && item.onHold">
@@ -136,7 +136,7 @@
               </v-list-item-icon>
             </v-list-item>
 
-            <v-divider v-if="index < historys.length - 1" />
+            <v-divider v-if="index < historyList.length - 1" />
           </div>
         </ListContainer>
       </v-list-item-group>
@@ -183,7 +183,7 @@ export default {
       default: ApiStatus.IDLE,
     },
 
-    historys: {
+    historyList: {
       type: Array,
       default() {
         return [];
