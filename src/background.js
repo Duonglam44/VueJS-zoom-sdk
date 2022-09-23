@@ -80,23 +80,30 @@ async function createWindow() {
   });
 
   const display = screen.getPrimaryDisplay();
-  const { width } = display.bounds;
+  const { width } = display.workAreaSize;
 
   workerWindow = new BrowserWindow({
     width: 320,
-    height: 220,
-    x: width,
+    height: 210,
+    x: width - 320,
     y: 0,
+    transparent: true,
+    frame: false,
+    backgroundColor: '#FFF',
     resizable: false,
-    titleBarStyle: 'hiddenInset',
-    titleBarOverlay: true,
+    titleBarStyle: 'hidden',
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false,
     },
   });
 
-  workerWindow.setWindowButtonVisibility(false);
+  if (workerWindow.setWindowButtonVisibility) {
+    workerWindow.setWindowButtonVisibility(false);
+  } else {
+    workerWindow.setMenuBarVisibility(false);
+  }
+
   workerWindow.hide();
   if (process.env.WEBPACK_DEV_SERVER_URL) {
     await workerWindow.loadURL(`file://${__dirname}/../public/worker.html`);
