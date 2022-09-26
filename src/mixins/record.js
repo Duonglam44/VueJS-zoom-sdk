@@ -1,8 +1,9 @@
-import { mapActions, mapState } from 'vuex';
+import { mapActions, mapState, mapGetters } from 'vuex';
 
 import { RecorderAudio } from '@/service/recordAudio';
 import { adjustSpeakerTime } from '@/shared/utils';
 import InitRecordService from '@/service/InitRecordService';
+import TwilioAPI from '@/service/TwilioService';
 
 export default {
   data() {
@@ -16,10 +17,11 @@ export default {
   },
 
   computed: {
-    ...mapState('twilio', ['device', 'connection']),
+    ...mapState('twilio', ['device', 'connection', 'holdingCallSid']),
     ...mapState('auth', {
       currentUser: (state) => state.user,
     }),
+    ...mapGetters('twilio', ['remoteNumber']),
   },
 
   methods: {
@@ -31,10 +33,7 @@ export default {
       try {
         this.isRecording = true;
 
-        this.customerNumber =
-          this.connection?.direction === 'INCOMING'
-            ? this.connection.customParameters.get('From')
-            : this.connection.customParameters.get('To');
+        this.customerNumber = this.remoteNumber;
 
         // get local stream and remote stream
         const localStream = await navigator.mediaDevices.getUserMedia({
@@ -87,8 +86,7 @@ export default {
         });
         this.stopAndClearRecord();
         this.stopAndClearRecognize();
-
-        await this.saveDataPhoneCall({
+        const { detail = {} } = await this.saveDataPhoneCall({
           remoteRecordBlob,
           customerNumber: this.customerNumber,
           localRecordBlob,
@@ -96,8 +94,13 @@ export default {
           time: adjustSpeakerTime({ min: this.min, sec: this.sec }),
         });
 
+        if (this.holdingCallSid) {
+          await TwilioAPI.updateOnHold({ phone_log_id: detail.phoneLogId });
+        }
+
         this.loading = false;
       } catch (error) {
+        console.log('sendRecordRecognizdData -> error', error);
         this.loading = false;
         this.stopAndClearRecognize();
         this.stopAndClearRecord();

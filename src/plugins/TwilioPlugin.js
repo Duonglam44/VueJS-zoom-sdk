@@ -22,12 +22,11 @@ const onIncoming = (connection) => {
 
   if (send_type) {
     if (send_type === INCOMING_CALL_TYPE.ONHOLD_INBOUND && onhold_sid) {
-      // Implement call hold
+      store.commit('twilio/setHoldingCallSid', onhold_sid);
+      handleCallConnection();
     } else if (send_type === INCOMING_CALL_TYPE.SEND_OUTBOUND_CALL) {
       connection.ignore();
       return;
-    } else {
-      handleCallConnection();
     }
   }
 
