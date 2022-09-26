@@ -47,13 +47,9 @@
               </div>
               <div v-else>
                 <ChatBoxLeft
-                  :user="
-                    getData(item.address, '[0]', {
-                      name: phoneLog.customerPhoneNumber,
-                    })
-                  "
+                  :user="getCustomer(item.address, '[0]')"
                   :chat="item"
-                  :tag="item.vttMeta"
+                  :tag="convertToObject(item.vttMeta)"
                   @update="updateTag($event, index)"
                 />
               </div>
@@ -126,14 +122,14 @@
                   <MemoList
                     :user="getData(item.user, '[0]', {})"
                     :chat="item"
-                    :meta="item.vttMeta"
+                    :meta="convertToObject(item.vttMeta)"
                   />
                 </div>
                 <div v-else>
                   <MemoList
-                    :user="getData(item.address, '[0]', {})"
+                    :user="getCustomer(item.address, '[0]')"
                     :chat="item"
-                    :meta="item.vttMeta"
+                    :meta="convertToObject(item.vttMeta)"
                   />
                 </div>
               </v-card>
@@ -147,14 +143,14 @@
                   <MemoList
                     :user="getData(item.user, '[0]', {})"
                     :chat="item"
-                    :meta="item.vttMeta"
+                    :meta="convertToObject(item.vttMeta)"
                   />
                 </div>
                 <div v-else>
                   <MemoList
-                    :user="getData(item.address, '[0]', {})"
+                    :user="getCustomer(item.address, '[0]')"
                     :chat="item"
-                    :meta="item.vttMeta"
+                    :meta="convertToObject(item.vttMeta)"
                   />
                 </div>
               </v-card>
@@ -168,14 +164,14 @@
                   <MemoList
                     :user="getData(item.user, '[0]', {})"
                     :chat="item"
-                    :meta="item.vttMeta"
+                    :meta="convertToObject(item.vttMeta)"
                   />
                 </div>
                 <div v-else>
                   <MemoList
-                    :user="getData(item.address, '[0]', {})"
+                    :user="getCustomer(item.address, '[0]')"
                     :chat="item"
-                    :meta="item.vttMeta"
+                    :meta="convertToObject(item.vttMeta)"
                   />
                 </div>
               </v-card>
@@ -216,17 +212,22 @@ export default {
 
   computed: {
     listTag() {
-      return this.phoneLog.phoneTalkLogs?.filter(
-        (item) => !isEmpty(item.vttMeta)
-      );
+      return this.phoneLog.phoneTalkLogs?.filter((item) => {
+        const converted = this.convertToObject(item.vttMeta);
+        return !isEmpty(item.vttMeta) && (converted?.tag1 || converted?.tag2);
+      });
     },
 
     listTag1() {
-      return this.phoneLog.phoneTalkLogs?.filter((item) => item.vttMeta?.tag1);
+      return this.phoneLog.phoneTalkLogs?.filter(
+        (item) => this.convertToObject(item.vttMeta)?.tag1
+      );
     },
 
     listTag2() {
-      return this.phoneLog.phoneTalkLogs?.filter((item) => item.vttMeta?.tag2);
+      return this.phoneLog.phoneTalkLogs?.filter(
+        (item) => this.convertToObject(item.vttMeta)?.tag2
+      );
     },
 
     phoneToRecordURL() {
@@ -264,9 +265,16 @@ export default {
 
     updateTag($event, index) {
       this.phoneLog.phoneTalkLogs[index].vttMeta = $event;
-      // TODO: call API update tag
-      // const { phoneTalkLogId } = this.phoneLog.phoneTalkLogs[index];
-      // phoneLogsService.updateTagPhoneTalk({ id: phoneTalkLogId, meta: $event });
+      const { phoneTalkLogId } = this.phoneLog.phoneTalkLogs[index];
+      phoneLogsService.updateTagPhoneTalk({ id: phoneTalkLogId, meta: $event });
+    },
+    convertToObject(meta) {
+      if (typeof meta !== 'string') return meta;
+
+      return JSON.parse(meta || '{}');
+    },
+    getCustomer(object, key) {
+      return get(object, key, { name: this.phoneLog.customerPhoneNumber });
     },
   },
 };

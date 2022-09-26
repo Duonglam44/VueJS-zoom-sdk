@@ -25,7 +25,7 @@ const updateMemo = (id, data) => {
 };
 
 const updateTagPhoneTalk = (data) => {
-  return axiosInstance.post('phone/phone_talk_log', data);
+  return axiosInstance.post('phone_logs/phone_talk_log', data);
 };
 
 const phoneLogsService = {

@@ -68,7 +68,11 @@ export default {
     inputedValue: {
       get() {
         const mapData = { tag1: 0, tag2: 1 };
-        return Object.keys(this.tag || {}).map((item) => mapData[item]);
+        return Object.keys(this.tag || {}).reduce(
+          (result, item) =>
+            this.tag[item] ? [...result, mapData[item]] : result,
+          []
+        );
       },
       set(newValue) {
         const mapData = { 0: 'tag1', 1: 'tag2' };
