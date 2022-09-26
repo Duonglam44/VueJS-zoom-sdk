@@ -12,6 +12,7 @@ const getters = {
 
     return INCOMING_CALL_TYPE.SEND_OUTBOUND_CALL;
   },
+
   isInCalling(state) {
     if (
       state.connection?.status() === 'pending' ||
@@ -21,6 +22,12 @@ const getters = {
     }
 
     return false;
+  },
+
+  remoteNumber(state) {
+    return state.connection?.direction === 'INCOMING'
+      ? state.connection?.parameters.From
+      : state.connection?.customParameters?.get?.('To');
   },
 };
 

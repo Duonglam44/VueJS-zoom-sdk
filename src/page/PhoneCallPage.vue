@@ -11,17 +11,25 @@
           <v-btn to="/" text x-large color="#505c65" class="white--text">
             ＜戻る
           </v-btn>
-          <v-toolbar-title class="white--text font-weight-black">{{
-            titleConnection
-          }}</v-toolbar-title>
+          <v-toolbar-title class="white--text font-weight-black">
+            {{ remoteNumber }}
+          </v-toolbar-title>
 
           <v-spacer></v-spacer>
-          <v-btn elevation="2" icon outlined color="white" class="mx-1"
-            ><v-icon>mdi-phone-settings</v-icon></v-btn
+          <v-btn
+            v-if="connection && connection.direction === 'INCOMING'"
+            elevation="2"
+            icon
+            outlined
+            color="white"
+            class="mx-1"
+            @click="createOnHold"
           >
-          <v-btn elevation="2" icon outlined color="white" class="mx-1"
-            ><v-icon>mdi-microphone</v-icon></v-btn
-          >
+            <v-icon>mdi-phone-settings</v-icon>
+          </v-btn>
+          <v-btn elevation="2" icon outlined color="white" class="mx-1">
+            <v-icon>mdi-microphone</v-icon>
+          </v-btn>
 
           <v-btn
             elevation="2"
@@ -187,17 +195,18 @@
 </template>
 
 <script>
-import { mapActions, mapGetters, mapState } from 'vuex';
+import { mapActions, mapGetters, mapState, mapMutations } from 'vuex';
 import { isEmpty } from 'lodash';
 
 import recordMixins from '@/mixins/record';
 import recognizerMixins from '@/mixins/recognizer';
 
-import { INCOMING_CALL_TYPE } from '@/shared/constant/common';
 import Loading from '@/components/Loading.vue';
 import ChatBoxRight from '@/components/ChatBoxRight.vue';
 import ChatBoxLeft from '@/components/ChatBoxLeft.vue';
 import MemoList from '@/components/MemoList.vue';
+
+import TwilioAPI from '@/service/TwilioService';
 
 export default {
   name: 'PhoneCall',
@@ -231,7 +240,7 @@ export default {
   },
 
   computed: {
-    ...mapGetters('twilio', ['callType']),
+    ...mapGetters('twilio', ['callType', 'isInCalling', 'remoteNumber']),
     ...mapState('phoneCall', ['speechResults']),
 
     status() {
@@ -250,11 +259,6 @@ export default {
       return this.speechResults.filter((item) => item.meta?.tag2);
     },
 
-    titleConnection() {
-      return this.connection?.direction === 'INCOMING'
-        ? this.connection?.customParameters?.get?.('From')
-        : this.connection?.customParameters?.get?.('To');
-    },
     speechResultsLength() {
       return this.speechResults.length;
     },
@@ -294,12 +298,7 @@ export default {
   },
 
   created() {
-    if (this.callType !== INCOMING_CALL_TYPE.SEND_OUTBOUND_CALL) {
-      this.$router.push({ name: 'PhoneLogListRoute' });
-
-      return;
-    }
-    this.connection.on('disconnect', this.endCall);
+    this.connection?.on?.('disconnect', this.endCall);
   },
 
   async beforeDestroy() {
@@ -310,6 +309,7 @@ export default {
 
   methods: {
     ...mapActions('twilio', ['disconnectCall']),
+    ...mapMutations('twilio', ['setHoldingCallSid']),
 
     startTimer() {
       this.playingTimer();
@@ -341,6 +341,21 @@ export default {
       await this.sendRecordRecognizdData();
       this.clearTimer();
       this.$router.push({ name: 'PhoneLogListRoute' });
+    },
+
+    async createOnHold() {
+      const { CallSid: callSid = '' } = this.connection?.parameters ?? {};
+
+      try {
+        const response = await TwilioAPI.createOnHold({
+          callSid,
+          userId: this.currentUser.userId,
+        });
+        const parentCallSid = response.substr(-35).substr(0, 34);
+        this.setHoldingCallSid(parentCallSid);
+      } catch (error) {
+        console.log('createOnHold -> error', error);
+      }
     },
   },
 };

@@ -38,7 +38,7 @@
 
     <template v-if="isLstSearchResult">
       <PhoneLogList
-        :allow-show-btn-onhold="true"
+        allow-show-btn-onhold
         :status="apiStatus"
         :title="$t('phoneLogs.searchResults')"
         :history-list="phoneLogs.data || []"
@@ -53,7 +53,7 @@
 
     <template v-else>
       <PhoneLogList
-        :allow-show-btn-onhold="true"
+        allow-show-btn-onhold
         :status="apiStatusTodayList"
         :title="$t('phoneLogs.daySection')"
         :history-list="todayPhoneLogs.data || []"
@@ -66,6 +66,7 @@
       />
 
       <PhoneLogList
+        allow-show-btn-onhold
         :status="apiStatus"
         :title="titleList"
         :history-list="phoneLogs.data || []"

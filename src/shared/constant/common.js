@@ -11,6 +11,7 @@ const INCOMING_CALL_TYPE = {
 
 const OUTGOING_CALL_TYPE = {
   IN_BOUND: 'in_bound',
+  ONHOLD_INBOUND: 'onhold_inbound',
   SEND_OUTBOUND_CALL: 'send_out_bound',
 };
 

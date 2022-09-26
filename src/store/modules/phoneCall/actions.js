@@ -36,9 +36,9 @@ const actions = {
       formData.append('memo', memo);
       formData.append('time', time);
 
-      await phoneCallService.saveDataPhoneCall(formData);
+      const response = await phoneCallService.saveDataPhoneCall(formData);
       commit('resetSpeechResult');
-      return Promise.resolve();
+      return Promise.resolve(response);
     } catch (error) {
       commit('resetSpeechResult');
       return Promise.reject(error);

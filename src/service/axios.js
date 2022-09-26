@@ -80,11 +80,11 @@ axiosInstance.interceptors.request.use(
     if (config.params) {
       config.params = decamelizeKeys(config.params);
     }
-    if (config.headers['Content-Type'] === 'multipart/form-data') return config;
     if (config.url === 'auth/login') return config;
     if (token && !config.headers.Authorization) {
       config.headers.Authorization = `Bearer ${token}`;
     }
+    if (config.headers['Content-Type'] === 'multipart/form-data') return config;
 
     if (config.data) {
       config.data = decamelizeKeys(config.data);

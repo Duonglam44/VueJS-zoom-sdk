@@ -4,16 +4,10 @@
       <v-card-title>{{ title }}</v-card-title>
 
       <v-card-actions class="d-flex justify-center mb-2">
-        <template v-if="status && status !== 'open'">
-          <v-btn
-            v-if="callType === INCOMING_CALL_TYPE.ONHOLD_INBOUND"
-            color="primary"
-            @click="handleTransfer"
-          >
-            <v-icon right dark> mdi-phone </v-icon>
-            {{ $t('callTypeModal.replyTransfer') }}
-          </v-btn>
-        </template>
+        <v-btn v-if="showTransferButton" color="primary" @click="transferCall">
+          <v-icon right dark> mdi-phone </v-icon>
+          {{ $t('callTypeModal.replyTransfer') }}
+        </v-btn>
 
         <v-btn color="error" @click="handleCannel">
           <v-icon dark right> mdi-cancel </v-icon>
@@ -79,6 +73,10 @@ export default {
 
       return this.connection?.direction;
     },
+
+    showTransferButton() {
+      return this.connection?.direction === 'INCOMING';
+    },
   },
 
   beforeDestroy() {
@@ -86,12 +84,11 @@ export default {
   },
 
   methods: {
-    ...mapActions('twilio', ['disconnectCall']),
-    ...mapMutations('twilio', ['setIsShowCallTypeModal']),
-
-    handleTransfer() {
-      this.setIsShowCallTypeModal(false);
-    },
+    ...mapActions('twilio', {
+      transferCall: 'returnCall',
+      disconnectCall: 'disconnectCall',
+    }),
+    ...mapMutations('twilio', ['setIsShowCallTypeModal', 'setConnection']),
 
     handleCannel() {
       this.disconnectCall();

@@ -67,10 +67,9 @@
   </v-dialog>
 </template>
 <script>
-import { mapMutations } from 'vuex';
+import { mapActions, mapMutations, mapGetters } from 'vuex';
 
 import { OUTGOING_CALL_TYPE } from '@/shared/constant/common';
-import connectionMixins from '@/mixins/connection';
 import UserList from './UserList.vue';
 import AddressList from './AddressList.vue';
 
@@ -81,8 +80,6 @@ export default {
     UserList,
     AddressList,
   },
-
-  mixins: [connectionMixins],
 
   props: { openDialog: { type: Boolean, default: false } },
 
@@ -96,6 +93,8 @@ export default {
   },
 
   computed: {
+    ...mapGetters('twilio', ['isInCalling']),
+
     dialogModel: {
       get() {
         return this.openDialog;
@@ -107,6 +106,7 @@ export default {
   },
 
   methods: {
+    ...mapActions('twilio', ['handleCall']),
     ...mapMutations('twilio', ['setIsShowCallTypeModal', 'setConnection']),
 
     onCall() {

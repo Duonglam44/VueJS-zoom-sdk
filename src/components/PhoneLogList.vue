@@ -9,7 +9,7 @@
           <div v-for="(item, index) in historyList" :key="item.phoneLogId">
             <v-list-item @click.native="$emit('item-clicked', item.phoneLogId)">
               <div>
-                <template v-if="allowShowBtnOnhold && item.onHold">
+                <template v-if="allowShowBtnOnhold && !!item.onhold">
                   <v-list-item-action>
                     <v-menu
                       bottom
@@ -36,16 +36,16 @@
                       />
                       <v-list v-else>
                         <v-list-item>
-                          <v-list-item-title>{{
+                          <v-list-item-title @click="returnCall">{{
                             $t('phoneLogs.goOut')
                           }}</v-list-item-title>
                         </v-list-item>
 
                         <div>
                           <v-list-item v-for="user in users" :key="user.userId">
-                            <v-list-item-title>{{
-                              user.name
-                            }}</v-list-item-title>
+                            <v-list-item-title @click="selectOnHoldUser(user)">
+                              {{ user.name }}
+                            </v-list-item-title>
                           </v-list-item>
 
                           <infinite-loading
@@ -160,8 +160,11 @@
   </v-card>
 </template>
 <script>
-import { mapActions, mapState } from 'vuex';
+import { mapActions, mapMutations, mapState } from 'vuex';
+
 import { ApiStatus } from '@/store/constants';
+import { OUTGOING_CALL_TYPE } from '@/shared/constant/common';
+
 import ListContainer from './commons/ListContainer.vue';
 import Pagination from './commons/Pagination.vue';
 import AddressDialog from './AddressDialog.vue';
@@ -221,6 +224,11 @@ export default {
 
   computed: {
     ...mapState('phoneLog', ['users', 'usersPagination']),
+    ...mapState('twilio', ['holdingCallSid', 'device']),
+    ...mapState('auth', {
+      currentUser: (state) => state.user,
+    }),
+
     isShowPagination() {
       return Math.ceil(this.total / this.perPage) > 1;
     },
@@ -228,6 +236,9 @@ export default {
 
   methods: {
     ...mapActions('phoneLog', ['getUsers']),
+    ...mapActions('twilio', ['handleCall', 'returnCall']),
+    ...mapMutations('twilio', ['setConnection']),
+
     changePage(page) {
       this.$emit('page-changed', page);
     },
@@ -258,6 +269,24 @@ export default {
           $state.loaded();
         }
       });
+    },
+
+    selectOnHoldUser(user) {
+      try {
+        if (!this.holdingCallSid) throw Error(`holdingCallSid is required`);
+
+        const params = {
+          From: this.currentUser.phoneNumber,
+          To: user.phoneNumber,
+          call_type: OUTGOING_CALL_TYPE.ONHOLD_INBOUND,
+          user_id: user.userId,
+          caller_id: this.holdingCallSid,
+        };
+
+        this.handleCall(params);
+      } catch (error) {
+        console.log('selectOnHoldUser -> error', error);
+      }
     },
   },
 };
