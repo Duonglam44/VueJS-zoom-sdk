@@ -61,14 +61,15 @@ export default {
 
     handleAccept() {
       this.connection?.accept();
+      this.connection?.on('accept', () => {
+        if (this.callType === INCOMING_CALL_TYPE.SEND_OUTBOUND_CALL) {
+          this.$router.push({ name: 'PhoneCallRoute' });
 
-      if (this.callType === INCOMING_CALL_TYPE.SEND_OUTBOUND_CALL) {
-        this.$router.push({ name: 'PhoneCallRoute' });
+          return;
+        }
 
-        return;
-      }
-
-      this.setIsShowCallTypeModal(true);
+        this.setIsShowCallTypeModal(true);
+      });
     },
   },
 };
