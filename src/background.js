@@ -14,6 +14,7 @@ import path from 'path';
 import ElectronStore from 'electron-store';
 
 ElectronStore.initRenderer();
+const electronStore = new ElectronStore();
 app.commandLine.appendSwitch('ignore-certificate-errors');
 const isDevelopment = process.env.NODE_ENV !== 'production';
 let win;
@@ -118,6 +119,7 @@ async function createWindow() {
 }
 
 app.on('before-quit', () => {
+  electronStore.clear();
   app.quitting = true;
 });
 
