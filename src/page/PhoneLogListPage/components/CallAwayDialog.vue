@@ -67,7 +67,7 @@
   </v-dialog>
 </template>
 <script>
-import { mapActions, mapMutations, mapGetters } from 'vuex';
+import { mapActions, mapMutations, mapGetters, mapState } from 'vuex';
 
 import { OUTGOING_CALL_TYPE } from '@/shared/constant/common';
 import UserList from './UserList.vue';
@@ -94,6 +94,9 @@ export default {
 
   computed: {
     ...mapGetters('twilio', ['isInCalling']),
+    ...mapState('auth', {
+      currentUser: (state) => state.user,
+    }),
 
     dialogModel: {
       get() {

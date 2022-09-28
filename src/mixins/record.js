@@ -55,6 +55,7 @@ export default {
         // start recognize
         this.startSpeechRecognize();
       } catch (error) {
+        console.log('startRecordAndRecognize -> error', error);
         this.isRecording = false;
         this.stopAndClearRecord();
         this.stopAndClearRecognize();
