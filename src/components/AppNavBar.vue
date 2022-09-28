@@ -6,11 +6,11 @@
     height="60"
   >
     <img src="../assets/logo-icon.png" alt="Logo" class="ma-1 pa-1" />
-    <router-link to="/">
+    <span class="link-item" @click="goBackHomePage">
       <v-toolbar-title class="white--text font-weight-black ma-2 pa-1">
         {{ $t('headerBar.phoneLogs') }}
       </v-toolbar-title>
-    </router-link>
+    </span>
     <v-spacer></v-spacer>
     <v-menu v-if="user" left offset-y>
       <template #activator="{ on, attrs }">
@@ -60,6 +60,18 @@ export default {
   methods: {
     ...mapActions('auth', ['logout']),
 
+    goBackHomePage() {
+      this.$router.push(
+        '/',
+        () => {
+          // to do
+        },
+        () => {
+          window.location.reload();
+        }
+      );
+    },
+
     async handleLogout() {
       this.loading = true;
       await this.logout();
@@ -72,5 +84,8 @@ export default {
 <style scoped>
 a {
   text-decoration: none;
+}
+.link-item {
+  cursor: pointer;
 }
 </style>

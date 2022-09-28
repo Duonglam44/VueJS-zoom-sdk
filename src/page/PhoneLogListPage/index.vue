@@ -53,6 +53,7 @@
 
     <template v-else>
       <PhoneLogList
+        v-if="!hasSearchMonth"
         allow-show-btn-onhold
         :status="apiStatusTodayList"
         :title="$t('phoneLogs.daySection')"
@@ -123,6 +124,7 @@ export default {
       datepickerType: DATEPICKER_TYPE,
       currentPageSearch: 1,
       isLstSearchResult: false,
+      hasSearchMonth: false,
     };
   },
 
@@ -143,6 +145,7 @@ export default {
     time: {
       handler(newValue, oldValue) {
         if (!oldValue) return;
+        this.hasSearchMonth = true;
         this.loadPhoneLogs(this.currentPageThisMonth, newValue);
       },
       immediate: true,
