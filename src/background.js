@@ -138,22 +138,37 @@ app.on('activate', () => {
   win.show();
 });
 
-// This method will be called when Electron has finished
-// initialization and is ready to create browser windows.
-// Some APIs can only be used after this event occurs.
-app.on('ready', async () => {
-  if (isDevelopment && !process.env.IS_TEST) {
-    // Install Vue Devtools
-    try {
-      await installExtension(VUEJS_DEVTOOLS);
-    } catch (e) {
-      // eslint-disable-next-line no-console
-      console.error('Vue Devtools failed to install:', e.toString());
+const gotTheLock = app.requestSingleInstanceLock();
+
+if (!gotTheLock) {
+  app.quit();
+} else {
+  app.on('second-instance', () => {
+    // Someone tried to run a second instance, we should focus our window.
+    if (win) {
+      if (win.isMinimized()) win.restore();
+      win.show();
+      win.focus();
     }
-  }
-  initTray();
-  createWindow();
-});
+  });
+
+  // This method will be called when Electron has finished
+  // initialization and is ready to create browser windows.
+  // Some APIs can only be used after this event occurs.
+  app.on('ready', async () => {
+    if (isDevelopment && !process.env.IS_TEST) {
+      // Install Vue Devtools
+      try {
+        await installExtension(VUEJS_DEVTOOLS);
+      } catch (e) {
+        // eslint-disable-next-line no-console
+        console.error('Vue Devtools failed to install:', e.toString());
+      }
+    }
+    initTray();
+    createWindow();
+  });
+}
 
 // Exit cleanly on request from parent process in development mode.
 if (isDevelopment) {
