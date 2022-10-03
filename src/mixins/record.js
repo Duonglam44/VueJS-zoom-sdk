@@ -1,4 +1,4 @@
-import { mapActions, mapState, mapGetters } from 'vuex';
+import { mapActions, mapState, mapGetters, mapMutations } from 'vuex';
 
 import { RecorderAudio } from '@/service/recordAudio';
 import { adjustSpeakerTime } from '@/shared/utils';
@@ -26,6 +26,7 @@ export default {
 
   methods: {
     ...mapActions('phoneCall', ['saveDataPhoneCall']),
+    ...mapMutations('twilio', ['setHoldingCallSid']),
 
     async startRecordAndRecognize() {
       if (!this.connection) return;
@@ -87,7 +88,7 @@ export default {
         });
         this.stopAndClearRecord();
         this.stopAndClearRecognize();
-        const { detail = {} } = await this.saveDataPhoneCall({
+        const { data = {} } = await this.saveDataPhoneCall({
           remoteRecordBlob,
           customerNumber: this.customerNumber,
           localRecordBlob,
@@ -96,7 +97,8 @@ export default {
         });
 
         if (this.holdingCallSid) {
-          await TwilioAPI.updateOnHold({ phone_log_id: detail.phoneLogId });
+          await TwilioAPI.updateOnHold({ phone_log_id: data.phoneLogId });
+          this.setHoldingCallSid('');
         }
 
         this.loading = false;

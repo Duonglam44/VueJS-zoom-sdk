@@ -3,6 +3,7 @@ const state = {
   device: null,
   isShowCallTypeModal: false,
   holdingCallSid: '',
+  customerPhoneNumber: '',
 };
 
 export default state;

@@ -13,6 +13,9 @@ const onIncoming = (connection) => {
   const send_type = connection.customParameters.get('send_type');
   const address = connection.customParameters.get('address');
   const onhold_sid = connection.customParameters.get('onhold_sid');
+  const customer_phone_number = connection.customParameters.get(
+    'customer_phone_number'
+  );
   const { userId } = store.state.auth.user || {};
 
   const handleCallConnection = () => {
@@ -23,6 +26,7 @@ const onIncoming = (connection) => {
   if (send_type) {
     if (send_type === INCOMING_CALL_TYPE.ONHOLD_INBOUND && onhold_sid) {
       store.commit('twilio/setHoldingCallSid', onhold_sid);
+      store.commit('twilio/setCustomerPhoneNumber', customer_phone_number);
       handleCallConnection();
     } else if (send_type === INCOMING_CALL_TYPE.SEND_OUTBOUND_CALL) {
       connection.ignore();
@@ -39,11 +43,13 @@ const onIncoming = (connection) => {
   connection.on('cancel', () => {
     window.electron.notification.cancelCall();
     store.dispatch('twilio/disconnectCall');
+    store.commit('twilio/setCustomerPhoneNumber', '');
   });
 
   connection.on('disconnect', () => {
     window.electron.notification.cancelCall();
     store.dispatch('twilio/disconnectCall');
+    store.commit('twilio/setCustomerPhoneNumber', '');
   });
 };
 

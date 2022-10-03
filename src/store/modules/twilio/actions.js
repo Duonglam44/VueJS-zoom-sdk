@@ -18,6 +18,9 @@ const actions = {
     const connection = await state.device?.connect({ params });
 
     const handleEndCall = () => {
+      if (params.call_type === OUTGOING_CALL_TYPE.ONHOLD_INBOUND) {
+        commit('phoneLog/setRecallList', true, { root: true });
+      }
       dispatch('disconnectCall');
     };
 
@@ -46,20 +49,19 @@ const actions = {
   async returnCall({ state, commit }) {
     try {
       if (!state.holdingCallSid) throw Error(`holdingCallSid is required`);
+      const tempCustomerPhoneNumber = state.customerPhoneNumber;
 
       state.connection?.disconnect();
 
       const connection = await state.device?.connect({
         params: { call_sid: state.holdingCallSid },
       });
+      commit('setHoldingCallSid', '');
+      commit('setCustomerPhoneNumber', tempCustomerPhoneNumber);
 
-      connection
-        .on('accept', () => {
-          router.push({ name: 'PhoneCallRoute' });
-        })
-        .on('disconnect', () => {
-          commit('setHoldingCallSid', '');
-        });
+      connection.on('accept', () => {
+        router.push({ name: 'PhoneCallRoute' });
+      });
 
       commit('setConnection', connection);
     } catch (error) {
