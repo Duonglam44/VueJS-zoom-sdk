@@ -25,6 +25,10 @@ const getters = {
   },
 
   remoteNumber(state) {
+    if (state.customerPhoneNumber) {
+      return state.customerPhoneNumber;
+    }
+
     return state.connection?.direction === 'INCOMING'
       ? state.connection?.parameters.From
       : state.connection?.customParameters?.get?.('To');

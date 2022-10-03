@@ -236,6 +236,7 @@ export default {
       memo: '',
       autoScrolling: false,
       tab: 0,
+      creatingOnHold: false,
     };
   },
 
@@ -305,11 +306,12 @@ export default {
     this.disconnectCall();
     await this.sendRecordRecognizdData();
     this.clearTimer();
+    this.setCustomerPhoneNumber('');
   },
 
   methods: {
     ...mapActions('twilio', ['disconnectCall']),
-    ...mapMutations('twilio', ['setHoldingCallSid']),
+    ...mapMutations('twilio', ['setHoldingCallSid', 'setCustomerPhoneNumber']),
 
     startTimer() {
       this.playingTimer();
@@ -337,6 +339,8 @@ export default {
     },
 
     async endCall() {
+      if (this.creatingOnHold) return;
+
       this.disconnectCall();
       await this.sendRecordRecognizdData();
       this.clearTimer();
@@ -345,6 +349,7 @@ export default {
 
     async createOnHold() {
       const { CallSid: callSid = '' } = this.connection?.parameters ?? {};
+      this.creatingOnHold = true;
 
       try {
         const response = await TwilioAPI.createOnHold({
@@ -353,7 +358,10 @@ export default {
         });
         const parentCallSid = response.substr(-35).substr(0, 34);
         this.setHoldingCallSid(parentCallSid);
+        this.creatingOnHold = false;
+        this.endCall();
       } catch (error) {
+        this.creatingOnHold = false;
         console.log('createOnHold -> error', error);
       }
     },

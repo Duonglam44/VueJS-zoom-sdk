@@ -14,6 +14,10 @@ const mutations = {
   setHoldingCallSid(state, value) {
     state.holdingCallSid = value;
   },
+
+  setCustomerPhoneNumber(state, value) {
+    state.customerPhoneNumber = value;
+  },
 };
 
 export default mutations;

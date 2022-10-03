@@ -36,14 +36,16 @@
                       />
                       <v-list v-else>
                         <v-list-item>
-                          <v-list-item-title @click="returnCall">{{
-                            $t('phoneLogs.goOut')
-                          }}</v-list-item-title>
+                          <v-list-item-title @click="handleReturnCall(item)">
+                            {{ $t('phoneLogs.goOut') }}
+                          </v-list-item-title>
                         </v-list-item>
 
                         <div>
                           <v-list-item v-for="user in users" :key="user.userId">
-                            <v-list-item-title @click="selectOnHoldUser(user)">
+                            <v-list-item-title
+                              @click="selectOnHoldUser(user, item)"
+                            >
                               {{ user.name }}
                             </v-list-item-title>
                           </v-list-item>
@@ -223,8 +225,8 @@ export default {
   },
 
   computed: {
-    ...mapState('phoneLog', ['users', 'usersPagination']),
-    ...mapState('twilio', ['holdingCallSid', 'device']),
+    ...mapState('phoneLog', ['users', 'usersPagination', 'recallList']),
+    ...mapState('twilio', ['device']),
     ...mapState('auth', {
       currentUser: (state) => state.user,
     }),
@@ -234,10 +236,24 @@ export default {
     },
   },
 
+  watch: {
+    recallList(newValue) {
+      if (newValue) {
+        this.$emit('reload-data');
+        this.setRecallList(false);
+      }
+    },
+  },
+
   methods: {
     ...mapActions('phoneLog', ['getUsers']),
     ...mapActions('twilio', ['handleCall', 'returnCall']),
-    ...mapMutations('twilio', ['setConnection']),
+    ...mapMutations('twilio', [
+      'setConnection',
+      'setHoldingCallSid',
+      'setCustomerPhoneNumber',
+    ]),
+    ...mapMutations('phoneLog', ['setRecallList']),
 
     changePage(page) {
       this.$emit('page-changed', page);
@@ -271,16 +287,25 @@ export default {
       });
     },
 
-    selectOnHoldUser(user) {
+    handleReturnCall(item) {
+      const callSid = item.onhold ? item.onhold.callSid : '';
+
+      this.setCustomerPhoneNumber(item.customerPhoneNumber);
+      this.setHoldingCallSid(callSid);
+      this.returnCall();
+    },
+
+    selectOnHoldUser(user, item) {
       try {
-        if (!this.holdingCallSid) throw Error(`holdingCallSid is required`);
+        const { callSid } = item.onhold;
 
         const params = {
           From: this.currentUser.phoneNumber,
           To: user.phoneNumber,
           call_type: OUTGOING_CALL_TYPE.ONHOLD_INBOUND,
           user_id: user.userId,
-          caller_id: this.holdingCallSid,
+          caller_id: callSid,
+          customer_phone_number: item.customerPhoneNumber,
         };
 
         this.handleCall(params);
