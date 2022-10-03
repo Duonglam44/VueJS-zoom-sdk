@@ -37,17 +37,18 @@ export default {
         this.customerNumber = this.remoteNumber;
 
         // get local stream and remote stream
-        const localStream = await navigator.mediaDevices.getUserMedia({
+        this.localStream = await navigator.mediaDevices.getUserMedia({
           audio: true,
         });
         await InitRecordService.initService();
         // setup record
-        this.localStream = localStream;
-        this.localRecorder = new RecorderAudio(localStream);
-        const remoteStream = this.connection.getRemoteStream();
-        this.remoteRecorder = new RecorderAudio(remoteStream);
-        this.localRecorder.init();
+        this.localRecorder = new RecorderAudio(this.localStream);
+        this.remoteStream = new MediaStream([
+          this.connection.getRemoteStream().getAudioTracks()[0],
+        ]);
+        this.remoteRecorder = new RecorderAudio(this.remoteStream);
         this.remoteRecorder.init();
+        this.localRecorder.init();
 
         // start record
         this.localRecorder.start();
@@ -68,6 +69,7 @@ export default {
       this.remoteRecorder?.clear();
       this.isRecording = false;
       this.localStream?.getTracks()?.forEach((track) => track.stop());
+      this.remoteStream?.getTracks()?.forEach((track) => track.stop());
       this.localStream = null;
       this.localRecorder = null;
       this.remoteRecorder = null;

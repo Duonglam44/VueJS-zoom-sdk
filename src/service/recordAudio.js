@@ -9,6 +9,7 @@ export class RecorderAudio {
   init() {
     this.mediaRecorder = new MediaRecorder(this.stream, {
       mimeType: 'audio/wav',
+      bitsPerSecond: 16000,
     });
     this.listenEvent();
   }
