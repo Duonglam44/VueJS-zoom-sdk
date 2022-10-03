@@ -21,6 +21,18 @@ const onIncoming = (connection) => {
   const handleCallConnection = () => {
     showNotification(connection.parameters.From);
     store.commit('twilio/setConnection', connection);
+
+    connection.on('cancel', () => {
+      window.electron.notification.cancelCall();
+      store.dispatch('twilio/disconnectCall');
+      store.commit('twilio/setCustomerPhoneNumber', '');
+    });
+
+    connection.on('disconnect', () => {
+      window.electron.notification.cancelCall();
+      store.dispatch('twilio/disconnectCall');
+      store.commit('twilio/setCustomerPhoneNumber', '');
+    });
   };
 
   if (send_type) {
@@ -39,18 +51,6 @@ const onIncoming = (connection) => {
   } else {
     connection.ignore();
   }
-
-  connection.on('cancel', () => {
-    window.electron.notification.cancelCall();
-    store.dispatch('twilio/disconnectCall');
-    store.commit('twilio/setCustomerPhoneNumber', '');
-  });
-
-  connection.on('disconnect', () => {
-    window.electron.notification.cancelCall();
-    store.dispatch('twilio/disconnectCall');
-    store.commit('twilio/setCustomerPhoneNumber', '');
-  });
 };
 
 const onRegistered = () => {};

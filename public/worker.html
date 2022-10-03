@@ -169,7 +169,10 @@
     const ipcRenderer = require('electron').ipcRenderer;
 
     ipcRenderer.on('incoming', (event, content) => {
-      document.querySelector('#title').innerHTML = content;
+      const title = document.querySelector('#title');
+      if (title) {
+        title.innerHTML = content;
+      }
     });
 
     document.querySelector('#accept').addEventListener('click', () => {
