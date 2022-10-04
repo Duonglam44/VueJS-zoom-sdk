@@ -1,6 +1,6 @@
 import TwilioAPI from '@/service/TwilioService';
 import store from '@/store';
-import { Device } from '@twilio/voice-sdk';
+import { Device, Call } from '@twilio/voice-sdk';
 import { INCOMING_CALL_TYPE } from '@/shared/constant/common';
 
 const showNotification = (from) => {
@@ -46,10 +46,25 @@ const onIncoming = (connection) => {
     }
   }
 
-  if (address === 'all' || address === userId) {
-    handleCallConnection();
-  } else {
-    connection.ignore();
+  switch (address) {
+    case 'all':
+      handleCallConnection();
+      break;
+    case userId: {
+      const status = store.state.twilio.connection?.status?.();
+
+      if (status === Call.State.Closed || !status) {
+        handleCallConnection();
+      } else {
+        connection.reject();
+      }
+
+      break;
+    }
+
+    default:
+      connection.ignore();
+      break;
   }
 };
 
