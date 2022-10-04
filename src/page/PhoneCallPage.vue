@@ -232,7 +232,9 @@ export default {
       date: null,
       sec: 0,
       min: 0,
+      ms: 0,
       timer: null,
+      msTimer: null,
       memo: '',
       autoScrolling: false,
       tab: 0,
@@ -316,6 +318,12 @@ export default {
     startTimer() {
       this.playingTimer();
       this.timer = setInterval(() => this.playingTimer(), 1000);
+
+      const start = new Date().getTime();
+      this.msTimer = setInterval(() => {
+        const now = new Date().getTime();
+        this.ms = (now - start) % 1000;
+      }, 400);
     },
 
     playingTimer() {
@@ -334,6 +342,12 @@ export default {
         clearInterval(this.timer);
         this.timer = null;
       }
+
+      if (this.msTimer) {
+        clearInterval(this.msTimer);
+        this.msTimer = null;
+      }
+
       this.sec = 0;
       this.min = 0;
     },

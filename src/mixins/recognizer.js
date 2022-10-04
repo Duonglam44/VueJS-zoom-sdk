@@ -68,6 +68,7 @@ export default {
                 min: this.min,
                 sec: this.sec,
                 adjust: -3,
+                ms: this.ms,
               });
             }
           }
@@ -80,6 +81,7 @@ export default {
               endTimeLocal = adjustSpeakerTime({
                 min: this.min,
                 sec: this.sec,
+                ms: this.ms,
               });
               this.receiveSpeechRecognized({
                 name,
@@ -112,6 +114,7 @@ export default {
                 min: this.min,
                 sec: this.sec,
                 adjust: -3,
+                ms: this.ms,
               });
             }
           }
@@ -124,6 +127,7 @@ export default {
               endTimeRemote = adjustSpeakerTime({
                 min: this.min,
                 sec: this.sec,
+                ms: this.ms,
               });
 
               this.receiveSpeechRecognized({

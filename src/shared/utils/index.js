@@ -58,16 +58,22 @@ const stringifyParams = (data) => {
   });
 };
 
-function adjustSpeakerTime({ min, sec, adjust = 0 }) {
+function adjustSpeakerTime({ min, sec, adjust = 0, ms }) {
   const adjustSec = min * 60 + sec + adjust;
 
   if (Math.sign(adjustSec) === -1) {
     return '00:00';
   }
 
-  return `${String(Math.floor(adjustSec / 60)).padStart(2, '0')}:${String(
-    Math.floor(adjustSec % 60)
-  ).padStart(2, '0')}`;
+  const minute = String(Math.floor(adjustSec / 60)).padStart(2, '0');
+  const second = String(Math.floor(adjustSec % 60)).padStart(2, '0');
+  const milliSecond = String(ms).padStart(3, '0');
+
+  if (typeof ms !== 'undefined') {
+    return `${minute}:${second}:${milliSecond}`;
+  }
+
+  return `${minute}:${second}`;
 }
 
 export { getCurrentDomain, isElectron, stringifyParams, adjustSpeakerTime };
