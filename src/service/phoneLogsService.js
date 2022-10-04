@@ -8,10 +8,6 @@ const getTodayPhoneLogs = (params) => {
   return axiosInstance.get('phone_logs/today', { params });
 };
 
-function getAddress(params) {
-  return axiosInstance.get('address', { params });
-}
-
 function getUsers(params) {
   return axiosInstance.get('users', { params });
 }
@@ -31,7 +27,6 @@ const updateTagPhoneTalk = (data) => {
 const phoneLogsService = {
   getPhoneLogs,
   getTodayPhoneLogs,
-  getAddress,
   getUsers,
   getPhoneLogDetail,
   updateMemo,

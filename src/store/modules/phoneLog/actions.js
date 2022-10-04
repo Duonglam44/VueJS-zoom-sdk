@@ -1,4 +1,5 @@
-import phoneLogsService from '@/service/PhoneLogsService';
+import phoneLogsService from '@/service/phoneLogsService';
+import addressService from '@/service/addressService';
 import { uniqBy } from 'lodash';
 
 const actions = {
@@ -30,7 +31,7 @@ const actions = {
   async getAddressList({ commit }, params) {
     try {
       const { data, currentPage, nextPageUrl } =
-        await phoneLogsService.getAddress(params);
+        await addressService.getAddress(params);
       commit('setAddressList', { data, page: params.page });
       commit('setAddressListPagination', {
         currentPage,
