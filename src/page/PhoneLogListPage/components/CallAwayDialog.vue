@@ -67,10 +67,9 @@
   </v-dialog>
 </template>
 <script>
-import { mapMutations } from 'vuex';
+import { mapActions, mapMutations, mapGetters, mapState } from 'vuex';
 
 import { OUTGOING_CALL_TYPE } from '@/shared/constant/common';
-import connectionMixins from '@/mixins/connection';
 import UserList from './UserList.vue';
 import AddressList from './AddressList.vue';
 
@@ -81,8 +80,6 @@ export default {
     UserList,
     AddressList,
   },
-
-  mixins: [connectionMixins],
 
   props: { openDialog: { type: Boolean, default: false } },
 
@@ -96,6 +93,11 @@ export default {
   },
 
   computed: {
+    ...mapGetters('twilio', ['isInCalling']),
+    ...mapState('auth', {
+      currentUser: (state) => state.user,
+    }),
+
     dialogModel: {
       get() {
         return this.openDialog;
@@ -107,15 +109,16 @@ export default {
   },
 
   methods: {
+    ...mapActions('twilio', ['handleCall']),
     ...mapMutations('twilio', ['setIsShowCallTypeModal', 'setConnection']),
 
     onCall() {
       if (!this.phoneNumber || this.isInCalling) return;
 
       const params = {
-        From: this.currentUser.hasTennant.phoneNumber,
+        From: this.currentUser.phoneNumber,
         To: this.phoneNumber,
-        call_type: OUTGOING_CALL_TYPE.OUT_BOUND,
+        call_type: OUTGOING_CALL_TYPE.SEND_OUTBOUND_CALL,
       };
 
       this.handleCall(params);

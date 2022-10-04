@@ -13,4 +13,6 @@ export default {
   cutting: 'Cutting',
   noMore: 'No more',
   noResults: 'No results',
+  month: '{month} Month',
+  searchResults: 'Search results',
 };

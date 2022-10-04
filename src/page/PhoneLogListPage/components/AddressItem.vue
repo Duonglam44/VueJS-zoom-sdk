@@ -21,33 +21,34 @@
   </v-list-item>
 </template>
 <script>
-import { mapMutations, mapState } from 'vuex';
+import { mapActions, mapMutations, mapGetters, mapState } from 'vuex';
 
-import connectionMixins from '@/mixins/connection';
 import { OUTGOING_CALL_TYPE } from '@/shared/constant/common';
 
 export default {
   name: 'AddressItem',
 
-  mixins: [connectionMixins],
-
   props: { address: { type: Object, required: true } },
 
   computed: {
     ...mapState('twilio', ['device']),
-    ...mapState('auth', ['user']),
+    ...mapState('auth', {
+      currentUser: (state) => state.user,
+    }),
+    ...mapGetters('twilio', ['isInCalling']),
   },
 
   methods: {
+    ...mapActions('twilio', ['handleCall']),
     ...mapMutations('twilio', ['setConnection']),
 
     callToAddress() {
       if (this.isInCalling) return;
 
       const params = {
-        From: this.user.hasTennant.phoneNumber,
+        From: this.currentUser.phoneNumber,
         To: this.address.phoneNumber,
-        call_type: OUTGOING_CALL_TYPE.OUT_BOUND,
+        call_type: OUTGOING_CALL_TYPE.SEND_OUTBOUND_CALL,
       };
 
       this.handleCall(params);

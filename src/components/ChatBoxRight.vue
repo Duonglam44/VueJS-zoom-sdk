@@ -3,18 +3,23 @@
     <div class="face_icon">
       <v-avatar color="red">
         <span class="white--text">
-          {{ user.short_name }}
+          {{ user.shortName || user.name | avatar }}
         </span>
       </v-avatar>
     </div>
     <p class="says">
-      {{ chat.text }}
+      {{ chat.text || chat.vtt }}
     </p>
   </div>
 </template>
 <script>
+import systemMixins from '@/mixins/system';
+
 export default {
   name: 'ChatBoxRight',
+
+  mixins: [systemMixins],
+
   props: {
     tag: {
       type: Array,

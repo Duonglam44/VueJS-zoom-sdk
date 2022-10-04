@@ -3,6 +3,7 @@ import login from './login';
 import resetPassword from './resetPassword';
 import phoneLogs from './phoneLogs';
 import phoneCall from './phoneCall';
+import addressModal from './addressModal';
 
 export default {
   ...common,
@@ -10,5 +11,6 @@ export default {
   resetPassword,
   phoneLogs,
   phoneCall,
+  addressModal,
   welcome: 'Welcome!',
 };

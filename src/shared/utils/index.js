@@ -58,4 +58,16 @@ const stringifyParams = (data) => {
   });
 };
 
-export { getCurrentDomain, isElectron, stringifyParams };
+function adjustSpeakerTime({ min, sec, adjust = 0 }) {
+  const adjustSec = min * 60 + sec + adjust;
+
+  if (Math.sign(adjustSec) === -1) {
+    return '00:00';
+  }
+
+  return `${String(Math.floor(adjustSec / 60)).padStart(2, '0')}:${String(
+    Math.floor(adjustSec % 60)
+  ).padStart(2, '0')}`;
+}
+
+export { getCurrentDomain, isElectron, stringifyParams, adjustSpeakerTime };

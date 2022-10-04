@@ -1,12 +1,12 @@
-import phoneLogService from '@/service/phone-log-service';
+import phoneLogsService from '@/service/phoneLogsService';
+import addressService from '@/service/addressService';
 import { uniqBy } from 'lodash';
 
 const actions = {
   async getUsers({ commit, state, rootState }, params) {
     try {
-      const { data, currentPage, nextPageUrl } = await phoneLogService.getUsers(
-        params
-      );
+      const { data, currentPage, nextPageUrl } =
+        await phoneLogsService.getUsers(params);
 
       let users = data;
       users = users.filter(
@@ -31,7 +31,7 @@ const actions = {
   async getAddressList({ commit }, params) {
     try {
       const { data, currentPage, nextPageUrl } =
-        await phoneLogService.getAddress(params);
+        await addressService.getAddress(params);
       commit('setAddressList', { data, page: params.page });
       commit('setAddressListPagination', {
         currentPage,

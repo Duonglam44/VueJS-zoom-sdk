@@ -25,14 +25,5 @@ export default {
       immediate: true,
     },
   },
-  mounted() {
-    window.electron.ipcRenderer.on('navigate', (routePath) => {
-      this.$router.push({ name: routePath });
-    });
-
-    window.electron.ipcRenderer.on('answerCall', () => {
-      this.connection.accept();
-    });
-  },
 };
 </script>

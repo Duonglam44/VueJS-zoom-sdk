@@ -6,9 +6,41 @@ module.exports = defineConfig({
   pluginOptions: {
     electronBuilder: {
       preload: 'src/preload.js',
+      builderOptions: {
+        asar: false,
+        productName: 'Phone Call App',
+        appId: 'com.unixon.phoneCallApp',
+        mac: {
+          icon: 'public/app_icon.png',
+        },
+        dmg: {
+          contents: [
+            {
+              x: 130,
+              y: 220,
+            },
+            {
+              x: 410,
+              y: 220,
+              type: 'link',
+              path: '/Applications',
+            },
+          ],
+        },
+        win: {
+          icon: 'public/app_icon.png',
+        },
+        linux: {
+          icon: 'public/app_icon.png',
+        },
+      },
     },
   },
   chainWebpack(config) {
     config.resolve.alias.set('@', path.resolve(__dirname, 'src'));
+  },
+  devServer: {
+    https: true,
+    host: '0.0.0.0',
   },
 });

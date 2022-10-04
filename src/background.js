@@ -3,10 +3,10 @@ import {
   protocol,
   BrowserWindow,
   ipcMain,
-  Notification,
   Tray,
   nativeImage,
   Menu,
+  screen,
 } from 'electron';
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib';
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer';
@@ -14,10 +14,12 @@ import path from 'path';
 import ElectronStore from 'electron-store';
 
 ElectronStore.initRenderer();
+const electronStore = new ElectronStore();
+app.commandLine.appendSwitch('ignore-certificate-errors');
 const isDevelopment = process.env.NODE_ENV !== 'production';
 let win;
 let tray;
-let notification;
+let workerWindow;
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
   { scheme: 'app', privileges: { secure: true, standard: true } },
@@ -26,9 +28,9 @@ protocol.registerSchemesAsPrivileged([
 function initTray() {
   const iconPath =
     process.platform === 'darwin'
-      ? '../public/app-icon.png'
-      : '../public/favicon.ico';
-  const icon = nativeImage.createFromPath(path.join(__dirname, iconPath));
+      ? path.join(__static, 'images/icon.png')
+      : path.join(__static, 'favicon.ico');
+  const icon = nativeImage.createFromPath(iconPath);
   tray = new Tray(icon);
   const menu = Menu.buildFromTemplate([
     {
@@ -77,9 +79,47 @@ async function createWindow() {
       win.hide();
     }
   });
+
+  const display = screen.getPrimaryDisplay();
+  const { width } = display.workAreaSize;
+
+  workerWindow = new BrowserWindow({
+    width: 320,
+    height: 210,
+    x: width - 320,
+    y: 0,
+    transparent: true,
+    frame: false,
+    backgroundColor: '#FFF',
+    resizable: false,
+    titleBarStyle: 'hidden',
+    webPreferences: {
+      nodeIntegration: true,
+      contextIsolation: false,
+    },
+  });
+
+  if (workerWindow.setWindowButtonVisibility) {
+    workerWindow.setWindowButtonVisibility(false);
+  } else {
+    workerWindow.setMenuBarVisibility(false);
+  }
+
+  workerWindow.hide();
+  if (process.env.WEBPACK_DEV_SERVER_URL) {
+    await workerWindow.loadURL(`file://${__dirname}/../public/worker.html`);
+  } else {
+    createProtocol('app');
+    // Load the worker.html when not in development
+    workerWindow.loadURL('app://./worker.html');
+  }
+  workerWindow.on('closed', () => {
+    workerWindow = undefined;
+  });
 }
 
 app.on('before-quit', () => {
+  electronStore.clear();
   app.quitting = true;
 });
 
@@ -98,22 +138,37 @@ app.on('activate', () => {
   win.show();
 });
 
-// This method will be called when Electron has finished
-// initialization and is ready to create browser windows.
-// Some APIs can only be used after this event occurs.
-app.on('ready', async () => {
-  if (isDevelopment && !process.env.IS_TEST) {
-    // Install Vue Devtools
-    try {
-      await installExtension(VUEJS_DEVTOOLS);
-    } catch (e) {
-      // eslint-disable-next-line no-console
-      console.error('Vue Devtools failed to install:', e.toString());
+const gotTheLock = app.requestSingleInstanceLock();
+
+if (!gotTheLock) {
+  app.quit();
+} else {
+  app.on('second-instance', () => {
+    // Someone tried to run a second instance, we should focus our window.
+    if (win) {
+      if (win.isMinimized()) win.restore();
+      win.show();
+      win.focus();
     }
-  }
-  initTray();
-  createWindow();
-});
+  });
+
+  // This method will be called when Electron has finished
+  // initialization and is ready to create browser windows.
+  // Some APIs can only be used after this event occurs.
+  app.on('ready', async () => {
+    if (isDevelopment && !process.env.IS_TEST) {
+      // Install Vue Devtools
+      try {
+        await installExtension(VUEJS_DEVTOOLS);
+      } catch (e) {
+        // eslint-disable-next-line no-console
+        console.error('Vue Devtools failed to install:', e.toString());
+      }
+    }
+    initTray();
+    createWindow();
+  });
+}
 
 // Exit cleanly on request from parent process in development mode.
 if (isDevelopment) {
@@ -130,19 +185,24 @@ if (isDevelopment) {
   }
 }
 
-ipcMain.on('incoming-call', () => {
-  notification = new Notification({
-    title: '着信通知',
-  });
+ipcMain.on('incoming-call', (_, { caller }) => {
+  workerWindow.webContents.send('incoming', caller);
+  workerWindow.show();
+  workerWindow.focus();
+});
 
-  notification.show();
-
-  notification.on('click', () => {
-    win.show();
-    win.focus();
-  });
+ipcMain.on('accept', () => {
+  win.webContents.send('answerCall');
+  win.show();
+  win.focus();
+  workerWindow.hide();
 });
 
 ipcMain.on('cancel-call', () => {
-  notification.removeAllListeners();
+  workerWindow.hide();
+});
+
+ipcMain.on('ignore-call', () => {
+  workerWindow.hide();
+  win.webContents.send('ignoreCall');
 });

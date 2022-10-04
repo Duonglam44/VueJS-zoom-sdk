@@ -1,4 +1,4 @@
-import authService from '@/service/AuthService';
+import authService from '@/service/authService';
 import { CookiesStorage } from '@/shared/config/cookie';
 import store from '@/store';
 

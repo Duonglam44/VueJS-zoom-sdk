@@ -1,6 +1,7 @@
 import TwilioAPI from '@/service/TwilioService';
 import store from '@/store';
-import { Device } from '@twilio/voice-sdk';
+import { Device, Call } from '@twilio/voice-sdk';
+import { INCOMING_CALL_TYPE } from '@/shared/constant/common';
 
 const showNotification = (from) => {
   window.electron.notification.incomingCall({
@@ -9,19 +10,62 @@ const showNotification = (from) => {
 };
 
 const onIncoming = (connection) => {
-  connection.on('cancel', () => {
-    window.electron.notification.cancelCall();
-    store.dispatch('twilio/disconnectCall');
-  });
+  const send_type = connection.customParameters.get('send_type');
+  const address = connection.customParameters.get('address');
+  const onhold_sid = connection.customParameters.get('onhold_sid');
+  const customer_phone_number = connection.customParameters.get(
+    'customer_phone_number'
+  );
+  const { userId } = store.state.auth.user || {};
 
-  connection.on('disconnect', () => {
-    window.electron.notification.cancelCall();
-    store.dispatch('twilio/disconnectCall');
-  });
+  const handleCallConnection = () => {
+    showNotification(connection.parameters.From);
+    store.commit('twilio/setConnection', connection);
 
-  showNotification(connection.parameters.From);
-  store.commit('twilio/setConnection', connection);
-  store.commit('twilio/setIsShowCallTypeModal', true);
+    connection.on('cancel', () => {
+      window.electron.notification.cancelCall();
+      store.dispatch('twilio/disconnectCall');
+      store.commit('twilio/setCustomerPhoneNumber', '');
+    });
+
+    connection.on('disconnect', () => {
+      window.electron.notification.cancelCall();
+      store.dispatch('twilio/disconnectCall');
+      store.commit('twilio/setCustomerPhoneNumber', '');
+    });
+  };
+
+  if (send_type) {
+    if (send_type === INCOMING_CALL_TYPE.ONHOLD_INBOUND && onhold_sid) {
+      store.commit('twilio/setHoldingCallSid', onhold_sid);
+      store.commit('twilio/setCustomerPhoneNumber', customer_phone_number);
+      handleCallConnection();
+    } else if (send_type === INCOMING_CALL_TYPE.SEND_OUTBOUND_CALL) {
+      connection.ignore();
+      return;
+    }
+  }
+
+  switch (address) {
+    case 'all':
+      handleCallConnection();
+      break;
+    case userId: {
+      const status = store.state.twilio.connection?.status?.();
+
+      if (status === Call.State.Closed || !status) {
+        handleCallConnection();
+      } else {
+        connection.reject();
+      }
+
+      break;
+    }
+
+    default:
+      connection.ignore();
+      break;
+  }
 };
 
 const onRegistered = () => {};

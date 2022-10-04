@@ -36,4 +36,15 @@ export default {
   error: {
     undefined: 'エラーが発生しました',
   },
+  datepicker: {
+    ok: 'はい',
+    cancel: '解約',
+  },
+  modal: {
+    cancel: '解約',
+    save: '保存',
+    update: '更新',
+    createSuccess: '成功を生み出す!',
+    updateSuccess: '更新に成功!',
+  },
 };

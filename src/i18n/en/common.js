@@ -25,4 +25,15 @@ export default {
   error: {
     undefined: 'An error has occurred',
   },
+  datepicker: {
+    ok: 'Ok',
+    cancel: 'Cancel',
+  },
+  modal: {
+    cancel: 'Cancel',
+    save: 'Save',
+    update: 'Update',
+    createSuccess: 'Create success!',
+    updateSuccess: 'Update success!',
+  },
 };

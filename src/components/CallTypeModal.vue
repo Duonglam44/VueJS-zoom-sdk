@@ -4,21 +4,10 @@
       <v-card-title>{{ title }}</v-card-title>
 
       <v-card-actions class="d-flex justify-center mb-2">
-        <template v-if="status && status !== 'open'">
-          <v-btn color="success" @click="handleAccept">
-            <v-icon right dark> mdi-phone </v-icon>
-            {{ $t('callTypeModal.reply') }}
-          </v-btn>
-
-          <v-btn
-            v-if="callType === CALL_TYPE.ONHOLD_INBOUND"
-            color="primary"
-            @click="handleTransfer"
-          >
-            <v-icon right dark> mdi-phone </v-icon>
-            {{ $t('callTypeModal.replyTransfer') }}
-          </v-btn>
-        </template>
+        <v-btn v-if="showTransferButton" color="primary" @click="transferCall">
+          <v-icon right dark> mdi-phone </v-icon>
+          {{ $t('callTypeModal.replyTransfer') }}
+        </v-btn>
 
         <v-btn color="error" @click="handleCannel">
           <v-icon dark right> mdi-cancel </v-icon>
@@ -31,13 +20,16 @@
 
 <script>
 import { mapActions, mapMutations, mapState, mapGetters } from 'vuex';
-import { CALL_TYPE, OUTGOING_CALL_TYPE } from '@/shared/constant/common';
+import {
+  INCOMING_CALL_TYPE,
+  OUTGOING_CALL_TYPE,
+} from '@/shared/constant/common';
 
 export default {
   name: 'CallTypeModal',
 
   data() {
-    return { CALL_TYPE };
+    return { INCOMING_CALL_TYPE };
   },
 
   computed: {
@@ -64,7 +56,7 @@ export default {
       }
 
       if (this.connection?.direction === 'INCOMING') {
-        if (this.callType === CALL_TYPE.ONHOLD_INBOUND) {
+        if (this.callType === INCOMING_CALL_TYPE.ONHOLD_INBOUND) {
           return this.$t('callTypeModal.title.transferCall');
         }
 
@@ -81,6 +73,15 @@ export default {
 
       return this.connection?.direction;
     },
+
+    showTransferButton() {
+      const send_type = this.connection?.customParameters?.get?.('send_type');
+
+      return (
+        this.connection?.direction === 'INCOMING' &&
+        send_type === OUTGOING_CALL_TYPE.ONHOLD_INBOUND
+      );
+    },
   },
 
   beforeDestroy() {
@@ -88,28 +89,14 @@ export default {
   },
 
   methods: {
-    ...mapActions('twilio', ['disconnectCall', 'rejectCall']),
+    ...mapActions('twilio', {
+      transferCall: 'returnCall',
+      disconnectCall: 'disconnectCall',
+    }),
     ...mapMutations('twilio', ['setIsShowCallTypeModal', 'setConnection']),
 
-    handleAccept() {
-      this.connection?.accept();
-
-      if (this.callType === CALL_TYPE.OUTBOUND_CALL) {
-        this.$router.push({ name: 'PhoneCallRoute' });
-        this.setIsShowCallTypeModal(false);
-      }
-    },
-
-    handleTransfer() {
-      this.setIsShowCallTypeModal(false);
-    },
-
     handleCannel() {
-      if (this.status === 'open') {
-        this.disconnectCall();
-      } else {
-        this.rejectCall();
-      }
+      this.disconnectCall();
     },
   },
 };

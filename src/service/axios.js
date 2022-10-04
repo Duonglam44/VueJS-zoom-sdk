@@ -5,7 +5,7 @@ import { isNil } from 'lodash';
 import router from '@/router';
 import { CookiesStorage } from '@/shared/config/cookie';
 import { VUE_APP_API_URL } from '@/shared/config/setting';
-import authService from '@/service/AuthService';
+import authService from '@/service/authService';
 import { stringifyParams } from '@/shared/utils';
 
 const removeAccessToken = () => {
@@ -83,6 +83,11 @@ axiosInstance.interceptors.request.use(
     if (config.url === 'auth/login') return config;
     if (token && !config.headers.Authorization) {
       config.headers.Authorization = `Bearer ${token}`;
+    }
+    if (config.headers['Content-Type'] === 'multipart/form-data') return config;
+
+    if (config.data) {
+      config.data = decamelizeKeys(config.data);
     }
     return config;
   },

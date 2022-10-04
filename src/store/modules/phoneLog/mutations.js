@@ -4,6 +4,7 @@ const mutations = {
   setUsers(state, users) {
     state.users = users;
   },
+
   setAddressList(state, { data, page }) {
     if (page === 1) {
       state.addressList = data;
@@ -14,11 +15,17 @@ const mutations = {
       );
     }
   },
+
   setAddressListPagination(state, pagination) {
     state.addressListPagination = pagination;
   },
+
   setUsersPagination(state, pagination) {
     state.usersPagination = pagination;
+  },
+
+  setRecallList(state, value) {
+    state.recallList = value;
   },
 };
 

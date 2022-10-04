@@ -1,42 +1,47 @@
 <template>
   <div class="balloon_l">
     <v-sheet
-      v-if="meta.includes(0)"
-      width="5"
-      height="50"
-      color="#ff7d7d"
-      class="mr-1"
-    >
-    </v-sheet>
-    <v-sheet
-      v-if="meta.includes(1)"
+      v-if="meta && meta.tag1"
       width="5"
       height="50"
       color="#ffc421"
       class="mr-1"
     >
     </v-sheet>
+    <v-sheet
+      v-if="meta && meta.tag2"
+      width="5"
+      height="50"
+      color="#ff7d7d"
+      class="mr-1"
+    >
+    </v-sheet>
     <div class="face_icon">
       <v-avatar color="blue">
         <span class="white--text">
-          {{ user.short_name }}
+          {{ user.shortName || user.name | avatar }}
         </span>
       </v-avatar>
     </div>
     <div>
       <p class="says">
-        {{ chat.text }}
+        {{ chat.text || chat.vtt }}
       </p>
     </div>
   </div>
 </template>
 <script>
+import systemMixins from '@/mixins/system';
+
 export default {
   name: 'MemoList',
+
+  mixins: [systemMixins],
+
   props: {
     meta: {
-      type: Array,
-      default: () => [],
+      type: Object,
+      default: () => {},
     },
     chat: {
       type: Object,

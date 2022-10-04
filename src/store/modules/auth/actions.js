@@ -2,7 +2,7 @@ import router from '@/router';
 
 import axiosInstance from '@/service/axios';
 import { CookiesStorage } from '@/shared/config/cookie';
-import authService from '@/service/AuthService';
+import authService from '@/service/authService';
 
 const actionsAuth = {
   async login({ commit }, user) {

@@ -3,15 +3,16 @@ const COOKIEKEY = {
   refreshToken: 'refreshToken',
 };
 
-const CALL_TYPE = {
+const INCOMING_CALL_TYPE = {
   INBOUND_CALL: 'inbound_call',
   ONHOLD_INBOUND: 'onhold_inbound',
-  OUTBOUND_CALL: 'outbound_call',
+  SEND_OUTBOUND_CALL: 'send_out_bound',
 };
 
 const OUTGOING_CALL_TYPE = {
   IN_BOUND: 'in_bound',
-  OUT_BOUND: 'out_bound',
+  ONHOLD_INBOUND: 'onhold_inbound',
+  SEND_OUTBOUND_CALL: 'send_out_bound',
 };
 
 const HTTP_STATUS = {
@@ -21,4 +22,14 @@ const HTTP_STATUS = {
   UNAUTHORIZED: 401,
 };
 
-export { COOKIEKEY, CALL_TYPE, OUTGOING_CALL_TYPE, HTTP_STATUS };
+const REGION_OPTIONS = 'japaneast';
+const SPEECH_RECOGNITION_LANGUAGE = 'ja-JP';
+
+export {
+  COOKIEKEY,
+  INCOMING_CALL_TYPE,
+  OUTGOING_CALL_TYPE,
+  HTTP_STATUS,
+  REGION_OPTIONS,
+  SPEECH_RECOGNITION_LANGUAGE,
+};
