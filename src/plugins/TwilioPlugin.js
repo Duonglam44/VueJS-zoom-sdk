@@ -51,7 +51,9 @@ const onIncoming = (connection) => {
       handleCallConnection();
       break;
     case userId: {
-      const status = store.state.twilio.connection?.status?.();
+      const status = store.state.twilio.connection
+        ? store.state.twilio.connection.status()
+        : null;
 
       if (status === Call.State.Closed || !status) {
         handleCallConnection();
