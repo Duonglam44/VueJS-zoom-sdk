@@ -5,7 +5,7 @@ import { isNil } from 'lodash';
 import router from '@/router';
 import { CookiesStorage } from '@/shared/config/cookie';
 import { VUE_APP_API_URL } from '@/shared/config/setting';
-import authService from '@/service/AuthService';
+import authService from '@/service/authService';
 import { stringifyParams } from '@/shared/utils';
 
 const removeAccessToken = () => {

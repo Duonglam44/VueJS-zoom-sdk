@@ -190,7 +190,7 @@ import ChatBoxRight from '@/components/ChatBoxRight.vue';
 import ChatBoxLeft from '@/components/ChatBoxLeft.vue';
 import MemoList from '@/components/MemoList.vue';
 import Loading from '@/components/Loading.vue';
-import phoneLogsService from '@/service/PhoneLogsService';
+import phoneLogsService from '@/service/phoneLogsService';
 import { VUE_APP_URL_RESOURCE } from '@/shared/config/setting';
 
 export default {

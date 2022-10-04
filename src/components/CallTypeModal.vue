@@ -75,7 +75,12 @@ export default {
     },
 
     showTransferButton() {
-      return this.connection?.direction === 'INCOMING';
+      const send_type = this.connection?.customParameters?.get?.('send_type');
+
+      return (
+        this.connection?.direction === 'INCOMING' &&
+        send_type === OUTGOING_CALL_TYPE.ONHOLD_INBOUND
+      );
     },
   },
 

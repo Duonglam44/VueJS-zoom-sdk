@@ -97,7 +97,7 @@ import Datepicker, {
   FORMAT_DATE_TYPE,
   DATEPICKER_TYPE,
 } from '@/components/commons/Datepicker.vue';
-import phoneLogsService from '@/service/PhoneLogsService';
+import phoneLogsService from '@/service/phoneLogsService';
 import CallAwayDialog from './components/CallAwayDialog.vue';
 
 export default {
