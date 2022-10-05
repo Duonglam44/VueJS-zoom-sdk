@@ -1,6 +1,6 @@
 const mutations = {
   receiveSpeechRecognized(state, item) {
-    let newItem = item;
+    let newItem = {};
     if (item.operator) {
       newItem = {
         ...item,

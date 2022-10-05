@@ -206,7 +206,7 @@ import ChatBoxRight from '@/components/ChatBoxRight.vue';
 import ChatBoxLeft from '@/components/ChatBoxLeft.vue';
 import MemoList from '@/components/MemoList.vue';
 
-import TwilioAPI from '@/service/TwilioService';
+import twilioService from '@/service/twilioService';
 
 export default {
   name: 'PhoneCall',
@@ -366,7 +366,7 @@ export default {
       this.creatingOnHold = true;
 
       try {
-        const response = await TwilioAPI.createOnHold({
+        const response = await twilioService.createOnHold({
           callSid,
           userId: this.currentUser.userId,
         });

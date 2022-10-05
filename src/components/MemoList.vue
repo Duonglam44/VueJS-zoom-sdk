@@ -41,15 +41,15 @@ export default {
   props: {
     meta: {
       type: Object,
-      default: () => {},
+      default: () => ({}),
     },
     chat: {
       type: Object,
-      default: () => {},
+      default: () => ({}),
     },
     user: {
       type: Object,
-      default: () => {},
+      default: () => ({}),
     },
   },
   mounted() {},

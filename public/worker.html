@@ -1,189 +1,212 @@
+<!DOCTYPE html>
 <html lang="ja" class="">
-
-<head>
-  <meta charset="UTF-8" />
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:100,300,400,400i,700" />
-  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css" />
-  <style class="INLINE_PEN_STYLESHEET_ID">
-    .flex {
-      display: flex;
-    }
-    .flex-column {
-      flex-direction: column;
-    }
-    .items-center {
-      align-items: center;
-    }
-    .justify-center {
-      justify-content: center;
-    }
-    .justify-between {
-      justify-content: space-between;
-    }
-    .flex-auto {
-      flex: 1 1 auto;
-      min-width: 0;
-      /* 1 */
-      min-height: 0;
-      /* 1 */
-    }
-    .mb2 {
-      margin-bottom: 1rem;
-    }
-    :root {
-      font-size: 10px;
-    }
-    html,
-    body {
-      font-family: Lato;
-      font-size: 16px;
-      height: 100%;
-      width: 100%;
-      overflow: hidden;
-      background-color: #1393bd;
-      color: white;
-    }
-    h1 {
-      font-size: 2.25rem;
-      font-weight: 300;
-      margin: 0 0 1em;
-      line-height: 3rem;
-    }
-    h4 {
-      font-size: 1.25rem;
-      font-weight: 700;
-      margin: 0 0 1em;
-      letter-spacing: 0.04em;
-      line-height: 2rem;
-    }
-    .danger {
-      background-color: #f65959;
-    }
-    .success {
-      background-color: #99d154;
-    }
-    .caller-info {
-      min-height: 100px;
-    }
-    .caller-info .avatar-caller {
-      width: 65px;
-      height: 65px;
-    }
-    .caller-info .avatar-caller .icon-phone {
-      position: absolute;
-      z-index: 2;
-      width: inherit;
-      height: inherit;
-      font-size: 50px;
-      line-height: 90px;
-      color: #1393bd;
-    }
-    .call-buttons {
-      width: 250px;
-    }
-    .call-buttons .btn-floating-label .btn-floating.btn-jumbo {
-      width: 5rem;
-      height: 5rem;
-    }
-    .call-buttons .btn-floating-label .btn-floating.btn-jumbo i {
-      font-size: 2rem;
-      line-height: 5rem;
-    }
-    .call-buttons .btn-floating-label h4 {
-      font-weight: 300;
-      margin-top: 0.5rem;
-      text-align: center;
-    }
-    #reject i {
-      transform: rotate(135deg);
-    }
-    .ripple-wave {
-      position: absolute;
-      border-radius: 50%;
-      z-index: 1;
-      height: 65px;
-      width: 65px;
-    }
-    .ripple-wave::before,
-    .ripple-wave::after {
-      content: '';
-      display: block;
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      border-radius: 50%;
-      background-color: white;
-      will-change: transform, opacity;
-    }
-    .ripple-wave::after {
-      -webkit-animation: pulse-animation 2s cubic-bezier(0.24, 0, 0.38, 1) infinite;
-      animation: pulse-animation 2s cubic-bezier(0.24, 0, 0.38, 1) infinite;
-      transition: opacity 0.4s, transform 0.4s;
-    }
-    .ripple-wave .ripple-wave-2 {
-      position: absolute;
-      height: inherit;
-      width: inherit;
-    }
-    .ripple-wave .ripple-wave-2::before {
-      content: '';
-      display: block;
-      height: inherit;
-      width: inherit;
-      border-radius: 50%;
-      background-color: white;
-      -webkit-animation: pulse-animation 2s cubic-bezier(0.24, 0, 0.38, 1) infinite;
-      animation: pulse-animation 2s cubic-bezier(0.24, 0, 0.38, 1) infinite;
-      -webkit-animation-delay: 0.24s;
-      animation-delay: 0.24s;
-    }  </style>
-</head>
-
-<body>
-  <div class="flex flex-column items-center justify-center wrapper-caller-info" style="min-height: 100%">
-    <section class="caller-info flex flex-column items-center flex-auto justify-center">
-      <div class="circle avatar-caller mb4">
-        <div class="ripple-wave">
-          <div class="ripple-wave-2"></div>
-        </div>
-        <div class="material-icons circle icon-phone">phone_callback</div>
-      </div>
-      <h1 class="mb2" id="title"></h1>
-    </section>
-    <section class="call-buttons flex justify-between">
-      <div class="btn-floating-label">
-        <a class="btn-floating btn-jumbo waves-effect waves-light danger" id="reject"><i
-            class="material-icons">phone</i></a>
-        <h4 for="reject">切断</h4>
-      </div>
-      <div class="btn-floating-label">
-        <a class="btn-floating btn-jumbo waves-effect waves-light success" id="accept"><i
-            class="material-icons">phone</i></a>
-        <h4 for="accept">出る</h4>
-      </div>
-    </section>
-  </div>
-
-  <script>
-    const ipcRenderer = require('electron').ipcRenderer;
-
-    ipcRenderer.on('incoming', (event, content) => {
-      const title = document.querySelector('#title');
-      if (title) {
-        title.innerHTML = content;
+  <head>
+    <meta charset="UTF-8" />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css?family=Lato:100,300,400,400i,700"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css"
+    />
+    <style class="INLINE_PEN_STYLESHEET_ID">
+      .flex {
+        display: flex;
       }
-    });
+      .flex-column {
+        flex-direction: column;
+      }
+      .items-center {
+        align-items: center;
+      }
+      .justify-center {
+        justify-content: center;
+      }
+      .justify-between {
+        justify-content: space-between;
+      }
+      .flex-auto {
+        flex: 1 1 auto;
+        min-width: 0;
+        /* 1 */
+        min-height: 0;
+        /* 1 */
+      }
+      .mb2 {
+        margin-bottom: 1rem;
+      }
+      :root {
+        font-size: 10px;
+      }
+      html,
+      body {
+        font-family: Lato, Arial, sans-serif;
+        font-size: 16px;
+        height: 100%;
+        width: 100%;
+        overflow: hidden;
+        background-color: #1393bd;
+        color: white;
+      }
+      h1 {
+        font-size: 2.25rem;
+        font-weight: 300;
+        margin: 0 0 1em;
+        line-height: 3rem;
+      }
+      h4 {
+        font-size: 1.25rem;
+        font-weight: 700;
+        margin: 0 0 1em;
+        letter-spacing: 0.04em;
+        line-height: 2rem;
+      }
+      .danger {
+        background-color: #f65959;
+      }
+      .success {
+        background-color: #99d154;
+      }
+      .caller-info {
+        min-height: 100px;
+      }
+      .caller-info .avatar-caller {
+        width: 65px;
+        height: 65px;
+      }
+      .caller-info .avatar-caller .icon-phone {
+        position: absolute;
+        z-index: 2;
+        width: inherit;
+        height: inherit;
+        font-size: 50px;
+        line-height: 90px;
+        color: #1393bd;
+      }
+      .call-buttons {
+        width: 250px;
+      }
+      .call-buttons .btn-floating-label .btn-floating.btn-jumbo {
+        width: 5rem;
+        height: 5rem;
+      }
+      .call-buttons .btn-floating-label .btn-floating.btn-jumbo i {
+        font-size: 2rem;
+        line-height: 5rem;
+      }
+      .call-buttons .btn-floating-label h4 {
+        font-weight: 300;
+        margin-top: 0.5rem;
+        text-align: center;
+      }
+      #reject i {
+        transform: rotate(135deg);
+      }
+      .ripple-wave {
+        position: absolute;
+        border-radius: 50%;
+        z-index: 1;
+        height: 65px;
+        width: 65px;
+      }
+      .ripple-wave::before,
+      .ripple-wave::after {
+        content: '';
+        display: block;
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        background-color: white;
+        will-change: transform, opacity;
+      }
+      .ripple-wave::after {
+        -webkit-animation: pulse-animation 2s cubic-bezier(0.24, 0, 0.38, 1)
+          infinite;
+        animation: pulse-animation 2s cubic-bezier(0.24, 0, 0.38, 1) infinite;
+        transition: opacity 0.4s, transform 0.4s;
+      }
+      .ripple-wave .ripple-wave-2 {
+        position: absolute;
+        height: inherit;
+        width: inherit;
+      }
+      .ripple-wave .ripple-wave-2::before {
+        content: '';
+        display: block;
+        height: inherit;
+        width: inherit;
+        border-radius: 50%;
+        background-color: white;
+        -webkit-animation: pulse-animation 2s cubic-bezier(0.24, 0, 0.38, 1)
+          infinite;
+        animation: pulse-animation 2s cubic-bezier(0.24, 0, 0.38, 1) infinite;
+        -webkit-animation-delay: 0.24s;
+        animation-delay: 0.24s;
+      }
+    </style>
+  </head>
 
-    document.querySelector('#accept').addEventListener('click', () => {
-      ipcRenderer.send('accept');
-    });
-    document.querySelector('#reject').addEventListener('click', () => {
-      ipcRenderer.send('ignore-call');
-    });
-  </script>
+  <body>
+    <div
+      class="flex flex-column items-center justify-center wrapper-caller-info"
+      style="min-height: 100%"
+    >
+      <section
+        class="caller-info flex flex-column items-center flex-auto justify-center"
+      >
+        <div class="circle avatar-caller mb4">
+          <div class="ripple-wave">
+            <div class="ripple-wave-2"></div>
+          </div>
+          <div class="material-icons circle icon-phone">phone_callback</div>
+        </div>
+        <h1 class="mb2" id="title"></h1>
+      </section>
+      <section class="call-buttons flex justify-between">
+        <div class="btn-floating-label">
+          <a
+            class="btn-floating btn-jumbo waves-effect waves-light danger"
+            id="reject"
+            ><i class="material-icons">phone</i></a
+          >
+          <h4 for="reject">切断</h4>
+        </div>
+        <div class="btn-floating-label">
+          <a
+            class="btn-floating btn-jumbo waves-effect waves-light success"
+            id="accept"
+          >
+            <i class="material-icons">phone</i>
+          </a>
+          <h4 for="accept">出る</h4>
+        </div>
+      </section>
+    </div>
 
-  <div class="hiddendiv common"></div>
-</body>
+    <script>
+      const ipcRenderer = require('electron').ipcRenderer;
 
+      ipcRenderer.on('incoming', (event, content) => {
+        const title = document.querySelector('#title');
+        if (title) {
+          title.innerHTML = content;
+        }
+      });
+
+      document.querySelector('#accept').addEventListener('click', () => {
+        ipcRenderer.send('accept');
+      });
+      document.querySelector('#reject').addEventListener('click', () => {
+        ipcRenderer.send('ignore-call');
+      });
+    </script>
+
+    <div class="hiddendiv common"></div>
+  </body>
 </html>

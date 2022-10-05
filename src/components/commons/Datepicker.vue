@@ -89,11 +89,11 @@ export default {
       const newDate = new Date(this.date);
       let tempTime = '';
       let amount = 1;
+
       if (key === 'last') {
         amount = -1;
-      } else {
-        amount = 1;
       }
+
       tempTime = format(addMonths(newDate, amount), this.formatType);
       this.date = tempTime;
       this.$emit('input', tempTime);

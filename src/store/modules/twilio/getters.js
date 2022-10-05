@@ -14,14 +14,9 @@ const getters = {
   },
 
   isInCalling(state) {
-    if (
-      state.connection?.status() === 'pending' ||
-      state.connection?.status() === 'open'
-    ) {
-      return true;
-    }
+    const callState = state.connection?.status();
 
-    return false;
+    return ['pending', 'open'].includes(callState);
   },
 
   remoteNumber(state) {
