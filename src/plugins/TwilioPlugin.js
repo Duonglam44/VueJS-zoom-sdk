@@ -1,4 +1,4 @@
-import TwilioAPI from '@/service/TwilioService';
+import twilioService from '@/service/twilioService';
 import store from '@/store';
 import { Device, Call } from '@twilio/voice-sdk';
 import { INCOMING_CALL_TYPE } from '@/shared/constant/common';
@@ -75,7 +75,7 @@ const onDestroyed = () => {};
 const onError = () => {};
 const onTokenWillExpire = async (device) => {
   try {
-    const res = await TwilioAPI.getToken();
+    const res = await twilioService.getToken();
     device.updateToken(res.accessToken);
   } catch (error) {
     store.commit('twilio/setDevice', null);
@@ -84,7 +84,7 @@ const onTokenWillExpire = async (device) => {
 
 const initTwilio = async () => {
   try {
-    const res = await TwilioAPI.getToken();
+    const res = await twilioService.getToken();
     const device = new Device(res.accessToken, {
       codecPreferences: ['opus', 'pcmu'],
       fakeLocalDTMF: true,

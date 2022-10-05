@@ -3,7 +3,7 @@ import { mapActions, mapState, mapGetters, mapMutations } from 'vuex';
 import { RecorderAudio } from '@/service/recordAudio';
 import { adjustSpeakerTime } from '@/shared/utils';
 import InitRecordService from '@/service/InitRecordService';
-import TwilioAPI from '@/service/TwilioService';
+import twilioService from '@/service/twilioService';
 
 export default {
   data() {
@@ -99,7 +99,7 @@ export default {
         });
 
         if (this.holdingCallSid) {
-          await TwilioAPI.updateOnHold({ phone_log_id: data.phoneLogId });
+          await twilioService.updateOnHold({ phone_log_id: data.phoneLogId });
           this.setHoldingCallSid('');
         }
 
