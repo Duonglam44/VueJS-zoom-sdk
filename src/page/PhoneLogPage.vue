@@ -231,14 +231,12 @@ export default {
     },
 
     phoneToRecordURL() {
-      const [, ...arrLink] = get(this.phoneLog, 'wavFileFromPath', '').split(
-        '/'
-      );
+      const [, ...arrLink] = (this.phoneLog?.wavFileFromPath || '').split('/');
       return `${VUE_APP_URL_RESOURCE}/${arrLink.join('/')}`;
     },
 
     phoneFromRecordURL() {
-      const [, ...arrLink] = get(this.phoneLog, 'wavFileToPath', '').split('/');
+      const [, ...arrLink] = (this.phoneLog?.wavFileToPath || '').split('/');
       return `${VUE_APP_URL_RESOURCE}/${arrLink.join('/')}`;
     },
   },
