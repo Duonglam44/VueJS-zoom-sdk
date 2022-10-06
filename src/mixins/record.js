@@ -43,9 +43,18 @@ export default {
         await InitRecordService.initService();
         // setup record
         this.localRecorder = new RecorderAudio(this.localStream);
-        this.remoteStream = new MediaStream([
-          this.connection.getRemoteStream().getAudioTracks()[0],
-        ]);
+        this.remoteStream = await new Promise((rel) => {
+          this.connection.on('volume', (_, outputVolume) => {
+            if (outputVolume > 0) {
+              rel(
+                new MediaStream([
+                  this.connection.getRemoteStream().getAudioTracks()[0],
+                ])
+              );
+            }
+          });
+        });
+        this.connection.removeListener('volume', () => {});
         this.remoteRecorder = new RecorderAudio(this.remoteStream);
         this.remoteRecorder.init();
         this.localRecorder.init();
