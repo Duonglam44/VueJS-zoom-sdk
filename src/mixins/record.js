@@ -36,13 +36,20 @@ export default {
 
         this.customerNumber = this.remoteNumber;
 
-        // get local stream and remote stream
+        // get local stream
         this.localStream = await navigator.mediaDevices.getUserMedia({
           audio: true,
         });
         await InitRecordService.initService();
-        // setup record
+        // setup and start record local stream
         this.localRecorder = new RecorderAudio(this.localStream);
+        this.localRecorder.init();
+        this.localRecorder.start();
+
+        // start recognize
+        this.startSpeechRecognize();
+
+        // setup and start record remote stream
         this.remoteStream = await new Promise((rel) => {
           this.connection.on('volume', (_, outputVolume) => {
             if (outputVolume > 0) {
@@ -57,14 +64,7 @@ export default {
         this.connection.removeListener('volume', () => {});
         this.remoteRecorder = new RecorderAudio(this.remoteStream);
         this.remoteRecorder.init();
-        this.localRecorder.init();
-
-        // start record
-        this.localRecorder.start();
         this.remoteRecorder.start();
-
-        // start recognize
-        this.startSpeechRecognize();
       } catch (error) {
         console.log('startRecordAndRecognize -> error', error);
         this.isRecording = false;
@@ -100,7 +100,7 @@ export default {
         this.stopAndClearRecord();
         this.stopAndClearRecognize();
         const { data = {} } = await this.saveDataPhoneCall({
-          remoteRecordBlob,
+          remoteRecordBlob: remoteRecordBlob || new Blob([]),
           customerNumber: this.customerNumber,
           localRecordBlob,
           memo: this.memo,
