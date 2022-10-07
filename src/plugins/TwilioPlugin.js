@@ -40,7 +40,10 @@ const onIncoming = (connection) => {
       store.commit('twilio/setHoldingCallSid', onhold_sid);
       store.commit('twilio/setCustomerPhoneNumber', customer_phone_number);
       handleCallConnection();
-    } else if (send_type === INCOMING_CALL_TYPE.SEND_OUTBOUND_CALL) {
+      return;
+    }
+
+    if (send_type === INCOMING_CALL_TYPE.SEND_OUTBOUND_CALL) {
       connection.ignore();
       return;
     }

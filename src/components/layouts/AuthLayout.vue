@@ -51,8 +51,8 @@ export default {
     );
   },
   beforeDestroy() {
-    this.removeAnswerListener();
-    this.removeIgnoreListener();
+    this.removeAnswerListener?.();
+    this.removeIgnoreListener?.();
   },
 
   methods: {
