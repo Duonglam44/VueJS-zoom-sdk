@@ -37,9 +37,14 @@ const onIncoming = (connection) => {
 
   if (send_type) {
     if (send_type === INCOMING_CALL_TYPE.ONHOLD_INBOUND && onhold_sid) {
-      store.commit('twilio/setHoldingCallSid', onhold_sid);
-      store.commit('twilio/setCustomerPhoneNumber', customer_phone_number);
-      handleCallConnection();
+      if (address === userId) {
+        store.commit('twilio/setHoldingCallSid', onhold_sid);
+        store.commit('twilio/setCustomerPhoneNumber', customer_phone_number);
+        handleCallConnection();
+        return;
+      }
+
+      connection.ignore();
       return;
     }
 
