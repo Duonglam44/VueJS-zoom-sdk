@@ -165,6 +165,10 @@ export default {
       border: 1px solid #adb5bd;
       background-color: #ebf6fa;
     }
+    &:disabled {
+      color: rgba(0, 0, 0, 0.38);
+      background-color: rgba(0, 0, 0, 0.06);
+    }
   }
 }
 
