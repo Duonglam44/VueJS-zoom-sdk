@@ -76,4 +76,40 @@ function adjustSpeakerTime({ min, sec, adjust = 0, ms }) {
   return `${minute}:${second}`;
 }
 
-export { getCurrentDomain, isElectron, stringifyParams, adjustSpeakerTime };
+function formatNumber(number) {
+  const numberMatched = `${number}`.match(/([0-9+])+/g);
+
+  if (!number || !numberMatched) return '';
+  const phoneNumberStr = numberMatched.join('');
+
+  if (phoneNumberStr.startsWith('+81') || phoneNumberStr.startsWith('0')) {
+    const cleaned = `${phoneNumberStr}`.replace('+81', '0').replace(/\D/g, '');
+    const matchNumber = cleaned.match(/^(\d{3})(\d{3,4})(\d{4})$/);
+    if (matchNumber) {
+      return `${matchNumber[1]}-${matchNumber[2]}-${matchNumber[3]}`;
+    }
+
+    return phoneNumberStr;
+  }
+
+  return phoneNumberStr;
+}
+
+function formatToGlobalNumber(str) {
+  if (!str) return '';
+
+  if (str.startsWith('0')) {
+    return `+81${str}`;
+  }
+
+  return str;
+}
+
+export {
+  getCurrentDomain,
+  isElectron,
+  stringifyParams,
+  adjustSpeakerTime,
+  formatNumber,
+  formatToGlobalNumber,
+};
