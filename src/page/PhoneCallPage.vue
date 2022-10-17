@@ -27,9 +27,6 @@
           >
             <v-icon>mdi-phone-settings</v-icon>
           </v-btn>
-          <v-btn elevation="2" icon outlined color="white" class="mx-1">
-            <v-icon>mdi-microphone</v-icon>
-          </v-btn>
 
           <v-btn
             elevation="2"

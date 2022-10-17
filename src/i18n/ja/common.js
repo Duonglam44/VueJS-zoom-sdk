@@ -41,7 +41,7 @@ export default {
     cancel: '解約',
   },
   modal: {
-    cancel: '解約',
+    cancel: 'キャンセル',
     save: '保存',
     update: '更新',
     createSuccess: '成功を生み出す!',
