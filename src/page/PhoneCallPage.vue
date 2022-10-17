@@ -65,7 +65,11 @@
               :color="autoScrolling ? 'accent' : ''"
               @click="autoScrolling = !autoScrolling"
               ><v-icon>mdi-checkbox-marked-circle</v-icon
-              >自動スクロールON</v-btn
+              >{{
+                autoScrolling
+                  ? $t('phoneCall.autoScrollOn')
+                  : $t('phoneCall.autoScrollOff')
+              }}</v-btn
             >
           </v-col>
         </v-row>
@@ -238,7 +242,7 @@ export default {
       timer: null,
       msTimer: null,
       memo: '',
-      autoScrolling: false,
+      autoScrolling: true,
       tab: 0,
       creatingOnHold: false,
     };
