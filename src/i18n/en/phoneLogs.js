@@ -15,4 +15,7 @@ export default {
   noResults: 'No results',
   month: '{month} Month',
   searchResults: 'Search results',
+  minuteAgo: 'Minutes ago',
+  secondAgo: 'Seconds ago',
+  numberNotSave: 'Number not in address book',
 };

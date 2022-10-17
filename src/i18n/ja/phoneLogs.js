@@ -13,4 +13,7 @@ export default {
   noResults: '結果がありません',
   month: '{month} 月',
   searchResults: '検索結果',
+  minuteAgo: '分前',
+  secondAgo: '秒前',
+  numberNotSave: 'アドレス帳にない番号',
 };

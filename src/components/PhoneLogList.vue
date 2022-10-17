@@ -123,7 +123,9 @@
               </v-list-item-content>
 
               <v-list-item-content>
-                <v-list-item-title>{{ item.createdAt }}</v-list-item-title>
+                <v-list-item-title>{{
+                  timeFromNow(item.createdAt)
+                }}</v-list-item-title>
               </v-list-item-content>
 
               <v-list-item-content>
@@ -163,9 +165,11 @@
 </template>
 <script>
 import { mapActions, mapMutations, mapState } from 'vuex';
+import { intervalToDuration, format } from 'date-fns';
 
 import { ApiStatus } from '@/store/constants';
 import { OUTGOING_CALL_TYPE } from '@/shared/constant/common';
+import { convertTimeZone } from '@/shared/utils';
 
 import ListContainer from './commons/ListContainer.vue';
 import Pagination from './commons/Pagination.vue';
@@ -213,6 +217,11 @@ export default {
     pageSelected: {
       type: Number,
       default: 1,
+    },
+
+    showTimeDetail: {
+      type: Boolean,
+      default: true,
     },
   },
 
@@ -265,7 +274,7 @@ export default {
     },
 
     getDataAddressByKey(address, key) {
-      if (!address) return 'null';
+      if (!address) return this.$t('phoneLogs.numberNotSave');
       return address[key] ?? '';
     },
 
@@ -313,6 +322,25 @@ export default {
         console.log('selectOnHoldUser -> error', error);
       }
     },
+
+    timeFromNow(time) {
+      if (this.showTimeDetail) return time;
+
+      const { hours, minutes, seconds } = intervalToDuration({
+        start: new Date(time),
+        end: convertTimeZone(new Date()),
+      });
+
+      if (hours >= 1) {
+        return format(new Date(time), 'H:mm');
+      }
+
+      if (minutes >= 1) {
+        return `${minutes} ${this.$t('phoneLogs.minuteAgo')}`;
+      }
+
+      return `${seconds} ${this.$t('phoneLogs.secondAgo')}`;
+    },
   },
 };
 </script>
@@ -321,5 +349,8 @@ export default {
 .header-list {
   background: rgba(0, 0, 0, 0.03);
   color: #373737 !important;
+}
+.v-item-group > div:nth-of-type(2) > div:nth-of-type(even) {
+  background-color: rgba(0, 0, 0, 0.02);
 }
 </style>

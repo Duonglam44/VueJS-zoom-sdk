@@ -2,4 +2,5 @@ export const {
   VUE_APP_API_URL,
   VUE_APP_AZURE_SUBSCRIPTION,
   VUE_APP_URL_RESOURCE,
+  VUE_APP_TIME_ZONE,
 } = process.env;
