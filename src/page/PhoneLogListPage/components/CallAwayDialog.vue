@@ -33,10 +33,11 @@
               <div class="form-group d-flex">
                 <input
                   id="phoneNumber"
-                  v-model="phoneNumber"
+                  :value="phoneNumber"
                   type="text"
                   class="form-control"
                   required="true"
+                  @change="onInputChange"
                 />
                 <v-btn
                   style="min-height: 38px"
@@ -70,6 +71,8 @@
 import { mapActions, mapMutations, mapGetters, mapState } from 'vuex';
 
 import { OUTGOING_CALL_TYPE } from '@/shared/constant/common';
+import { formatNumber, formatToGlobalNumber } from '@/shared/utils';
+
 import UserList from './UserList.vue';
 import AddressList from './AddressList.vue';
 
@@ -117,11 +120,19 @@ export default {
 
       const params = {
         From: this.currentUser.phoneNumber,
-        To: this.phoneNumber,
+        To: formatToGlobalNumber(this.phoneNumber),
         call_type: OUTGOING_CALL_TYPE.SEND_OUTBOUND_CALL,
       };
 
       this.handleCall(params);
+    },
+
+    onInputChange($event) {
+      const val = formatNumber($event.target.value);
+
+      // eslint-disable-next-line no-param-reassign
+      if (val === this.phoneNumber) $event.target.value = val;
+      else this.phoneNumber = val;
     },
   },
 };

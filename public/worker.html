@@ -190,12 +190,26 @@
     </div>
 
     <script>
+      function formatNumber(number) {
+        if (number.startsWith('+81')) {
+          const cleaned = `${number}`.replace('+81', '0');
+          const matchNumber = cleaned.match(/^(\d{3})(\d{3,4})(\d{4})$/);
+          if (matchNumber) {
+            return `${matchNumber[1]}-${matchNumber[2]}-${matchNumber[3]}`;
+          }
+
+          return cleaned;
+        }
+
+        return number;
+      }
+
       const ipcRenderer = require('electron').ipcRenderer;
 
       ipcRenderer.on('incoming', (event, content) => {
         const title = document.querySelector('#title');
         if (title) {
-          title.innerHTML = content;
+          title.innerHTML = formatNumber(content);
         }
       });
 

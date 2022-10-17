@@ -12,13 +12,7 @@
             ＜戻る
           </v-btn>
           <v-toolbar-title class="white--text font-weight-black">
-            {{
-              getData(
-                phoneLog.address,
-                'name',
-                phoneLog.customerPhoneNumber || ''
-              )
-            }}
+            {{ getData(phoneLog.address, 'name', customerPhoneFormated || '') }}
           </v-toolbar-title>
 
           <v-spacer></v-spacer>
@@ -190,8 +184,11 @@ import ChatBoxRight from '@/components/ChatBoxRight.vue';
 import ChatBoxLeft from '@/components/ChatBoxLeft.vue';
 import MemoList from '@/components/MemoList.vue';
 import Loading from '@/components/Loading.vue';
+
 import phoneLogsService from '@/service/phoneLogsService';
+
 import { VUE_APP_URL_RESOURCE } from '@/shared/config/setting';
+import { formatNumber } from '@/shared/utils';
 
 export default {
   name: 'PhoneLogPage',
@@ -239,6 +236,10 @@ export default {
       const [, ...arrLink] = (this.phoneLog?.wavFileToPath || '').split('/');
       return `${VUE_APP_URL_RESOURCE}/${arrLink.join('/')}`;
     },
+
+    customerPhoneFormated() {
+      return formatNumber(this.phoneLog.customerPhoneNumber);
+    },
   },
   async created() {
     const { id } = this.$route.params;
@@ -272,7 +273,7 @@ export default {
       return JSON.parse(meta || '{}');
     },
     getCustomer(object, key) {
-      return get(object, key, { name: this.phoneLog.customerPhoneNumber });
+      return get(object, key, { name: this.customerPhoneFormated });
     },
   },
 };

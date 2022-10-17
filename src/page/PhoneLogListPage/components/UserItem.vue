@@ -11,7 +11,7 @@
     <v-list-item-content>
       <v-list-item-title>{{ user.name }}</v-list-item-title>
       <v-list-item-subtitle>
-        {{ user.phoneNumber }}
+        {{ phoneNumberFormatted }}
       </v-list-item-subtitle>
     </v-list-item-content>
     <v-list-item-action>
@@ -31,8 +31,10 @@
 <script>
 import { mapActions, mapMutations, mapState, mapGetters } from 'vuex';
 
-import { OUTGOING_CALL_TYPE } from '@/shared/constant/common';
 import systemMixins from '@/mixins/system';
+
+import { OUTGOING_CALL_TYPE } from '@/shared/constant/common';
+import { formatNumber } from '@/shared/utils';
 
 export default {
   name: 'UserItem',
@@ -44,6 +46,10 @@ export default {
       currentUser: (state) => state.user,
     }),
     ...mapGetters('twilio', ['isInCalling']),
+
+    phoneNumberFormatted() {
+      return formatNumber(this.user.phoneNumber);
+    },
   },
   methods: {
     ...mapActions('twilio', ['handleCall']),

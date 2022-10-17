@@ -12,7 +12,7 @@
             ＜戻る
           </v-btn>
           <v-toolbar-title class="white--text font-weight-black">
-            {{ remoteNumber }}
+            {{ phoneNumber }}
           </v-toolbar-title>
 
           <v-spacer></v-spacer>
@@ -208,6 +208,8 @@ import MemoList from '@/components/MemoList.vue';
 
 import twilioService from '@/service/twilioService';
 
+import { formatNumber } from '@/shared/utils';
+
 export default {
   name: 'PhoneCall',
 
@@ -264,6 +266,10 @@ export default {
 
     speechResultsLength() {
       return this.speechResults.length;
+    },
+
+    phoneNumber() {
+      return formatNumber(this.remoteNumber);
     },
   },
 
