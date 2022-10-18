@@ -1,6 +1,8 @@
 import { isNil, omitBy } from 'lodash';
 import qs from 'qs';
 
+import { VUE_APP_TIME_ZONE } from '../config/setting';
+
 function getCurrentDomain() {
   const parts = window.location.hostname;
   return parts;
@@ -105,6 +107,14 @@ function formatToGlobalNumber(str) {
   return str;
 }
 
+function convertTimeZone(date) {
+  return new Date(
+    (typeof date === 'string' ? new Date(date) : date).toLocaleString('en-US', {
+      timeZone: VUE_APP_TIME_ZONE,
+    })
+  );
+}
+
 export {
   getCurrentDomain,
   isElectron,
@@ -112,4 +122,5 @@ export {
   adjustSpeakerTime,
   formatNumber,
   formatToGlobalNumber,
+  convertTimeZone,
 };

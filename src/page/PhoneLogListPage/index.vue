@@ -61,6 +61,7 @@
         :total="todayPhoneLogs.total"
         :per-page="todayPhoneLogs.perPage"
         :page-selected="currentPageToday"
+        :show-time-detail="false"
         @page-changed="reloadTodayList"
         @item-clicked="onItemClick"
         @reload-data="reloadData"
