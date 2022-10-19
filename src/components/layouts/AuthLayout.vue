@@ -43,17 +43,24 @@ export default {
     this.removeIgnoreListener = window.electron.ipcRenderer.on(
       'ignoreCall',
       () => {
-        this.rejectCall();
+        const address = this.connection?.customParameters?.get?.('address');
+
+        if (address === 'all') {
+          this.ignoreCall();
+        } else {
+          this.rejectCall();
+        }
       }
     );
   },
+
   beforeDestroy() {
     this.removeAnswerListener?.();
     this.removeIgnoreListener?.();
   },
 
   methods: {
-    ...mapActions('twilio', ['rejectCall']),
+    ...mapActions('twilio', ['rejectCall', 'ignoreCall']),
     ...mapMutations('twilio', ['setIsShowCallTypeModal']),
 
     handleAccept() {

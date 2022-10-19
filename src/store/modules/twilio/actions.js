@@ -14,6 +14,12 @@ const actions = {
     commit('setConnection', null);
   },
 
+  ignoreCall({ state, commit }) {
+    state.connection?.ignore();
+    commit('setIsShowCallTypeModal', false);
+    commit('setConnection', null);
+  },
+
   async handleCall({ state, commit, dispatch }, params) {
     const connection = await state.device?.connect({ params });
 
