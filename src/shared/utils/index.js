@@ -115,6 +115,29 @@ function convertTimeZone(date) {
   );
 }
 
+function convertToSeconds(time) {
+  const start_ary = time.split(':');
+  return parseInt(start_ary[0], 10) * 60 + parseInt(start_ary[1], 10);
+}
+
+function playAudio({ start, end, buffer }) {
+  if (!buffer) return false;
+
+  return new Promise((rel) => {
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const source = audioCtx.createBufferSource();
+    source.buffer = buffer;
+    source.connect(audioCtx.destination);
+    const startSec = convertToSeconds(start);
+    const endSec = convertToSeconds(end);
+    const duration = endSec - startSec;
+    source.start(0, startSec, duration);
+    setTimeout(() => {
+      rel(true);
+    }, duration * 1000);
+  });
+}
+
 export {
   getCurrentDomain,
   isElectron,
@@ -123,4 +146,6 @@ export {
   formatNumber,
   formatToGlobalNumber,
   convertTimeZone,
+  convertToSeconds,
+  playAudio,
 };

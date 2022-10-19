@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <v-container>
     <v-row class="mt-13">
       <v-col cols="5" class="d-flex">
         <Datepicker
@@ -85,7 +85,7 @@
       :open-dialog="dialogCall"
       @toggle-dialog="(value) => (dialogCall = value)"
     />
-  </div>
+  </v-container>
 </template>
 
 <script>

@@ -27,6 +27,11 @@ const mutations = {
   setRecallList(state, value) {
     state.recallList = value;
   },
+
+  setRecordBuffer(state, { fileFromBuffer, fileToBuffer }) {
+    state.fileFromBuffer = fileFromBuffer;
+    state.fileToBuffer = fileToBuffer;
+  },
 };
 
 export default mutations;

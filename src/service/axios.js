@@ -7,6 +7,7 @@ import { CookiesStorage } from '@/shared/config/cookie';
 import { VUE_APP_API_URL } from '@/shared/config/setting';
 import authService from '@/service/authService';
 import { stringifyParams } from '@/shared/utils';
+import { RESPONSE_TYPE_TRANSFORM } from '@/shared/constant/common';
 
 const removeAccessToken = () => {
   CookiesStorage.clearAccessToken();
@@ -97,7 +98,13 @@ axiosInstance.interceptors.request.use(
 );
 
 axiosInstance.interceptors.response.use(
-  (res) => camelizeKeys(res.data),
+  (res) => {
+    if (RESPONSE_TYPE_TRANSFORM.includes(res.config.responseType)) {
+      return res;
+    }
+
+    return camelizeKeys(res.data);
+  },
   (error) => {
     return handleErrorStatus(error);
   }

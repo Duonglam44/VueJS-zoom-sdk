@@ -1,10 +1,7 @@
 <template>
   <div>
     <AppNavBar />
-
-    <v-container>
-      <router-view />
-    </v-container>
+    <router-view />
     <CallTypeModal />
   </div>
 </template>

@@ -1,19 +1,52 @@
 <template>
   <div class="balloon_r">
-    <div class="face_icon">
+    <div class="d-flex flex-column mt-10">
+      <v-icon v-if="tag && tag.tag1" color="#ff7d7d">mdi-bookmark</v-icon>
+    </div>
+    <div class="face_icon text-center">
       <v-avatar color="red">
         <span class="white--text">
           {{ user.shortName || user.name | avatar }}
         </span>
       </v-avatar>
+      <p class="text-center">{{ user.shortName || user.name }}</p>
     </div>
-    <p class="says">
-      {{ chat.text || chat.vtt }}
-    </p>
+    <div>
+      <div class="d-flex">
+        <v-btn
+          v-if="showReplay"
+          :disabled="!fileToBuffer || playing"
+          icon
+          small
+          @click="playAudioSource"
+        >
+          <v-icon>{{
+            playing
+              ? 'mdi-stop-circle-outline'
+              : 'mdi-arrow-right-drop-circle-outline'
+          }}</v-icon>
+        </v-btn>
+        <v-btn
+          small
+          :class="{ 'v-btn--active': tag && tag.tag1 }"
+          elevation="0"
+          @click="onToggleTag"
+        >
+          <v-icon color="#ff7d7d">mdi-bookmark</v-icon>
+        </v-btn>
+      </div>
+      <p class="says">
+        {{ chat.text || chat.vtt }}
+      </p>
+    </div>
   </div>
 </template>
 <script>
+import { mapState } from 'vuex';
+
 import systemMixins from '@/mixins/system';
+
+import { playAudio } from '@/shared/utils';
 
 export default {
   name: 'ChatBoxRight',
@@ -22,9 +55,9 @@ export default {
 
   props: {
     tag: {
-      type: Array,
+      type: Object,
       default() {
-        return [];
+        return {};
       },
     },
     user: {
@@ -39,11 +72,40 @@ export default {
         return {};
       },
     },
+    showReplay: {
+      type: Boolean,
+      default: false,
+    },
   },
+
   data() {
     return {
-      toggle_exclusive: undefined,
+      tags: null,
+      playing: false,
     };
+  },
+
+  computed: {
+    ...mapState('phoneLog', ['fileToBuffer']),
+  },
+
+  methods: {
+    async playAudioSource() {
+      try {
+        this.playing = true;
+        await playAudio({
+          start: this.chat.startTime,
+          end: this.chat.endTime,
+          buffer: this.fileToBuffer,
+        });
+      } finally {
+        this.playing = false;
+      }
+    },
+
+    onToggleTag() {
+      this.$emit('update', { tag1: !this.tag?.tag1 });
+    },
   },
 };
 </script>
@@ -57,6 +119,9 @@ export default {
 }
 .balloon_r {
   justify-content: flex-end;
+}
+.face_icon {
+  max-width: 100px;
 }
 .face_icon img {
   width: 80px;

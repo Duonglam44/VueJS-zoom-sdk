@@ -25,6 +25,8 @@ const HTTP_STATUS = {
 const REGION_OPTIONS = 'japaneast';
 const SPEECH_RECOGNITION_LANGUAGE = 'ja-JP';
 
+const RESPONSE_TYPE_TRANSFORM = ['arraybuffer', 'bolb'];
+
 export {
   COOKIEKEY,
   INCOMING_CALL_TYPE,
@@ -32,4 +34,5 @@ export {
   HTTP_STATUS,
   REGION_OPTIONS,
   SPEECH_RECOGNITION_LANGUAGE,
+  RESPONSE_TYPE_TRANSFORM,
 };

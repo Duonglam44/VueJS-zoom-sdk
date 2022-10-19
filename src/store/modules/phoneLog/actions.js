@@ -43,6 +43,18 @@ const actions = {
       return Promise.reject(error);
     }
   },
+  async getRecordFile({ commit }, { phoneLogId, cancelToken }) {
+    try {
+      commit('setRecordBuffer', { fileFromBuffer: null, fileToBuffer: null });
+      const [fileFromBuffer, fileToBuffer] = await Promise.all([
+        phoneLogsService.getFileFromRecord(phoneLogId, cancelToken),
+        phoneLogsService.getFileToRecord(phoneLogId, cancelToken),
+      ]);
+      commit('setRecordBuffer', { fileFromBuffer, fileToBuffer });
+    } catch (error) {
+      commit('setRecordBuffer', { fileFromBuffer: null, fileToBuffer: null });
+    }
+  },
 };
 
 export default actions;
