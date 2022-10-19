@@ -1,38 +1,52 @@
 <template>
   <div class="balloon_l">
-    <div class="face_icon">
+    <div class="face_icon text-center">
       <v-avatar color="blue">
         <span class="white--text">
           {{ user.shortName || user.name | avatar }}
         </span>
       </v-avatar>
+      <p class="text-center">{{ user.shortName || user.name }}</p>
     </div>
     <div>
-      <v-btn-toggle
-        v-model="inputedValue"
-        multiple
-        dense
-        class="d-flex justify-end"
-      >
-        <v-btn small>
-          <v-icon color="#ffc421">mdi-label</v-icon>
+      <div class="d-flex">
+        <v-btn
+          v-if="showReplay"
+          :disabled="!fileFromBuffer || playing"
+          icon
+          small
+          @click="playAudioSource"
+        >
+          <v-icon>{{
+            playing
+              ? 'mdi-stop-circle-outline'
+              : 'mdi-arrow-right-drop-circle-outline'
+          }}</v-icon>
         </v-btn>
-        <v-btn small>
-          <v-icon color="#ff7d7d">mdi-label</v-icon>
+        <v-btn
+          small
+          :class="{ 'v-btn--active': tag && tag.tag1 }"
+          elevation="0"
+          @click="onToggleTag"
+        >
+          <v-icon color="#ff7d7d">mdi-bookmark</v-icon>
         </v-btn>
-      </v-btn-toggle>
+      </div>
       <p class="says">
         {{ chat.text || chat.vtt }}
       </p>
     </div>
     <div class="d-flex flex-column mt-10">
-      <v-icon v-if="tag && tag.tag1" color="#ffc421">mdi-label</v-icon>
-      <v-icon v-if="tag && tag.tag2" color="#ff7d7d">mdi-label</v-icon>
+      <v-icon v-if="tag && tag.tag1" color="#ff7d7d">mdi-bookmark</v-icon>
     </div>
   </div>
 </template>
 <script>
+import { mapState } from 'vuex';
+
 import systemMixins from '@/mixins/system';
+
+import { playAudio } from '@/shared/utils';
 
 export default {
   name: 'ChatBoxLeft',
@@ -58,31 +72,39 @@ export default {
         return {};
       },
     },
+    showReplay: {
+      type: Boolean,
+      default: false,
+    },
   },
+
   data() {
     return {
       tags: null,
+      playing: false,
     };
   },
-  computed: {
-    inputedValue: {
-      get() {
-        const mapData = { tag1: 0, tag2: 1 };
-        return Object.keys(this.tag || {}).reduce(
-          (result, item) =>
-            this.tag[item] ? [...result, mapData[item]] : result,
-          []
-        );
-      },
-      set(newValue) {
-        const mapData = { 0: 'tag1', 1: 'tag2' };
-        const meta = newValue.reduce(
-          (a, v) => ({ ...a, [mapData[v]]: true }),
-          {}
-        );
 
-        this.$emit('update', meta);
-      },
+  computed: {
+    ...mapState('phoneLog', ['fileFromBuffer']),
+  },
+
+  methods: {
+    async playAudioSource() {
+      try {
+        this.playing = true;
+        await playAudio({
+          start: this.chat.startTime,
+          end: this.chat.endTime,
+          buffer: this.fileFromBuffer,
+        });
+      } finally {
+        this.playing = false;
+      }
+    },
+
+    onToggleTag() {
+      this.$emit('update', { tag1: !this.tag?.tag1 });
     },
   },
 };
@@ -97,6 +119,9 @@ export default {
 }
 .balloon_r {
   justify-content: flex-end;
+}
+.face_icon {
+  max-width: 100px;
 }
 .face_icon img {
   width: 80px;

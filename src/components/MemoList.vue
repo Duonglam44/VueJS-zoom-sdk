@@ -4,14 +4,6 @@
       v-if="meta && meta.tag1"
       width="5"
       height="50"
-      color="#ffc421"
-      class="mr-1"
-    >
-    </v-sheet>
-    <v-sheet
-      v-if="meta && meta.tag2"
-      width="5"
-      height="50"
       color="#ff7d7d"
       class="mr-1"
     >
