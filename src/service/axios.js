@@ -4,13 +4,16 @@ import { isNil } from 'lodash';
 
 import router from '@/router';
 import { CookiesStorage } from '@/shared/config/cookie';
-import { VUE_APP_API_URL } from '@/shared/config/setting';
 import authService from '@/service/authService';
-import { stringifyParams } from '@/shared/utils';
+import { formatApiURLByTennant, stringifyParams } from '@/shared/utils';
 import { RESPONSE_TYPE_TRANSFORM } from '@/shared/constant/common';
 
 const removeAccessToken = () => {
   CookiesStorage.clearAccessToken();
+};
+
+const tennantDefault = () => {
+  return CookiesStorage.getTennant();
 };
 
 let refreshTokenRequest = null;
@@ -68,7 +71,7 @@ const handleErrorStatus = async (error) => {
 };
 
 const axiosInstance = axios.create({
-  baseURL: VUE_APP_API_URL,
+  baseURL: formatApiURLByTennant(tennantDefault()),
   headers: {
     'Content-Type': 'application/json',
   },

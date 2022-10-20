@@ -46,4 +46,12 @@ export const CookiesStorage = {
       window.electron.store.removeToken();
     }
   },
+
+  getTennant() {
+    return window.electron.store.getTennant();
+  },
+
+  setTennant(value) {
+    window.electron.store.setTennant(value);
+  },
 };
