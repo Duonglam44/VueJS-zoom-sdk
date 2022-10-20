@@ -1,6 +1,7 @@
 const COOKIEKEY = {
   accessToken: 'accessToken',
   refreshToken: 'refreshToken',
+  tennant: 'tennant',
 };
 
 const INCOMING_CALL_TYPE = {

@@ -1,7 +1,7 @@
 import { isNil, omitBy } from 'lodash';
 import qs from 'qs';
 
-import { VUE_APP_TIME_ZONE } from '../config/setting';
+import { VUE_APP_BASE_API_URL, VUE_APP_TIME_ZONE } from '../config/setting';
 
 function getCurrentDomain() {
   const parts = window.location.hostname;
@@ -138,6 +138,12 @@ function playAudio({ start, end, buffer }) {
   });
 }
 
+function formatApiURLByTennant(tennant) {
+  if (!tennant) return VUE_APP_BASE_API_URL;
+
+  return VUE_APP_BASE_API_URL.replace('__tennant__', tennant);
+}
+
 export {
   getCurrentDomain,
   isElectron,
@@ -148,4 +154,5 @@ export {
   convertTimeZone,
   convertToSeconds,
   playAudio,
+  formatApiURLByTennant,
 };

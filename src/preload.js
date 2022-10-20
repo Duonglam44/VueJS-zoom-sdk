@@ -43,6 +43,14 @@ const store = {
   removeStore() {
     electronStore.clear();
   },
+
+  getTennant() {
+    return electronStore.get(COOKIEKEY.tennant);
+  },
+
+  setTennant(value) {
+    electronStore.set(COOKIEKEY.tennant, value);
+  },
 };
 
 const notification = {

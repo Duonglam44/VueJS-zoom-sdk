@@ -8,6 +8,9 @@ module.exports = defineConfig({
       preload: 'src/preload.js',
       builderOptions: {
         asar: false,
+        nsis: {
+          deleteAppDataOnUninstall: true,
+        },
         productName: 'Phone Call App',
         appId: 'com.unixon.phoneCallApp',
         mac: {
