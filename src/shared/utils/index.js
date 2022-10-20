@@ -101,7 +101,7 @@ function formatToGlobalNumber(str) {
   if (!str) return '';
 
   if (str.startsWith('0')) {
-    return `+81${str}`;
+    return str.replace('0', '+81').replaceAll('-', '');
   }
 
   return str;
