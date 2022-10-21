@@ -123,14 +123,14 @@ export default {
       try {
         if (this.isActionAdd) {
           const body = {
-            phoneNumber: this.phoneAddress,
+            phoneNumber: this.phoneLog.customerPhoneNumber,
             name: this.name,
           };
           await addressService.create(body);
           this.$toasted.success(this.$t('modal.createSuccess'));
         } else {
-          await addressService.update(this.phoneAddress, {
-            userPhoneNumberUpdate: this.phoneAddress,
+          await addressService.update(this.phoneLog.customerPhoneNumber, {
+            userPhoneNumberUpdate: this.phoneLog.customerPhoneNumber,
             name: this.name,
           });
           this.$toasted.success(this.$t('modal.updateSuccess'));
