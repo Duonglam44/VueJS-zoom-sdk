@@ -3,10 +3,10 @@
     <div class="face_icon text-center">
       <v-avatar color="blue">
         <span class="white--text">
-          {{ user.shortName || user.name | avatar }}
+          {{ name | avatar }}
         </span>
       </v-avatar>
-      <p class="text-center">{{ user.shortName || user.name }}</p>
+      <p class="text-center">{{ name }}</p>
     </div>
     <div>
       <div class="d-flex">
@@ -46,7 +46,7 @@ import { mapState } from 'vuex';
 
 import systemMixins from '@/mixins/system';
 
-import { playAudio } from '@/shared/utils';
+import { formatNumber, playAudio } from '@/shared/utils';
 
 export default {
   name: 'ChatBoxLeft',
@@ -87,6 +87,10 @@ export default {
 
   computed: {
     ...mapState('phoneLog', ['fileFromBuffer']),
+
+    name() {
+      return formatNumber(this.user.name);
+    },
   },
 
   methods: {
