@@ -1,6 +1,7 @@
 <template>
   <div class="card mx-auto my-auto form-signin" style="width: 30rem">
     <img class="card-img-top" src="@/assets/DXP_logo.png" alt="" />
+    <SelectTennant />
     <ValidationObserver v-slot="{ handleSubmit }">
       <form @submit.prevent="handleSubmit(onLogin)">
         <template v-if="errorLogin">
@@ -72,7 +73,13 @@
 import { mapActions, mapState } from 'vuex';
 import { HTTP_STATUS } from '@/shared/constant/common';
 
+import SelectTennant from './SelectTennant.vue';
+
 export default {
+  components: {
+    SelectTennant,
+  },
+
   data() {
     return {
       email: '',

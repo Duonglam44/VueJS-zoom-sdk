@@ -48,10 +48,14 @@ export const CookiesStorage = {
   },
 
   getTennant() {
+    if (!isElectron()) return '';
+
     return window.electron.store.getTennant();
   },
 
   setTennant(value) {
-    window.electron.store.setTennant(value);
+    if (isElectron()) {
+      window.electron.store.setTennant(value);
+    }
   },
 };

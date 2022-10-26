@@ -9,4 +9,5 @@ export default {
   emailPlaceholder: 'Please enter your username',
   passwordPlaceholder: 'Please enter your password',
   wrongLogin: 'User name or password is incorrect.',
+  selectTennant: 'Select tennant',
 };

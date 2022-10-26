@@ -22,10 +22,15 @@ const refreshToken = () => {
   );
 };
 
+const getTenants = () => {
+  return axiosInstance.get('/tennants');
+};
+
 const authService = {
   logout,
   getMe,
   refreshToken,
+  getTenants,
 };
 
 export default authService;
