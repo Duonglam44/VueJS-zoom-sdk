@@ -7,11 +7,7 @@
 </template>
 
 <script>
-import { mapActions, mapGetters, mapState } from 'vuex';
-
-import axiosInstance from './service/axios';
-import { CookiesStorage } from './shared/config/cookie';
-import { formatApiURLByTennant } from './shared/utils';
+import { mapGetters, mapState } from 'vuex';
 
 export default {
   name: 'App',
@@ -27,26 +23,6 @@ export default {
         }
       },
       immediate: true,
-    },
-  },
-
-  mounted() {
-    window.electron.ipcRenderer.on('saveSetting', (newTennant) => {
-      this.handleSaveSetting(newTennant);
-    });
-  },
-
-  methods: {
-    ...mapActions('auth', ['logout']),
-
-    async handleSaveSetting(newTennant) {
-      const oldTennant = CookiesStorage.getTennant();
-
-      if (oldTennant !== newTennant) {
-        if (this.isAuthenticated) await this.logout();
-        axiosInstance.defaults.baseURL = formatApiURLByTennant(newTennant);
-      }
-      CookiesStorage.setTennant(newTennant);
     },
   },
 };

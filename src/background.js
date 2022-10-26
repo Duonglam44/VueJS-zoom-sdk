@@ -12,16 +12,13 @@ import { createProtocol } from 'vue-cli-plugin-electron-builder/lib';
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer';
 import path from 'path';
 import ElectronStore from 'electron-store';
-import { COOKIEKEY } from './shared/constant/common';
 
 ElectronStore.initRenderer();
-const electronStore = new ElectronStore();
 app.commandLine.appendSwitch('ignore-certificate-errors');
 const isDevelopment = process.env.NODE_ENV !== 'production';
 let win;
 let tray;
 let workerWindow;
-let settingWindow;
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
   { scheme: 'app', privileges: { secure: true, standard: true } },
@@ -89,132 +86,7 @@ async function createWorkerWindow() {
   });
 }
 
-async function createSettingWindow() {
-  settingWindow = new BrowserWindow({
-    width: 420,
-    height: 250,
-    backgroundColor: '#FFF',
-    resizable: false,
-    webPreferences: {
-      nodeIntegration: true,
-      contextIsolation: false,
-    },
-  });
-
-  if (process.env.WEBPACK_DEV_SERVER_URL) {
-    await settingWindow.loadURL(
-      `file://${__dirname}/../public/setting-tennant.html`
-    );
-  } else {
-    createProtocol('app');
-    // Load the setting-tennant.html when not in development
-    settingWindow.loadURL('app://./setting-tennant.html');
-  }
-  settingWindow.on('closed', () => {
-    settingWindow = undefined;
-  });
-
-  const oldTennant = electronStore.get(COOKIEKEY.tennant);
-  settingWindow.webContents.send('openTennantSetting', oldTennant || '');
-}
-
-async function openSettingWindow() {
-  if (settingWindow) {
-    if (settingWindow.isMinimized()) settingWindow.restore();
-    settingWindow.show();
-    settingWindow.focus();
-  } else {
-    await createSettingWindow();
-  }
-}
-
 async function createMainWindow() {
-  const isMac = process.platform === 'darwin';
-
-  const template = [
-    ...(isMac
-      ? [
-          {
-            label: app.name,
-            submenu: [
-              { role: 'about' },
-              { type: 'separator' },
-              { role: 'services' },
-              { type: 'separator' },
-              { role: 'hide' },
-              { role: 'hideOthers' },
-              { role: 'unhide' },
-              { type: 'separator' },
-              { role: 'quit' },
-            ],
-          },
-        ]
-      : []),
-    {
-      label: 'File',
-      submenu: [
-        {
-          label: 'テナント設定',
-          click: () => {
-            openSettingWindow();
-          },
-        },
-        { type: 'separator' },
-        { role: 'close' },
-        { role: 'quit' },
-      ],
-    },
-    {
-      label: 'Edit',
-      submenu: [
-        { role: 'cut' },
-        { role: 'copy' },
-        { role: 'paste' },
-        ...(isMac
-          ? [
-              { role: 'pasteAndMatchStyle' },
-              { role: 'delete' },
-              { role: 'selectAll' },
-              { type: 'separator' },
-            ]
-          : [{ role: 'delete' }, { type: 'separator' }, { role: 'selectAll' }]),
-      ],
-    },
-    {
-      label: 'View',
-      submenu: [
-        ...(!process.env.IS_TEST && [
-          { role: 'reload' },
-          { role: 'forceReload' },
-          { role: 'toggleDevTools' },
-          { type: 'separator' },
-        ]),
-        { role: 'resetZoom' },
-        { role: 'zoomIn' },
-        { role: 'zoomOut' },
-        { type: 'separator' },
-        { role: 'togglefullscreen' },
-      ],
-    },
-    {
-      label: 'Window',
-      submenu: [
-        { role: 'minimize' },
-        { role: 'zoom' },
-        ...(isMac
-          ? [
-              { type: 'separator' },
-              { role: 'front' },
-              { type: 'separator' },
-              { role: 'window' },
-            ]
-          : [{ role: 'close' }]),
-      ],
-    },
-  ];
-
-  const menu = Menu.buildFromTemplate(template);
-  Menu.setApplicationMenu(menu);
   // Window起動時に環境変数を設定しないといけない
   // Create the browser window.
   win = new BrowserWindow({
@@ -227,7 +99,7 @@ async function createMainWindow() {
       preload: path.join(__dirname, 'preload.js'),
     },
   });
-
+  win.setMenuBarVisibility(false);
   if (process.env.WEBPACK_DEV_SERVER_URL) {
     // Load the url of the dev server if in development mode
     await win.loadURL(process.env.WEBPACK_DEV_SERVER_URL);
@@ -251,10 +123,6 @@ async function createMainWindow() {
 async function createWindow() {
   await createMainWindow();
   await createWorkerWindow();
-  const oldTennant = electronStore.get(COOKIEKEY.tennant);
-  if (!oldTennant) {
-    await createSettingWindow();
-  }
 }
 
 app.on('before-quit', () => {
@@ -343,13 +211,4 @@ ipcMain.on('cancel-call', () => {
 ipcMain.on('ignore-call', () => {
   workerWindow.hide();
   win.webContents.send('ignoreCall');
-});
-
-ipcMain.on('cancel-setting', () => {
-  if (settingWindow) settingWindow.close();
-});
-
-ipcMain.on('save-setting', (_, value) => {
-  settingWindow.close();
-  win.webContents.send('saveSetting', value);
 });

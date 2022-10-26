@@ -1,7 +1,7 @@
 const PhoneLogListPage = () => import('@/page/PhoneLogListPage');
 const PhoneCallPage = () => import('@/page/PhoneCallPage.vue');
 const PhoneLogPage = () => import('@/page/PhoneLogPage.vue');
-const Login = () => import('@/page/Login.vue');
+const Login = () => import('@/page/Login');
 const ProfilePage = () => import('@/page/ProfilePage.vue');
 const AuthLayout = () => import('@/components/layouts/AuthLayout.vue');
 
