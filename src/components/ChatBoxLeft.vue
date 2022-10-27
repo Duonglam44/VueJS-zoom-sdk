@@ -89,6 +89,10 @@ export default {
     ...mapState('phoneLog', ['fileFromBuffer']),
 
     name() {
+      if (this.user.phoneNumber) {
+        return this.user.name;
+      }
+
       return formatNumber(this.user.name);
     },
   },
