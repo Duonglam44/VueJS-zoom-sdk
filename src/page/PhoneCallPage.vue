@@ -257,6 +257,11 @@ export default {
   },
 
   created() {
+    if (!this.connection) {
+      this.$router.push({ name: 'PhoneLogListRoute' });
+      return;
+    }
+
     this.connection?.on?.('disconnect', this.endCall);
   },
 

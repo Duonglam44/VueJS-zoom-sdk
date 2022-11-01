@@ -63,13 +63,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss" scoped>
-.login-wrapper {
-  height: calc(100vh - 54px);
-}
-
-.card-footer {
-  background: rgb(232, 232, 232) !important;
-}
-</style>

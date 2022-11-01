@@ -1,7 +1,7 @@
 <template>
   <div class="card mx-auto my-auto form-signin" style="width: 30rem">
     <img class="card-img-top" src="@/assets/DXP_logo.png" alt="" />
-    <SelectTennant />
+    <SelectTennant v-if="isElectron" />
     <ValidationObserver v-slot="{ handleSubmit }">
       <form @submit.prevent="handleSubmit(onLogin)">
         <template v-if="errorLogin">
@@ -21,6 +21,8 @@
           :name="$t('login.email')"
           rules="required|email"
           mode="lazy"
+          slim
+          class="mb-2"
         >
           <div class="form-group d-flex flex-column">
             <label for="inputEmail">{{ $t('login.email') }}</label>
@@ -40,6 +42,8 @@
           :name="$t('login.password')"
           rules="required|min:8"
           mode="lazy"
+          slim
+          class="mb-3"
         >
           <div class="form-group d-flex flex-column">
             <label for="password">{{ $t('login.password') }}</label>
@@ -72,6 +76,7 @@
 <script>
 import { mapActions, mapState } from 'vuex';
 import { HTTP_STATUS } from '@/shared/constant/common';
+import { isElectron } from '@/shared/utils';
 
 import SelectTennant from './SelectTennant.vue';
 
@@ -91,6 +96,10 @@ export default {
 
   computed: {
     ...mapState('auth', ['isLoading']),
+
+    isElectron() {
+      return isElectron();
+    },
   },
 
   methods: {
@@ -129,10 +138,6 @@ export default {
         background-color: #ebf6fa;
       }
     }
-  }
-
-  .btn-login {
-    margin-top: 4px;
   }
 
   .mes-error {

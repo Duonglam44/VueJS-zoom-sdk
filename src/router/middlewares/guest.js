@@ -1,5 +1,6 @@
 import authService from '@/service/authService';
 import { CookiesStorage } from '@/shared/config/cookie';
+import { verifyTennantUser } from '@/shared/utils';
 import store from '@/store';
 
 export const guestMiddleware = async (to, from, next) => {
@@ -16,7 +17,7 @@ export const guestMiddleware = async (to, from, next) => {
 
       if (!user) {
         const res = await authService.getMe();
-        if (res) {
+        if (res && verifyTennantUser(res)) {
           store.commit('auth/setUser', res);
           next();
           return;

@@ -1,7 +1,7 @@
 <template>
   <v-list-item>
     <v-list-item-avatar>
-      <v-avatar color="#e9ecef" size="56">
+      <v-avatar color="#e9ecef" size="40">
         <span class="white--text headline">
           {{ user.name | avatar }}
         </span>
