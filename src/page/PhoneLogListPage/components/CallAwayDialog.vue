@@ -113,7 +113,7 @@ export default {
 
   methods: {
     ...mapActions('twilio', ['handleCall']),
-    ...mapMutations('twilio', ['setIsShowCallTypeModal', 'setConnection']),
+    ...mapMutations('twilio', ['setConnection']),
 
     onCall() {
       if (!this.phoneNumber || this.isInCalling) return;

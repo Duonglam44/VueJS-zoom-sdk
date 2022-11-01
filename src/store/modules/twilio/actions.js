@@ -1,23 +1,53 @@
-import { OUTGOING_CALL_TYPE } from '@/shared/constant/common';
+import {
+  OUTGOING_CALL_TYPE,
+  INCOMING_CALL_TYPE,
+} from '@/shared/constant/common';
 import router from '@/router';
 
 const actions = {
   disconnectCall({ state, commit }) {
     state.connection?.disconnect();
     commit('setIsShowCallTypeModal', false);
+    commit('setIsShowIncomingCallDialog', false);
     commit('setConnection', null);
   },
 
   rejectCall({ state, commit }) {
     state.connection?.reject();
     commit('setIsShowCallTypeModal', false);
+    commit('setIsShowIncomingCallDialog', false);
     commit('setConnection', null);
   },
 
   ignoreCall({ state, commit }) {
     state.connection?.ignore();
     commit('setIsShowCallTypeModal', false);
+    commit('setIsShowIncomingCallDialog', false);
     commit('setConnection', null);
+  },
+
+  acceptCall({ state, commit, getters }) {
+    state.connection?.accept();
+    commit('setIsShowIncomingCallDialog', false);
+    state.connection?.on('accept', () => {
+      if (getters.callType === INCOMING_CALL_TYPE.SEND_OUTBOUND_CALL) {
+        router.push({ name: 'PhoneCallRoute' });
+
+        return;
+      }
+
+      commit('setIsShowCallTypeModal', true);
+    });
+  },
+
+  callRejectHandler({ state, dispatch }) {
+    const address = state.connection?.customParameters?.get?.('address');
+
+    if (address === 'all') {
+      dispatch('ignoreCall');
+    } else {
+      dispatch('rejectCall');
+    }
   },
 
   async handleCall({ state, commit, dispatch }, params) {
