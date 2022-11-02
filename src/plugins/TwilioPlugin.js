@@ -2,11 +2,16 @@ import twilioService from '@/service/twilioService';
 import store from '@/store';
 import { Device, Call } from '@twilio/voice-sdk';
 import { INCOMING_CALL_TYPE } from '@/shared/constant/common';
+import { isElectron } from '@/shared/utils';
 
 const showNotification = (from) => {
-  window.electron.notification.incomingCall({
-    caller: from,
-  });
+  if (isElectron()) {
+    window.electron.notification.incomingCall({
+      caller: from,
+    });
+  } else {
+    store.commit('twilio/setIsShowIncomingCallDialog', true);
+  }
 };
 
 const onIncoming = (connection) => {
@@ -23,13 +28,17 @@ const onIncoming = (connection) => {
     store.commit('twilio/setConnection', connection);
 
     connection.on('cancel', () => {
-      window.electron.notification.cancelCall();
+      if (isElectron()) {
+        window.electron.notification.cancelCall();
+      }
       store.dispatch('twilio/disconnectCall');
       store.commit('twilio/setCustomerPhoneNumber', '');
     });
 
     connection.on('disconnect', () => {
-      window.electron.notification.cancelCall();
+      if (isElectron()) {
+        window.electron.notification.cancelCall();
+      }
       store.dispatch('twilio/disconnectCall');
       store.commit('twilio/setCustomerPhoneNumber', '');
     });

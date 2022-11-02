@@ -11,6 +11,10 @@ const mutations = {
     state.isShowCallTypeModal = value;
   },
 
+  setIsShowIncomingCallDialog(state, value) {
+    state.isShowIncomingCallDialog = value;
+  },
+
   setHoldingCallSid(state, value) {
     state.holdingCallSid = value;
   },

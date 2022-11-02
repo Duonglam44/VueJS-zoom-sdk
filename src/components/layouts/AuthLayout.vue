@@ -3,14 +3,18 @@
     <AppNavBar />
     <router-view />
     <CallTypeModal />
+    <IncomingCallDialog />
   </div>
 </template>
 
 <script>
+import { mapActions, mapGetters, mapState } from 'vuex';
+
+import { isElectron } from '@/shared/utils';
+
 import AppNavBar from '@/components/AppNavBar.vue';
 import CallTypeModal from '@/components/CallTypeModal.vue';
-import { mapActions, mapGetters, mapMutations, mapState } from 'vuex';
-import { INCOMING_CALL_TYPE } from '@/shared/constant/common';
+import IncomingCallDialog from '@/components/IncomingCallDialog.vue';
 
 export default {
   name: 'AuthLayout',
@@ -18,6 +22,7 @@ export default {
   components: {
     AppNavBar,
     CallTypeModal,
+    IncomingCallDialog,
   },
 
   data() {
@@ -33,47 +38,42 @@ export default {
   },
 
   mounted() {
-    this.removeAnswerListener = window.electron.ipcRenderer.on(
-      'answerCall',
-      () => {
-        this.handleAccept();
-      }
-    );
-
-    this.removeIgnoreListener = window.electron.ipcRenderer.on(
-      'ignoreCall',
-      () => {
-        const address = this.connection?.customParameters?.get?.('address');
-
-        if (address === 'all') {
-          this.ignoreCall();
-        } else {
-          this.rejectCall();
+    if (isElectron()) {
+      this.removeAnswerListener = window.electron.ipcRenderer.on(
+        'answerCall',
+        () => {
+          this.acceptCall();
         }
-      }
-    );
+      );
+
+      this.removeIgnoreListener = window.electron.ipcRenderer.on(
+        'ignoreCall',
+        () => {
+          this.callRejectHandler();
+        }
+      );
+    } else {
+      window.addEventListener('beforeunload', this.preventNav);
+    }
   },
 
   beforeDestroy() {
-    this.removeAnswerListener?.();
-    this.removeIgnoreListener?.();
+    if (isElectron()) {
+      this.removeAnswerListener?.();
+      this.removeIgnoreListener?.();
+    } else {
+      window.removeEventListener('beforeunload', this.preventNav);
+    }
   },
 
   methods: {
-    ...mapActions('twilio', ['rejectCall', 'ignoreCall']),
-    ...mapMutations('twilio', ['setIsShowCallTypeModal']),
+    ...mapActions('twilio', ['acceptCall', 'callRejectHandler']),
 
-    handleAccept() {
-      this.connection?.accept();
-      this.connection?.on('accept', () => {
-        if (this.callType === INCOMING_CALL_TYPE.SEND_OUTBOUND_CALL) {
-          this.$router.push({ name: 'PhoneCallRoute' });
-
-          return;
-        }
-
-        this.setIsShowCallTypeModal(true);
-      });
+    preventNav(event) {
+      if (!this.connection) return;
+      event.preventDefault();
+      // eslint-disable-next-line no-param-reassign
+      event.returnValue = '';
     },
   },
 };
