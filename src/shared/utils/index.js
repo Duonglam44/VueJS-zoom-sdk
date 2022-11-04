@@ -1,6 +1,8 @@
 import { isNil, omitBy } from 'lodash';
 import qs from 'qs';
 
+import { CookiesStorage } from '../config/cookie';
+
 import { VUE_APP_BASE_API_URL, VUE_APP_TIME_ZONE } from '../config/setting';
 
 function getCurrentDomain() {
@@ -144,6 +146,29 @@ function formatApiURLByTennant(tennant) {
   return VUE_APP_BASE_API_URL.replace('__tennant__', tennant);
 }
 
+function getTennantFromURL() {
+  const [tennant] = window.location.hostname.split('.');
+
+  return tennant;
+}
+
+function getCurrentTennant() {
+  return isElectron() ? CookiesStorage.getTennant() : getTennantFromURL();
+}
+
+function verifyTennantUser(user) {
+  const currentTennant = getCurrentTennant();
+  const tennantUser = user.hasTennant?.tennantId;
+
+  if (currentTennant !== tennantUser) {
+    CookiesStorage.clearAccessToken();
+
+    return false;
+  }
+
+  return true;
+}
+
 export {
   getCurrentDomain,
   isElectron,
@@ -155,4 +180,6 @@ export {
   convertToSeconds,
   playAudio,
   formatApiURLByTennant,
+  getCurrentTennant,
+  verifyTennantUser,
 };

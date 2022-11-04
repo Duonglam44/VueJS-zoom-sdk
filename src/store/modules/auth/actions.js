@@ -26,10 +26,11 @@ const actionsAuth = {
   async logout({ commit, rootState }) {
     try {
       await authService.logout();
+      await rootState.twilio.device?.unregister?.();
 
-      rootState.twilio.device?.destroy?.();
       commit('twilio/setDevice', null, { root: true });
       commit('setUser', null);
+
       CookiesStorage.clearAccessToken();
       router.push({ name: 'LoginRoute' });
 

@@ -73,9 +73,12 @@ export default {
     },
 
     async handleLogout() {
-      this.loading = true;
-      await this.logout();
-      this.loading = false;
+      try {
+        this.loading = true;
+        await this.logout();
+      } finally {
+        this.loading = false;
+      }
     },
   },
 };

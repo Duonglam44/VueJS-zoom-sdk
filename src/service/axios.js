@@ -3,17 +3,19 @@ import { camelizeKeys, decamelizeKeys } from 'humps';
 import { isNil } from 'lodash';
 
 import router from '@/router';
+
 import { CookiesStorage } from '@/shared/config/cookie';
-import authService from '@/service/authService';
-import { formatApiURLByTennant, stringifyParams } from '@/shared/utils';
+import {
+  formatApiURLByTennant,
+  getCurrentTennant,
+  stringifyParams,
+} from '@/shared/utils';
 import { RESPONSE_TYPE_TRANSFORM } from '@/shared/constant/common';
+
+import authService from '@/service/authService';
 
 const removeAccessToken = () => {
   CookiesStorage.clearAccessToken();
-};
-
-const tennantDefault = () => {
-  return CookiesStorage.getTennant();
 };
 
 let refreshTokenRequest = null;
@@ -71,7 +73,7 @@ const handleErrorStatus = async (error) => {
 };
 
 const axiosInstance = axios.create({
-  baseURL: formatApiURLByTennant(tennantDefault()),
+  baseURL: formatApiURLByTennant(getCurrentTennant()),
   headers: {
     'Content-Type': 'application/json',
   },

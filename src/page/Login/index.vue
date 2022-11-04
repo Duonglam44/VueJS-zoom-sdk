@@ -25,7 +25,7 @@ export default {
 
 <style lang="scss" scoped>
 .login-wrapper {
-  height: calc(100vh - 54px);
+  min-height: calc(100vh - 54px);
 }
 
 .card-footer {
