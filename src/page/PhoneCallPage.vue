@@ -349,8 +349,9 @@ export default {
   display: flex;
   flex-direction: column;
   height: calc(100% - 106px);
+
   .convention-list {
-    overflow: scroll;
+    overflow-y: scroll;
   }
 }
 </style>

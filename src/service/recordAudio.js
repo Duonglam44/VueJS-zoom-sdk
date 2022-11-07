@@ -1,4 +1,6 @@
-import { MediaRecorder } from 'extendable-media-recorder';
+import AudioRecorder from 'audio-recorder-polyfill';
+
+window.MediaRecorder = AudioRecorder;
 
 export class RecorderAudio {
   constructor(stream) {
@@ -9,15 +11,14 @@ export class RecorderAudio {
   init() {
     this.mediaRecorder = new MediaRecorder(this.stream, {
       mimeType: 'audio/wav',
-      bitsPerSecond: 16000,
     });
     this.listenEvent();
   }
 
   listenEvent() {
-    this.mediaRecorder.ondataavailable = (event) => {
+    this.mediaRecorder.addEventListener('dataavailable', (event) => {
       this.audioChunks.push(event.data);
-    };
+    });
   }
 
   start() {
@@ -26,10 +27,10 @@ export class RecorderAudio {
 
   stop() {
     return new Promise((resolve) => {
-      this.mediaRecorder.onstop = () => {
+      this.mediaRecorder.addEventListener('stop', () => {
         const blob = new Blob(this.audioChunks, { type: 'audio/wav' });
         resolve({ blob });
-      };
+      });
 
       this.mediaRecorder.stop();
     });
