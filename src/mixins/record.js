@@ -2,7 +2,6 @@ import { mapActions, mapState, mapGetters, mapMutations } from 'vuex';
 
 import { RecorderAudio } from '@/service/recordAudio';
 import { adjustSpeakerTime } from '@/shared/utils';
-import InitRecordService from '@/service/InitRecordService';
 import twilioService from '@/service/twilioService';
 
 export default {
@@ -40,7 +39,6 @@ export default {
         this.localStream = await navigator.mediaDevices.getUserMedia({
           audio: true,
         });
-        await InitRecordService.initService();
         // setup and start record local stream
         this.localRecorder = new RecorderAudio(this.localStream);
         this.localRecorder.init();

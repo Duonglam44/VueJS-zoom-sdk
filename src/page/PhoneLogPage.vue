@@ -61,6 +61,7 @@
                   x-large
                   color="#505c65"
                   class="white--text"
+                  :loading="updatingMemo"
                   @click="updateMemo"
                 >
                   <v-icon>mdi-pencil</v-icon>MEMO
@@ -152,6 +153,7 @@ export default {
       tab: 0,
       phoneLog: {},
       cancelGetRecord: null,
+      updatingMemo: false,
     };
   },
 
@@ -207,10 +209,17 @@ export default {
       return get(object, key, valueDefault);
     },
 
-    updateMemo() {
-      phoneLogsService.updateMemo(this.phoneLog.phoneLogId, {
-        memo: this.phoneLog.memo,
-      });
+    async updateMemo() {
+      if (this.updatingMemo) return;
+
+      try {
+        this.updatingMemo = true;
+        await phoneLogsService.updateMemo(this.phoneLog.phoneLogId, {
+          memo: this.phoneLog.memo,
+        });
+      } finally {
+        this.updatingMemo = false;
+      }
     },
 
     updateTag($event, index) {
@@ -237,11 +246,12 @@ export default {
   display: flex;
   flex-direction: column;
   height: calc(100% - 106px);
+
   .convention-list {
-    overflow: scroll;
+    overflow-y: scroll;
   }
   .v-tabs--align-with-title {
-    overflow: scroll;
+    overflow-y: scroll;
   }
 }
 </style>
