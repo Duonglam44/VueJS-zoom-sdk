@@ -5,7 +5,13 @@
     scroll-target="#scrolling-techniques-7"
     height="60"
   >
-    <img src="../assets/logo-icon.png" alt="Logo" class="ma-1 pa-1" />
+    <img
+      src="../assets/logo-icon.png"
+      alt="Logo"
+      class="ma-1 pa-1"
+      width="60"
+      height="60"
+    />
     <span class="link-item" @click="goBackHomePage">
       <v-toolbar-title class="white--text font-weight-black ma-2 pa-1">
         {{ $t('headerBar.phoneLogs') }}

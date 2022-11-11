@@ -1,18 +1,18 @@
 <template>
   <div class="card mx-auto my-auto form-signin" style="width: 30rem">
-    <img class="card-img-top" src="@/assets/DXP_logo.png" alt="" />
+    <img
+      class="card-img-top"
+      src="@/assets/DXP_logo.png"
+      alt="logo"
+      width="300"
+      height="300"
+    />
     <SelectTennant v-if="isElectron" />
     <ValidationObserver v-slot="{ handleSubmit }">
       <form @submit.prevent="handleSubmit(onLogin)">
         <template v-if="errorLogin">
-          <p class="mes-error">
-            {{
-              $t(
-                errorLogin.status === httpStatus.BAD_REQUEST
-                  ? 'login.wrongLogin'
-                  : 'error.undefined'
-              )
-            }}
+          <p class="error-message">
+            {{ errorMessage }}
           </p>
         </template>
 
@@ -33,7 +33,7 @@
               class="form-control"
               :placeholder="$t('login.emailPlaceholder')"
             />
-            <span class="mes-error d-block">{{ errors[0] }}</span>
+            <span class="error-message d-block">{{ errors[0] }}</span>
           </div>
         </ValidationProvider>
 
@@ -54,7 +54,7 @@
               class="form-control"
               :placeholder="$t('login.passwordPlaceholder')"
             />
-            <span class="mes-error d-block">{{ errors[0] }}</span>
+            <span class="error-message d-block">{{ errors[0] }}</span>
           </div>
         </ValidationProvider>
 
@@ -90,7 +90,6 @@ export default {
       email: '',
       password: '',
       errorLogin: null,
-      httpStatus: HTTP_STATUS,
     };
   },
 
@@ -99,6 +98,17 @@ export default {
 
     isElectron() {
       return isElectron();
+    },
+
+    errorMessage() {
+      const localePath = [
+        HTTP_STATUS.FORBIDDEN,
+        HTTP_STATUS.BAD_REQUEST,
+      ].includes(this.errorLogin.status)
+        ? 'login.wrongLogin'
+        : 'error.undefined';
+
+      return this.$t(localePath);
     },
   },
 
@@ -140,7 +150,7 @@ export default {
     }
   }
 
-  .mes-error {
+  .error-message {
     color: red;
     font-size: 14px;
   }

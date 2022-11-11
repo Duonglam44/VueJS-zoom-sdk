@@ -1,8 +1,14 @@
 import axiosInstance from '@/service/axios';
 import { CookiesStorage } from '@/shared/config/cookie';
 
+export const loginPath = 'auth/login';
+
 const getMe = () => {
   return axiosInstance.get('/auth/user-profile');
+};
+
+const login = (params) => {
+  return axiosInstance.post(`/${loginPath}`, params);
 };
 
 const logout = () => {
@@ -27,6 +33,7 @@ const getTenants = () => {
 };
 
 const authService = {
+  login,
   logout,
   getMe,
   refreshToken,

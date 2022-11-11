@@ -8,7 +8,13 @@
           color="#505c65"
           scroll-target="#scrolling-techniques-7"
         >
-          <v-btn to="/" text x-large color="#505c65" class="white--text">
+          <v-btn
+            text
+            x-large
+            color="#505c65"
+            class="white--text"
+            @click="goBack"
+          >
             ＜戻る
           </v-btn>
           <v-toolbar-title class="white--text font-weight-black">
@@ -166,7 +172,7 @@ import MemoList from '@/components/MemoList.vue';
 
 import twilioService from '@/service/twilioService';
 
-import { formatNumber } from '@/shared/utils';
+import { formatNumber, isElectron } from '@/shared/utils';
 
 export default {
   name: 'PhoneCall',
@@ -186,6 +192,14 @@ export default {
 
   mixins: [recognizerMixins, recordMixins],
 
+  beforeRouteLeave(_, __, next) {
+    if (this.connection) {
+      next(false);
+    } else {
+      next();
+    }
+  },
+
   data() {
     return {
       intervalId: null,
@@ -199,6 +213,7 @@ export default {
       autoScrolling: true,
       tab: 0,
       creatingOnHold: false,
+      isSendingRecord: false,
     };
   },
 
@@ -254,6 +269,7 @@ export default {
     setTimeout(() => {
       this.startRecordAndRecognize();
     });
+    window.addEventListener('beforeunload', this.preventNav);
   },
 
   created() {
@@ -266,10 +282,12 @@ export default {
   },
 
   async beforeDestroy() {
-    this.disconnectCall();
-    await this.sendRecordRecognizdData();
-    this.clearTimer();
+    await this.endCall();
     this.setCustomerPhoneNumber('');
+
+    if (isElectron()) {
+      window.removeEventListener('beforeunload', this.preventNav);
+    }
   },
 
   methods: {
@@ -314,12 +332,18 @@ export default {
     },
 
     async endCall() {
-      if (this.creatingOnHold) return;
+      if (this.creatingOnHold || this.isSendingRecord) return;
 
-      this.disconnectCall();
-      await this.sendRecordRecognizdData();
-      this.clearTimer();
-      this.$router.push({ name: 'PhoneLogListRoute' });
+      try {
+        this.isSendingRecord = true;
+        this.disconnectCall();
+        await this.sendRecordRecognizdData();
+        this.clearTimer();
+        this.$router.push({ name: 'PhoneLogListRoute' });
+      } catch (error) {
+        this.isSendingRecord = false;
+        console.log('endCall -> error', error);
+      }
     },
 
     async createOnHold() {
@@ -339,6 +363,17 @@ export default {
         this.creatingOnHold = false;
         console.log('createOnHold -> error', error);
       }
+    },
+
+    async goBack() {
+      await this.endCall();
+    },
+
+    preventNav(event) {
+      if (!this.connection) return;
+      event.preventDefault();
+      // eslint-disable-next-line no-param-reassign
+      event.returnValue = '';
     },
   },
 };
