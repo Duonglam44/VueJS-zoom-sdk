@@ -52,8 +52,6 @@ export default {
           this.callRejectHandler();
         }
       );
-    } else {
-      window.addEventListener('beforeunload', this.preventNav);
     }
   },
 
@@ -61,20 +59,11 @@ export default {
     if (isElectron()) {
       this.removeAnswerListener?.();
       this.removeIgnoreListener?.();
-    } else {
-      window.removeEventListener('beforeunload', this.preventNav);
     }
   },
 
   methods: {
     ...mapActions('twilio', ['acceptCall', 'callRejectHandler']),
-
-    preventNav(event) {
-      if (!this.connection) return;
-      event.preventDefault();
-      // eslint-disable-next-line no-param-reassign
-      event.returnValue = '';
-    },
   },
 };
 </script>

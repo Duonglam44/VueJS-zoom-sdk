@@ -21,6 +21,7 @@ const HTTP_STATUS = {
   CREATED: 201,
   BAD_REQUEST: 400,
   UNAUTHORIZED: 401,
+  FORBIDDEN: 403,
 };
 
 const REGION_OPTIONS = 'japaneast';

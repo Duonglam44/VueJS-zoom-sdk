@@ -1,6 +1,5 @@
 import router from '@/router';
 
-import axiosInstance from '@/service/axios';
 import { CookiesStorage } from '@/shared/config/cookie';
 import authService from '@/service/authService';
 
@@ -8,10 +7,7 @@ const actionsAuth = {
   async login({ commit }, user) {
     commit('setLoading', true);
     try {
-      const { accessToken, refreshToken } = await axiosInstance.post(
-        'auth/login',
-        user
-      );
+      const { accessToken, refreshToken } = await authService.login(user);
       CookiesStorage.setAccessToken(accessToken);
       CookiesStorage.setRefreshToken(refreshToken);
       router.push({ name: 'Home' });
@@ -23,16 +19,20 @@ const actionsAuth = {
     }
   },
 
-  async logout({ commit, rootState }) {
+  async clearAuthData({ commit, rootState }) {
+    await rootState.twilio.device?.unregister?.();
+
+    commit('twilio/setDevice', null, { root: true });
+    commit('setUser', null);
+
+    CookiesStorage.clearAccessToken();
+    router.push({ name: 'LoginRoute' });
+  },
+
+  async logout({ dispatch }) {
     try {
       await authService.logout();
-      await rootState.twilio.device?.unregister?.();
-
-      commit('twilio/setDevice', null, { root: true });
-      commit('setUser', null);
-
-      CookiesStorage.clearAccessToken();
-      router.push({ name: 'LoginRoute' });
+      await dispatch('clearAuthData');
 
       return Promise.resolve();
     } catch (error) {

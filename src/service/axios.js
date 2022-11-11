@@ -3,16 +3,16 @@ import { camelizeKeys, decamelizeKeys } from 'humps';
 import { isNil } from 'lodash';
 
 import router from '@/router';
-
+import store from '@/store';
 import { CookiesStorage } from '@/shared/config/cookie';
 import {
   formatApiURLByTennant,
   getCurrentTennant,
   stringifyParams,
 } from '@/shared/utils';
-import { RESPONSE_TYPE_TRANSFORM } from '@/shared/constant/common';
+import { RESPONSE_TYPE_TRANSFORM, HTTP_STATUS } from '@/shared/constant/common';
 
-import authService from '@/service/authService';
+import authService, { loginPath } from '@/service/authService';
 
 const removeAccessToken = () => {
   CookiesStorage.clearAccessToken();
@@ -25,7 +25,7 @@ const handleErrorStatus = async (error) => {
   const status = error?.status || error?.response?.status || null;
   const refetchToken = CookiesStorage.getRefreshToken();
   switch (status) {
-    case 401:
+    case HTTP_STATUS.UNAUTHORIZED:
       if (isRetryRequest || !refetchToken) {
         const promiseData = new Promise((resolve) => {
           removeAccessToken();
@@ -67,6 +67,15 @@ const handleErrorStatus = async (error) => {
         isRetryRequest = false;
         refreshTokenRequest = null;
       }
+    case HTTP_STATUS.FORBIDDEN: {
+      const { url } = error.config ?? {};
+
+      if (url !== loginPath) {
+        await store.dispatch('auth/clearAuthData');
+      }
+
+      return Promise.reject(error);
+    }
     default:
       return Promise.reject(error);
   }
@@ -86,7 +95,7 @@ axiosInstance.interceptors.request.use(
     if (config.params) {
       config.params = decamelizeKeys(config.params);
     }
-    if (config.url === 'auth/login') return config;
+    if (config.url === loginPath) return config;
     if (token && !config.headers.Authorization) {
       config.headers.Authorization = `Bearer ${token}`;
     }
