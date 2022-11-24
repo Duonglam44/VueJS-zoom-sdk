@@ -10,17 +10,19 @@
       </v-col>
 
       <v-col style="padding-top: 8px" cols="5">
-        <v-text-field
-          v-model="search"
-          dense
-          solo
-          :placeholder="$t('phoneLogs.searchPlaceholder')"
-          class="my-auto pa-1"
-        >
-          <v-icon slot="append" @click="searchPhoneLogsByText(1)">
-            mdi-magnify
-          </v-icon>
-        </v-text-field>
+        <form @submit.prevent="searchPhoneLogsByText(1)">
+          <v-text-field
+            v-model="search"
+            dense
+            solo
+            :placeholder="$t('phoneLogs.searchPlaceholder')"
+            class="my-auto pa-1"
+          >
+            <button slot="append" type="submit">
+              <v-icon> mdi-magnify </v-icon>
+            </button>
+          </v-text-field>
+        </form>
       </v-col>
 
       <v-col cols="2">

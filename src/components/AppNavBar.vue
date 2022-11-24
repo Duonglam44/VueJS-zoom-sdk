@@ -32,13 +32,14 @@
       </template>
 
       <v-list dense>
-        <v-list-item link>
-          <router-link to="/profile">
+        <router-link to="/profile">
+          <v-list-item link>
             <v-list-item-title class="black--text">
               {{ $t('headerBar.profileLink') }}
             </v-list-item-title>
-          </router-link>
-        </v-list-item>
+          </v-list-item>
+        </router-link>
+
         <v-list-item @click="handleLogout">
           <v-list-item-title>
             {{ $t('headerBar.logoutLink') }}

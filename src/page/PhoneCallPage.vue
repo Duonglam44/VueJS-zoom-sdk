@@ -15,7 +15,7 @@
             class="white--text"
             @click="goBack"
           >
-            ＜戻る
+            {{ `＜${$t('button.back')}` }}
           </v-btn>
           <v-toolbar-title class="white--text font-weight-black">
             {{ phoneNumber }}

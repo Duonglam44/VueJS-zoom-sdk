@@ -2,9 +2,9 @@
   <v-card class="mt-8 pb-4">
     <v-list subheader>
       <v-list-item-group>
-        <v-subheader class="font-weight-bold header-list">{{
-          title
-        }}</v-subheader>
+        <v-subheader class="font-weight-bold header-list">
+          {{ title }}
+        </v-subheader>
         <ListContainer :status="status" :is-data="!!historyList.length">
           <div v-for="(item, index) in historyList" :key="item.phoneLogId">
             <v-list-item @click.native="$emit('item-clicked', item.phoneLogId)">
