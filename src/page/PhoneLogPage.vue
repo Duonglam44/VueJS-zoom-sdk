@@ -9,7 +9,7 @@
           scroll-target="#scrolling-techniques-7"
         >
           <v-btn to="/" text x-large color="#505c65" class="white--text">
-            ＜戻る
+            {{ `＜${$t('button.back')}` }}
           </v-btn>
           <v-toolbar-title class="white--text font-weight-black">
             {{ getData(phoneLog.address, 'name', customerPhoneFormated || '') }}

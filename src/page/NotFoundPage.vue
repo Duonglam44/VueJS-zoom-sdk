@@ -6,10 +6,10 @@
         <div id="text-2">0</div>
         <div id="text-3">4</div>
       </div>
-      <p class="description">Page Not Found</p>
+      <p class="description">{{ $t('error.resourceNotFound') }}</p>
 
       <div class="actions">
-        <button @click="$router.back()">Go Back</button>
+        <button @click="$router.back()">{{ $t('button.back') }}</button>
       </div>
     </div>
   </div>
@@ -49,9 +49,9 @@ export default {
 }
 
 .description {
-  font-size: 1.5rem;
+  font-size: 1.3rem;
   font-weight: 500;
-  margin: 1rem 0;
+  margin: 0.7rem 0 0.9rem;
 }
 
 .actions {

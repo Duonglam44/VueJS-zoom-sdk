@@ -1,5 +1,8 @@
 export default {
   lang: 'ja',
+  button: {
+    back: '戻る',
+  },
   sidebar: {
     customHeader: 'カスタムヘッダー',
     linkActive: 'アクティブなリンク',
@@ -35,6 +38,7 @@ export default {
   },
   error: {
     undefined: 'エラーが発生しました',
+    resourceNotFound: 'リソースが見つかりません。',
   },
   datepicker: {
     ok: 'はい',
