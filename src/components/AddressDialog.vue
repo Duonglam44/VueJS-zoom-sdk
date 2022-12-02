@@ -129,10 +129,13 @@ export default {
           await addressService.create(body);
           this.$toasted.success(this.$t('modal.createSuccess'));
         } else {
-          await addressService.update(this.phoneLog.customerPhoneNumber, {
-            userPhoneNumberUpdate: this.phoneLog.customerPhoneNumber,
-            name: this.name,
-          });
+          await addressService.update(
+            this.phoneLog.customerPhoneName.addressId,
+            {
+              userPhoneNumberUpdate: this.phoneLog.customerPhoneNumber,
+              name: this.name,
+            }
+          );
           this.$toasted.success(this.$t('modal.updateSuccess'));
         }
         this.$emit('reload');
