@@ -4,8 +4,8 @@ const create = (body) => {
   return axiosInstance.post('address', body);
 };
 
-const update = (phoneNumber, body) => {
-  return axiosInstance.put(`address/${phoneNumber}`, body);
+const update = (id, body) => {
+  return axiosInstance.put(`address/${id}`, body);
 };
 
 const getAddress = (params) => {
