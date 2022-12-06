@@ -33,11 +33,11 @@
               <div class="form-group d-flex">
                 <input
                   id="phoneNumber"
-                  :value="phoneNumber"
+                  v-model="phoneNumber"
                   type="text"
                   class="form-control"
                   required="true"
-                  @change="onInputChange"
+                  @blur="onBlur"
                 />
                 <v-btn
                   style="min-height: 38px"
@@ -48,16 +48,6 @@
                 >
                   <v-icon left> mdi-phone-outgoing</v-icon>
                   {{ $t('phoneLogs.externalCall') }}
-                </v-btn>
-                <v-btn
-                  style="min-height: 38px"
-                  color="error"
-                  class="white--text btn-call"
-                  :disabled="!phoneNumber || isInCalling"
-                  type="button"
-                >
-                  <v-icon left> mdi-phone-remove</v-icon>
-                  {{ $t('phoneLogs.cutting') }}
                 </v-btn>
               </div>
             </ValidationProvider>
@@ -127,7 +117,7 @@ export default {
       this.handleCall(params);
     },
 
-    onInputChange($event) {
+    onBlur($event) {
       const val = formatNumber($event.target.value);
 
       // eslint-disable-next-line no-param-reassign

@@ -136,7 +136,7 @@
 
               <v-list-item-icon>
                 <v-icon> mdi-message </v-icon>
-                <v-badge overlap :content="item.phoneTalkLogsLength"></v-badge>
+                <v-badge overlap :content="item.phoneTalkLogsLength || '0'" />
               </v-list-item-icon>
             </v-list-item>
 
