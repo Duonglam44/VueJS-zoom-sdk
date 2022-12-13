@@ -44,6 +44,11 @@ const actions = {
       return Promise.reject(error);
     }
   },
+
+  async getPhraseList({ commit }) {
+    const { data: response = [] } = await phoneCallService.getPhraseList();
+    commit('setPhraseList', response);
+  },
 };
 
 export default actions;

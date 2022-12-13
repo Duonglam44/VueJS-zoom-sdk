@@ -7,7 +7,7 @@
 </template>
 
 <script>
-import { mapGetters, mapState } from 'vuex';
+import { mapGetters, mapState, mapActions } from 'vuex';
 
 export default {
   name: 'App',
@@ -24,6 +24,12 @@ export default {
       },
       immediate: true,
     },
+  },
+  created() {
+    this.getPhraseList();
+  },
+  methods: {
+    ...mapActions('phoneCall', ['getPhraseList']),
   },
 };
 </script>
