@@ -37,6 +37,10 @@ export default {
     ...mapGetters('twilio', ['callType']),
   },
 
+  created() {
+    this.getPhraseList();
+  },
+
   mounted() {
     if (isElectron()) {
       this.removeAnswerListener = window.electron.ipcRenderer.on(
@@ -64,6 +68,7 @@ export default {
 
   methods: {
     ...mapActions('twilio', ['acceptCall', 'callRejectHandler']),
+    ...mapActions('phoneCall', ['getPhraseList']),
   },
 };
 </script>
