@@ -8,8 +8,13 @@ const saveDataPhoneCall = (data) => {
   });
 };
 
+const getPhraseList = () => {
+  return axiosInstance.get('/phrase-list');
+};
+
 const phoneCallService = {
   saveDataPhoneCall,
+  getPhraseList,
 };
 
 export default phoneCallService;
