@@ -207,8 +207,3 @@ ipcMain.on('accept', () => {
 ipcMain.on('cancel-call', () => {
   workerWindow.hide();
 });
-
-ipcMain.on('ignore-call', () => {
-  workerWindow.hide();
-  win.webContents.send('ignoreCall');
-});

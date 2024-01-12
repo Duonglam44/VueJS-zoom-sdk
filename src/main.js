@@ -14,7 +14,6 @@ import App from './App.vue';
 import store from './store';
 import router from './router';
 import vuetify from './plugins/vuetify';
-import TwilioPlugin from './plugins/TwilioPlugin';
 
 extend('required', required);
 extend('email', email);
@@ -25,7 +24,6 @@ localize('ja', { messages });
 Vue.component('ValidationObserver', ValidationObserver);
 Vue.component('ValidationProvider', ValidationProvider);
 
-Vue.use(TwilioPlugin);
 Vue.use(InfiniteLoading);
 
 Vue.use(Toasted, {

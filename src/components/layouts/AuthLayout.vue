@@ -2,8 +2,6 @@
   <div>
     <AppNavBar />
     <router-view />
-    <CallTypeModal />
-    <IncomingCallDialog />
   </div>
 </template>
 
@@ -13,16 +11,12 @@ import { mapActions, mapGetters, mapState } from 'vuex';
 import { isElectron } from '@/shared/utils';
 
 import AppNavBar from '@/components/AppNavBar.vue';
-import CallTypeModal from '@/components/CallTypeModal.vue';
-import IncomingCallDialog from '@/components/IncomingCallDialog.vue';
 
 export default {
   name: 'AuthLayout',
 
   components: {
     AppNavBar,
-    CallTypeModal,
-    IncomingCallDialog,
   },
 
   data() {
@@ -49,20 +43,12 @@ export default {
           this.acceptCall();
         }
       );
-
-      this.removeIgnoreListener = window.electron.ipcRenderer.on(
-        'ignoreCall',
-        () => {
-          this.callRejectHandler();
-        }
-      );
     }
   },
 
   beforeDestroy() {
     if (isElectron()) {
       this.removeAnswerListener?.();
-      this.removeIgnoreListener?.();
     }
   },
 
